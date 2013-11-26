@@ -20,7 +20,7 @@ bool beVerbose=false;
 
 //operation modes
 #include "mode_find.c"
-#include "mode_buy.c"
+#include "mode_buy.c"	//buy needs find
 
 #define MAX_PASS_LEN 254
 #define MAX_USER_LEN 254

@@ -1,3 +1,31 @@
+int findSingleSnackByTerms(PGconn* db, int argc, char** argv){
+	int rv=-1;
+	PGresult* result=querySnacksForTerms(db,argc,argv);
+	if(!result){
+		printf("Failed to construct query\n");
+		return -1;
+	}
+	
+	if(PQntuples(result)!=1){
+		if(beVerbose&&PQntuples(result)>1){
+			printf("Search terms returned multiple matches\n");
+		}
+		else if(beVerbose){
+			printf("Search terms returned no matches\n");
+		}
+	}
+	else{
+		rv=strtol(PQgetvalue(result,0,0),NULL,10);
+		if(errno==EINVAL){
+			printf("Failed to convert returned snack ID\n");
+			rv=-1;
+		}
+	}
+	
+	PQclear(result);
+	return rv;
+}
+
 int queryUserID(PGconn* db, char* username){
 	static const char* QUERY_UID="SELECT user_id FROM garfield.users WHERE user_name = $1";
 	
@@ -26,29 +54,6 @@ int buySnackByID(PGconn* db, int user, int snack){
 	int binary[2]={1, 1};
 	
 	PGresult* result=PQexecParams(db,BUY_SNACK,2,NULL,values,lengths,binary,0);
-	
-	/*switch(PQresultStatus(result)){
-		case PGRES_EMPTY_QUERY:
-			printf("Empty query\n");
-			break;
-		case PGRES_COMMAND_OK:
-			printf("Command ok\n");
-			break;
-		case PGRES_TUPLES_OK:
-			printf("Got tuples\n");
-			break;
-		case PGRES_BAD_RESPONSE:
-			printf("Server response bad\n");
-			break;
-		case PGRES_NONFATAL_ERROR:
-			printf("Query resulted in nonfatal error\n");
-			break;
-		case PGRES_FATAL_ERROR:
-			printf("Query resulted in fatal error\n");
-			break;
-		default:
-			printf("Unknown result code\n");
-	}*/
 	
 	if(PQresultStatus(result)!=PGRES_TUPLES_OK){
 		printf("Failed to buy snack (%s)\n",PQresultErrorMessage(result));
@@ -100,15 +105,8 @@ int mode_buy(PGconn* db, int argc, char** argv){
 	}
 	
 	if(search_term){
-		printf("Search terms: ");
-		for(i=term_start;i<argc;i++){
-			printf("%s ",argv[i]);
-		}
-	}
-	printf("\n");
-	
-	if(search_term){
-		//TODO search term for snack id
+		//search term for snack id
+		snack_id=findSingleSnackByTerms(db,argc-term_start,argv+term_start);
 	}
 	else{
 		snack_id=strtol(argv[term_start],NULL,10);
@@ -128,10 +126,11 @@ int mode_buy(PGconn* db, int argc, char** argv){
 	//buy snack for id
 	if(buySnackByID(db,userid,snack_id)<0){
 		printf("Failed to buy snack :(\n");
+		return -1;
 	}
 	else{
 		printf("Snack bought.\n");
 	}
 	
-	return -1;
+	return 0;
 }
