@@ -2,8 +2,15 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <errno.h>
 #include <malloc.h>
 #include <libpq/libpq-fe.h> //might be postgresql/libpq-fe.h in some cases
+
+#ifndef _WIN32
+	#include <arpa/inet.h>
+#else
+	#include <winsock2.h>
+#endif
 
 //portability hacks
 #include "getchar.h"
