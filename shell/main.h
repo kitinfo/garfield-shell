@@ -1,5 +1,7 @@
-const int MAXLENGTH = 100;
-const int MATE = 0;
+#pragma once
+
+#define MAXLENGTH 100
+#define MATE 0
 
 
 int main(int argc, char* argv[]);
@@ -37,3 +39,6 @@ void buyMate();
 void buySnacks(char* input);
 
 void execBuy(int id);
+
+int getSnackID(char* snack);
+

@@ -4,7 +4,7 @@
 #include <string.h>
 #include <errno.h>
 #include <malloc.h>
-#include <libpq/libpq-fe.h> //might be postgresql/libpq-fe.h in some cases
+#include <libpq-fe.h> //might be postgresql/libpq-fe.h in some cases
 
 #ifndef _WIN32
 	#include <arpa/inet.h>

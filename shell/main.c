@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <ctype.h>
 #include "main.h"
+#include "linux.h"
 
 
 //const int MAXLENGTH = 100;
@@ -88,7 +89,6 @@ int shell() {
 
 
 	char input[MAXLENGTH];
-	char* arg = "exit";
 	for (;;) {
 		printf("%s>", login.user);
 
@@ -111,6 +111,7 @@ int shell() {
                 	sFirstCut(input, dest, 5);
         	} else if (begins(input, "buy ")) {
                 	sFirstCut(input, dest, 4);
+			printf("buy\n");
 			buy(dest);
         	} else if (begins(input, "help")) {
 			printInternHelp();
@@ -194,6 +195,7 @@ void buy(char* input) {
 		sFirstCut(input, dest, 5);
 		buySnacks(dest);
 	} else if (begins(input, "mate")) {
+		printf("mate\n");
 		buyMate();
 	}
 }
@@ -201,12 +203,25 @@ void buy(char* input) {
 void buySnacks(char* input) {
 	char* snacks = malloc(MAXLENGTH * sizeof(char));
 	snacks = strtok(input, " ");
+	printf(snacks);
+	printf("\n");
 	int id = 0;
 	while (snacks != NULL) {
-		if (sscanf(snacks,"%d", id) == 1) {
+		printf("in while\n");
+		if (sscanf(snacks,"%d", &id) == 1) {
+			printf("done\n");
+			execBuy(id);
+		} else {
+			id = getSnackID(snacks);
 			execBuy(id);
 		}
+		snacks = strtok(NULL, " ");
 	}
+}
+
+int getSnackID(char* snack) {
+	//TODO: get snack id
+	return 0;
 }
 
 
@@ -229,11 +244,12 @@ void execBuy(int id) {
 	}
 	// buy
 	printf("Buy snack with id: %d\n", id);
+	execBuyCmd(login.user, login.password, id);
 }
 
 
 void askPassword() {
-
+	login.password = "test";
 }
 
 
