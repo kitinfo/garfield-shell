@@ -17,8 +17,7 @@
 		return ch;
 	}
 
-	#define _GETCH_ _getch
+	#define getch _getch
 #else
 	#include <conio.h>
-	#define _GETCH_ getch
 #endif

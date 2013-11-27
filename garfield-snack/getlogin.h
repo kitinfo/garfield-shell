@@ -1,6 +1,4 @@
-#ifndef _WIN32
-	#define _GETLOGIN_ getlogin_r
-#else
+#ifdef _WIN32
 	#include <windows.h>
 	#include <errno.h>
 	int _getlogin_r(char *buf, size_t size){
@@ -13,5 +11,5 @@
 		}
 		return 0;
 	}
-	#define _GETLOGIN_ _getlogin_r
+	#define getlogin_r _getlogin_r
 #endif
