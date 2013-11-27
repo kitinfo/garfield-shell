@@ -75,6 +75,7 @@ void printHelp() {
  */
 int shell() {
 
+	checkLogin();
 
 	char input[MAXLENGTH];
 	for (;;) {
@@ -95,8 +96,10 @@ int shell() {
 			parseList(dest);
 		} else if (begins(input, "search ")) {
                 	sFirstCut(input, dest, 7);
-        	} else if (begins(input, "mate ")) {
+			find(dest);
+        	} else if (begins(input, "find ")) {
                 	sFirstCut(input, dest, 5);
+			find(dest);
         	} else if (begins(input, "buy ")) {
                 	sFirstCut(input, dest, 4);
 			printf("buy\n");
@@ -112,6 +115,17 @@ int shell() {
 	return 0;
 }
 
+void find(char* input) {
+
+	char dest[MAXLENGTH];
+
+	if (begins(input, "snack ")) {
+		sFirstCut(input, dest, 6);
+		findSnack(dest, login.user, login.password);
+	}
+}
+
+
 void printInternHelp() {
 	printf("HELP:\n");
 	printf("List of commands:\n");
@@ -122,7 +136,7 @@ void printInternHelp() {
 	printf("\t list\n");
 	printf("\t\t user <select>\t - prints all user,\n");
 	printf("\t\t\t\t if we have a select, search\n");
-	printf("\t search\n");
+	printf("\t find\n");
 	printf("\t\t user <select>\t - search a user in database\n");
 	printf("\t\t snack <select>\t - search a snack in database\n");
 	printf("\t buy\n");
@@ -188,6 +202,21 @@ void buy(char* input) {
 	}
 }
 
+void checkLogin() {
+	if (strlen(login.user) < 1) {
+                printf("We need a user: ");
+                char dest[MAXLENGTH];
+                read_line(dest);
+                setUser(dest);
+        }
+        if (strlen(login.password) < 1) {
+                printf("We need a password: ");
+                askPassword();
+        }
+
+}
+
+
 void buySnacks(char* input) {
 	char* snacks;/* = malloc(MAXLENGTH * sizeof(char));*/
 	snacks = strtok(input, " ");
@@ -195,12 +224,13 @@ void buySnacks(char* input) {
 	printf("\n");
 	int id = 0;
 	while (snacks != NULL) {
-		printf("in while\n");
 		if (sscanf(snacks,"%d", &id) == 1) {
-			printf("done\n");
 			execBuy(id);
 		} else {
 			id = getSnackID(snacks);
+			if (id < 0) {
+				return;
+			}
 			execBuy(id);
 		}
 		snacks = strtok(NULL, " ");
@@ -208,28 +238,22 @@ void buySnacks(char* input) {
 }
 
 int getSnackID(char* snack) {
-	//TODO: get snack id
-	return 0;
+
+	return findSnackByID(snack, login.user, login.password);
 }
 
 
 void buyMate() {
 
-	execBuy(MATE);
+	int id = getSnackID(MATE);
+	if (id < 0) {
+		return;
+	}
+	execBuy(id);
 }
 
-
 void execBuy(int id) {
-	if (strlen(login.user) < 1) {
-		printf("We need a user: ");
-		char dest[MAXLENGTH];
-		read_line(dest);
-		setUser(dest);
-	}
-	if (strlen(login.password) < 1) {
-		printf("We need a password: ");
-		askPassword();
-	}
+	checkLogin();
 	// buy
 	printf("Buy snack with id: %d\n", id);
 	execBuyCmd(login.user, login.password, id);

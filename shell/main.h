@@ -1,8 +1,11 @@
 #pragma once
 
 #define MAXLENGTH 100
-#define MATE 0
+#define MATE "Club-Mate (0,5l)"
 
+void find(char* input);
+
+void checkLogin();
 
 int main(int argc, char* argv[]);
 
@@ -41,4 +44,3 @@ void buySnacks(char* input);
 void execBuy(int id);
 
 int getSnackID(char* snack);
-
