@@ -14,13 +14,20 @@ int execBuyCmd(char* user, char* password, int id) {
 	//do some magic
 	char* cwd = getcwd(NULL, 0);
 
-	char* cmd = malloc(MAXLENGTH * 3 * sizeof(char));
+	char* cmd = malloc(strlen(cwd) + MAXLENGTH * 3);
 
-	char* pwargs = "--user";
+	char* pwargs = "--pass";
 	char* userargs = "--user";
 
-	snprintf(cmd, strlen(cwd) + MAXLENGTH *3,"%s%s %s %s %s %s %s %s %d", cwd,SNACKCMD, VERBOSE, userargs, user, pwargs, password, BUYCMD, id);
+	uint pid = snprintf(cmd, strlen(cwd) + MAXLENGTH *3,
+		"%s%s %s %s %s %s %s %s %d",
+		cwd,SNACKCMD, VERBOSE, userargs,
+		user, pwargs, password, BUYCMD, id);
+	printf(cmd);
+	printf("\n");
+	system(cmd);
+	free(cwd);
+	free(cmd);
 
-	uint pid = system(cmd);
-	printf("pid: %d", pid);
+	return pid;
 }

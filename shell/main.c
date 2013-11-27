@@ -4,17 +4,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <ctype.h>
+#include "getchar.h"
 #include "main.h"
 #include "linux.h"
-
-
-//const int MAXLENGTH = 100;
-
-enum {
-	USER = 'u',
-	PASSWORD = 'p',
-	HELP = 'h'
-};
 
 struct {
 	char* user;
@@ -30,16 +22,12 @@ int main(int argc, char* argv[]) {
 	login.user = malloc(MAXLENGTH * sizeof(char));
 	login.password = malloc(MAXLENGTH * sizeof(char));
 
-
 	if (argc > 0) {
 		parseArguments(argc, argv);
 	}
 
 	return shell();
-
 }
-
-extern char* optarg;
 
 /**
  * @handsoff
@@ -201,7 +189,7 @@ void buy(char* input) {
 }
 
 void buySnacks(char* input) {
-	char* snacks = malloc(MAXLENGTH * sizeof(char));
+	char* snacks;/* = malloc(MAXLENGTH * sizeof(char));*/
 	snacks = strtok(input, " ");
 	printf(snacks);
 	printf("\n");
@@ -249,14 +237,32 @@ void execBuy(int id) {
 
 
 void askPassword() {
-	login.password = "test";
+	char c;
+	int i=0;
+                do{
+                        c=getch();
+                        if(c==3){
+                                //handle sigint during input
+                                return;
+                        }
+                        if(c!='\n'&&c!='\r'&&c!=EOF){
+                                //printf("%c|%x\n",c,c);
+                                login.password[i]=c;
+                        }
+                        else{
+                                break;
+                        }
+                        i++;
+                }
+                while(i<MAXLENGTH);
+                login.password[i]=0;
 }
 
 
 
 void parseList(char* input) {
 
-	char dest[MAXLENGTH];
+	/*char dest[MAXLENGTH];*/
 	if (begins(input, "user")) {
 		printf("user: ");
 		printf(login.user);
