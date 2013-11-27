@@ -110,7 +110,7 @@ int main(int argc, char** argv){
 	
 	//if no user supplied, get from environment
 	if(*user==0){
-		i=_GETLOGIN_(user,MAX_USER_LEN);
+		i=getlogin_r(user,MAX_USER_LEN);
 		if(i!=0){
 			printf("Failed to get user name, try --user\n\n");
 			exit(usage(argv[0]));
@@ -122,7 +122,7 @@ int main(int argc, char** argv){
 		printf("Enter Garfield / DB access password for %s: ",user);
 		i=0;
 		do{
-			c=_GETCH_();
+			c=getch();
 			if(c==3){
 				//handle sigint during input
 				return -2;
