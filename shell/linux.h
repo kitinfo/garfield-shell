@@ -18,3 +18,5 @@ int findSnackByID(char* snack, char* user, char* pass);
 char* getFindCmd(char* snack, char* user, char* pass);
 
 char* buildCmd(char* cmd, char* user, char* pass);
+
+int execBuyWithName(char* snack, char* user, char* pass);

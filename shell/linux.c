@@ -73,7 +73,7 @@ void listUserCmd(char* user, char* pass, char* searchCmd) {
 
 	char* cwd = buildCmd(USERCMD, user, pass);
 
-	char len = strlen(cwd) + MAXLENGTH;
+	int len = strlen(cwd) + MAXLENGTH;
 
 	char* cmd = malloc(len);
 
@@ -84,4 +84,19 @@ void listUserCmd(char* user, char* pass, char* searchCmd) {
 	}
 	system(cmd);
 	free(cwd);
+}
+
+int execBuyWithName(char* snack, char* user, char* pass) {
+
+	char* cwd = buildCmd(SNACKCMD, user, pass);
+
+	int len = strlen(cwd) + MAXLENGTH;
+
+	char* cmd = malloc(len);
+	snprintf(cmd, len,"%s %s -s %s", cwd, BUYCMD, snack);
+        uint pid = system(cmd);
+        free(cwd);
+        free(cmd);
+
+        return pid;
 }

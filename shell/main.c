@@ -86,7 +86,6 @@ int shell() {
 		char dest[MAXLENGTH];
 
 		if (sequals(input, "exit")) {
-			printf("exit");
 			return 0;
 		} else if (begins(input, "set ")) {
 			sFirstCut(input, dest, 4);
@@ -102,7 +101,6 @@ int shell() {
 			find(dest);
         	} else if (begins(input, "buy ")) {
                 	sFirstCut(input, dest, 4);
-			printf("buy\n");
 			buy(dest);
         	} else if (begins(input, "help")) {
 			printInternHelp();
@@ -197,7 +195,6 @@ void buy(char* input) {
 		sFirstCut(input, dest, 5);
 		buySnacks(dest);
 	} else if (begins(input, "mate")) {
-		printf("mate\n");
 		buyMate();
 	}
 }
@@ -220,18 +217,12 @@ void checkLogin() {
 void buySnacks(char* input) {
 	char* snacks;/* = malloc(MAXLENGTH * sizeof(char));*/
 	snacks = strtok(input, " ");
-	printf(snacks);
-	printf("\n");
 	int id = 0;
 	while (snacks != NULL) {
 		if (sscanf(snacks,"%d", &id) == 1) {
 			execBuy(id);
 		} else {
-			id = getSnackID(snacks);
-			if (id < 0) {
-				return;
-			}
-			execBuy(id);
+			execBuyWithName(snacks, login.user, login.password);
 		}
 		snacks = strtok(NULL, " ");
 	}
@@ -253,7 +244,6 @@ void buyMate() {
 }
 
 void execBuy(int id) {
-	checkLogin();
 	// buy
 	printf("Buy snack with id: %d\n", id);
 	execBuyCmd(login.user, login.password, id);
@@ -296,8 +286,6 @@ void parseList(char* input) {
 
 
 void setUser(char* username) {
-	printf(username);
-	printf("\n");
 	strcpy(login.user, username);
 }
 
