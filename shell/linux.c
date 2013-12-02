@@ -6,17 +6,9 @@
 #include <string.h>
 #include "main.h"
 
-const char* SNACKCMD = "/garfield-snack";
-const char* BUYCMD = "buy";
-const char* VERBOSE = "--verbose";
-const char* USER_ARG = "--user";
-const char* PORT_ARG = "--port";
-const char* PASS_ARG = "--pass";
-const char* FIND = "find";
-
 int execBuyCmd(char* user, char* password, int id) {
 	//do some magic
-	char* cwd = buildCmd(user, password);
+	char* cwd = buildCmd(SNACKCMD, user, password);
 	int len = strlen(cwd) + MAXLENGTH;
 	char* cmd = malloc(len);
 
@@ -28,13 +20,13 @@ int execBuyCmd(char* user, char* password, int id) {
 	return pid;
 }
 
-char* buildCmd(char* user, char* pass) {
+char* buildCmd(char* garfieldCmd, char* user, char* pass) {
 	char* cwd = getcwd(NULL, 0);
 	int len = strlen(cwd) + MAXLENGTH * 3;
 	char* cmd = malloc(len);
 
 	snprintf(cmd, len, "%s%s %s \"%s\" %s \"%s\"", cwd,
-		SNACKCMD, USER_ARG, user, PASS_ARG, pass);
+		garfieldCmd, USER_ARG, user, PASS_ARG, pass);
 	free(cwd);
 	return cmd;
 }
@@ -68,11 +60,28 @@ int findSnack(char* snack, char* user, char* pass) {
 
 char* getFindCmd(char* snack, char* user, char* pass) {
 
-	char* cwd = buildCmd(user, pass);
+	char* cwd = buildCmd(SNACKCMD,user, pass);
         int len = strlen(cwd) + MAXLENGTH;
         char* cmd = malloc(len);
 
-        snprintf(cmd, len, "%s %s \"%s\"", cwd, FIND, snack);
+        snprintf(cmd, len, "%s %s \"%s\"", cwd, FINDCMD, snack);
 	free(cwd);
 	return cmd;
+}
+
+void listUserCmd(char* user, char* pass, char* searchCmd) {
+
+	char* cwd = buildCmd(USERCMD, user, pass);
+
+	char len = strlen(cwd) + MAXLENGTH;
+
+	char* cmd = malloc(len);
+
+	if (searchCmd != NULL) {
+	snprintf(cmd, len, "%s %s \"%s\"", cwd, LISTCMD, searchCmd);
+	} else {
+		snprintf(cmd, len, "%s %s", cwd, LISTCMD);
+	}
+	system(cmd);
+	free(cwd);
 }
