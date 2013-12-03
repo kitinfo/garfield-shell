@@ -182,7 +182,7 @@ int main(int argc, char** argv){
 		i=mode_stats(conn,argc-mode_arg,argv+mode_arg);
 	}
 	else{
-		printf("No such mode %s.",mode);
+		printf("No such mode %s.\n",mode);
 		i=usage(argv[0]);
 	}
 	

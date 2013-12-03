@@ -39,6 +39,7 @@ int mode_stats(PGconn* db, int argc, char** argv){
 			snackid=-1;
 			break;
 		}
+		printf("\n");
 		if(beVerbose){
 			printf("Querying info for snack %d\n",snackid);
 		}
