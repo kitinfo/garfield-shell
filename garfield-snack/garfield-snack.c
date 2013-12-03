@@ -4,7 +4,7 @@
 #include <string.h>
 #include <errno.h>
 #include <malloc.h>
-#include <postgresql/libpq-fe.h> //the path for this header differs by distribution.
+#include <libpq/libpq-fe.h> //might be postgresql/libpq-fe.h in some cases
 
 #ifndef _WIN32
 	#include <arpa/inet.h>
@@ -19,6 +19,7 @@
 bool beVerbose=false;
 
 //operation modes
+#include "mode_stats.c"
 #include "mode_find.c"
 #include "mode_buy.c"	//buy needs find
 
@@ -63,7 +64,7 @@ int main(int argc, char** argv){
 	char pass[MAX_PASS_LEN+1];
 	*pass=0;
 	char* server="fsmi-db";
-	char* port="5435";
+	char* port="5432"; //garfield test instance is on 5435
 	char* dbname="garfield";
 	char* mode=NULL;
 	int mode_arg=-1;
@@ -117,6 +118,10 @@ int main(int argc, char** argv){
 		}
 	}
 	
+	if(beVerbose){
+		printf("Connecting to %s:%s\n",server,port);
+	}
+	
 	//if none supplied, ask for password
 	if(*pass==0){
 		printf("Enter Garfield / DB access password for %s: ",user);
@@ -139,7 +144,7 @@ int main(int argc, char** argv){
 		while(i<MAX_PASS_LEN);
 		pass[i]=0;
 		
-		printf("\n");
+		printf("\n\n");
 	}
 	
 	char const* keywords[]={"host","port","dbname","user","password",NULL};
@@ -170,8 +175,11 @@ int main(int argc, char** argv){
 	if(!strcmp(mode,"buy")){
 		i=mode_buy(conn,argc-mode_arg,argv+mode_arg);
 	}
-	else if(!strcmp(mode,"find")){
+	else if(!strcmp(mode,"find")||!strcmp(mode,"search")){
 		i=mode_find(conn,argc-mode_arg,argv+mode_arg);
+	}
+	else if(!strcmp(mode,"stats")||!strcmp(mode,"info")){
+		i=mode_stats(conn,argc-mode_arg,argv+mode_arg);
 	}
 	else{
 		printf("No such mode %s.",mode);
