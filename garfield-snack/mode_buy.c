@@ -109,8 +109,9 @@ int mode_buy(PGconn* db, int argc, char** argv){
 		snack_id=findSingleSnackByTerms(db,argc-term_start,argv+term_start);
 	}
 	else{
+		errno=0;
 		snack_id=strtol(argv[term_start],NULL,10);
-		if(errno==EINVAL){
+		if(errno!=0){
 			snack_id=-1;
 		}
 	}

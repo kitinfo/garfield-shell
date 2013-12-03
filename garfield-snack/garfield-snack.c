@@ -45,12 +45,15 @@ int usage(char* fn){
 	printf("\tbuy <snack-id>\t\tBuy snack by ID\n");
 	printf("\tbuy -s <term>\t\tBuy snack by name (if search result is one row)\n");
 	printf("\tbuy -u <user> <snackid>\tBuy snack for specified user\n");
+	printf("\tinfo <snackid>\t\tQuery information for a given snack\n");
 	
 	//examples
 	printf("\nExamples:\n");
-	printf("%s find mate\t\tFind snacks named *mate*\n",fn);
-	printf("%s find ritter sport\tFind snacks named *ritter sport*\n",fn);
-	printf("%s buy -u user 828\tBuy snack #828 as 'user'\n",fn);
+	printf("%s find mate\t\tFind snacks matching *mate*\n",fn);
+	printf("%s find ritter sport\tFind snacks matching *ritter sport*\n",fn);
+	printf("%s buy -u user 828\t\tBuy snack #828 as 'user'\n",fn);
+	printf("%s buy -s <barcode>\t\tBuy snack by barcode\n",fn);
+	printf("%s info 828\t\t\tShow information about snack #828\n",fn);
 	return -1;
 }
 
@@ -147,15 +150,18 @@ int main(int argc, char** argv){
 		printf("\n\n");
 	}
 	
+	//set up connection parameters
 	char const* keywords[]={"host","port","dbname","user","password",NULL};
 	char* values[]={server,port,dbname,user,pass,NULL};
 	
+	//connect to server
 	conn=PQconnectdbParams(keywords,(char const **)values,0);
 	if(!conn){
 		printf("libpq failed to allocate memory\n");
 		exit(-1);
 	}
 	
+	//check connection status
 	switch(PQstatus(conn)){
 		case CONNECTION_OK:
 			if(beVerbose){
@@ -172,6 +178,7 @@ int main(int argc, char** argv){
 			return -1;
 	}
 	
+	//select mode procedure
 	if(!strcmp(mode,"buy")){
 		i=mode_buy(conn,argc-mode_arg,argv+mode_arg);
 	}
@@ -182,7 +189,7 @@ int main(int argc, char** argv){
 		i=mode_stats(conn,argc-mode_arg,argv+mode_arg);
 	}
 	else{
-		printf("No such mode %s.\n",mode);
+		printf("No such mode \"%s\".\n",mode);
 		i=usage(argv[0]);
 	}
 	
