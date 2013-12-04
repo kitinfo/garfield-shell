@@ -13,8 +13,8 @@
 #endif
 
 //portability hacks
-#include "getchar.h"
-#include "getlogin.h"
+#include "../garfield-common/getchar.h"
+#include "../garfield-common/getlogin.h"
 
 bool beVerbose=false;
 
