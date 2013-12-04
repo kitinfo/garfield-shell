@@ -1,1 +1,0 @@
-Display price and snack name when buying

@@ -65,6 +65,26 @@ int buySnackByID(PGconn* db, int user, int snack){
 	return 0;
 }
 
+PGresult* snackInfoByID(PGconn* db, int snackid){
+	static const char* QUERY_INFO_BY_ID="SELECT snack_name, snack_barcode, snack_price FROM garfield.snacks WHERE snack_id=$1::integer";
+
+	snackid=htonl(snackid);
+	
+	const char *values[1]={(char*)&snackid};
+	int lengths[1]={sizeof(snackid)};
+	int binary[1]={1};
+	
+	PGresult* result=PQexecParams(db,QUERY_INFO_BY_ID,1,NULL,values,lengths,binary,0);
+	
+	if(PQresultStatus(result)!=PGRES_TUPLES_OK){
+		printf("Failed to query snack info (%s)\n",PQresultErrorMessage(result));
+		PQclear(result); 
+		return NULL;
+	}
+	
+	return result;
+}
+
 int mode_buy(PGconn* db, int argc, char** argv){
 	int i=0;
 	int userid=-1;
@@ -121,8 +141,19 @@ int mode_buy(PGconn* db, int argc, char** argv){
 		return -1;
 	}
 	
-	//TODO print price
-	printf("Paying user: %s (%d)\nSnack ID: %d\n",username,userid,snack_id);
+	PGresult* snackInfo=snackInfoByID(db,snack_id);
+	if(!snackInfo){
+		printf("Failed to query snack info for %d\n");
+		return -1;
+	}
+	if(PQntuples(snackInfo)!=1){
+		printf("Invalid result set for snack info query\n");
+		PQclear(snackInfo);
+		return -1;
+	}
+	
+	printf("Snack:\t\t%s\nSnack ID:\t%d\nPrice:\t\t%s\nPaying user:\t%s (%d)\n",PQgetvalue(snackInfo,0,0),snack_id,PQgetvalue(snackInfo,0,2),username,userid);
+	PQclear(snackInfo);
 	
 	//buy snack for id
 	if(buySnackByID(db,userid,snack_id)<0){
@@ -130,7 +161,7 @@ int mode_buy(PGconn* db, int argc, char** argv){
 		return -1;
 	}
 	else{
-		printf("Snack bought.\n");
+		printf("Transaction ok!\n");
 	}
 	
 	return 0;
