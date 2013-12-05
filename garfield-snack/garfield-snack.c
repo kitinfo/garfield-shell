@@ -4,7 +4,7 @@
 #include <string.h>
 #include <errno.h>
 #include <malloc.h>
-#include <libpq/libpq-fe.h> //might be postgresql/libpq-fe.h in some cases
+#include <libpq-fe.h> //might be postgresql/libpq-fe.h in some cases
 
 #ifndef _WIN32
 	#include <arpa/inet.h>
@@ -66,7 +66,7 @@ int main(int argc, char** argv){
 	*user=0;
 	char pass[MAX_PASS_LEN+1];
 	*pass=0;
-	char* server="fsmi-db";
+	char* server="fsmi-db.fsmi.uni-karlsruhe.de";
 	char* port="5432"; //garfield test instance is on 5435
 	char* dbname="garfield";
 	char* mode=NULL;
