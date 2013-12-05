@@ -143,7 +143,7 @@ int mode_buy(PGconn* db, int argc, char** argv){
 	
 	PGresult* snackInfo=snackInfoByID(db,snack_id);
 	if(!snackInfo){
-		printf("Failed to query snack info for %d\n");
+		printf("Failed to query snack info for %d\n",snack_id);
 		return -1;
 	}
 	if(PQntuples(snackInfo)!=1){
