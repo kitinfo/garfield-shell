@@ -1,8 +1,10 @@
+PG_INCLUDES=-I$(shell pg_config --includedir)
+ifeq ($(PG_INCLUDES),-I)
+	PG_INCLUDES=
+endif
+
 all:
-	tcc -o garfield-snack -lpq -Wall garfield-snack.c
+	$(CC) -o garfield-snack -lpq -Wall $(PG_INCLUDES) garfield-snack.c
 
 windows:
-	tcc -o garfield-snack.exe -lpq -ladvapi32 -lws2_32 -Wall garfield-snack.c
-
-gcc:
-	gcc -o garfield-snack -lpq -Wall garfield-snack.c 
+	cc -o garfield-snack.exe -lpq -ladvapi32 -lws2_32 -Wall garfield-snack.c
