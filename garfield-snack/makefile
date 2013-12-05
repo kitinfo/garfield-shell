@@ -3,6 +3,9 @@ ifeq ($(PG_INCLUDES),-I)
 	PG_INCLUDES=
 endif
 
+
+.PHONY: all windows
+
 all:
 	$(CC) -o garfield-snack -lpq -Wall $(PG_INCLUDES) garfield-snack.c
 

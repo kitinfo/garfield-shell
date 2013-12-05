@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <ctype.h>
-#include "getchar.h"
+#include "../garfield-common/getchar.h"
 #include "main.h"
 #include "linux.h"
 
