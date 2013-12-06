@@ -10,9 +10,7 @@ all:
 
 windows:
 	mkdir bin
-	cd garfield-snack
-	make windows
-	cd ..
+	cd garfield-snack && make windows
 	mv garfield-snack/garfield-snack.exe bin/
 
 install:
