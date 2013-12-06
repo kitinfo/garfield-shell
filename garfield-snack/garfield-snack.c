@@ -38,6 +38,7 @@ int usage(char* fn){
 	printf("\t--port <port>\t\tDatabase server port\n");
 	printf("\t--dbname <dbname>\tDatabase name\n");
 	printf("\t--verbose\t\tPrint some debug info\n");
+	printf("\t--pgpass\t\tUse credentials supplied via .pgpass\n");
 	
 	//modes
 	printf("\nAvailable modes:\n");
@@ -70,6 +71,7 @@ int main(int argc, char** argv){
 	char* port="5432"; //garfield test instance is on 5435
 	char* dbname="garfield";
 	char* mode=NULL;
+	bool use_pgpass=false;
 	int mode_arg=-1;
 	
 	//parse arguments
@@ -97,6 +99,9 @@ int main(int argc, char** argv){
 			}
 			else if(!strcmp(argv[i],"--verbose")){
 				beVerbose=true;
+			}
+			else if(!strcmp(argv[i],"--pgpass")){
+				use_pgpass=true;
 			}
 		}
 		else{
@@ -126,7 +131,7 @@ int main(int argc, char** argv){
 	}
 	
 	//if none supplied, ask for password
-	if(*pass==0){
+	if(*pass==0&&!use_pgpass){
 		printf("Enter Garfield / DB access password for %s: ",user);
 		i=0;
 		do{
@@ -153,6 +158,10 @@ int main(int argc, char** argv){
 	//set up connection parameters
 	char const* keywords[]={"host","port","dbname","user","password",NULL};
 	char* values[]={server,port,dbname,user,pass,NULL};
+	
+	if(use_pgpass){
+		keywords[4]=NULL;
+	}
 	
 	//connect to server
 	conn=PQconnectdbParams(keywords,(char const **)values,0);

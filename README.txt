@@ -9,7 +9,7 @@ The project is split into the following modules
 
 	- garfield-snack
 		This module interfaces the snack subsystem,
-		providing functionality for finding an buying 
+		providing functionality for finding and buying 
 		snacks
 
 	- garfield-user
