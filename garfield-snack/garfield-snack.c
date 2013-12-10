@@ -11,14 +11,13 @@
 	#include <winsock2.h>
 #endif
 
-//portability hacks
-#include "../garfield-common/getchar.h"
 #include "../garfield-common/getlogin.h"
 
 bool beVerbose=false;
 
 
 #include "../garfield-common/pqconnect.c"
+#include "../garfield-common/getpass.c"
 
 //operation modes
 #include "mode_stats.c"
@@ -135,24 +134,11 @@ int main(int argc, char** argv){
 	//if none supplied, ask for password
 	if(*pass==0&&!use_pgpass){
 		printf("Enter Garfield / DB access password for %s: ",user);
-		i=0;
-		do{
-			c=getch();
-			if(c==3){
-				//handle sigint during input
-				return -2;
-			}
-			if(c!='\n'&&c!='\r'&&c!=EOF){
-				//printf("%c|%x\n",c,c);
-				pass[i]=c;
-			}
-			else{
-				break;
-			}
-			i++;
+		
+		if(ask_password(pass,MAX_PASS_LEN)<0){
+			printf("Aborting\n");
+			exit(1);
 		}
-		while(i<MAX_PASS_LEN);
-		pass[i]=0;
 		
 		printf("\n\n");
 	}
