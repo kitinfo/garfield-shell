@@ -4,7 +4,6 @@
 #include <string.h>
 #include <errno.h>
 #include <malloc.h>
-#include <libpq-fe.h> //might be postgresql/libpq-fe.h in some cases
 
 #ifndef _WIN32
 	#include <arpa/inet.h>
@@ -17,6 +16,9 @@
 #include "../garfield-common/getlogin.h"
 
 bool beVerbose=false;
+
+
+#include "../garfield-common/pqconnect.c"
 
 //operation modes
 #include "mode_stats.c"
@@ -155,36 +157,9 @@ int main(int argc, char** argv){
 		printf("\n\n");
 	}
 	
-	//set up connection parameters
-	char const* keywords[]={"host","port","dbname","user","password",NULL};
-	char* values[]={server,port,dbname,user,pass,NULL};
-	
-	if(use_pgpass){
-		keywords[4]=NULL;
-	}
-	
-	//connect to server
-	conn=PQconnectdbParams(keywords,(char const **)values,0);
+	conn=database_connect(server, port, dbname, user, use_pgpass?NULL:pass, beVerbose);
 	if(!conn){
-		printf("libpq failed to allocate memory\n");
-		exit(-1);
-	}
-	
-	//check connection status
-	switch(PQstatus(conn)){
-		case CONNECTION_OK:
-			if(beVerbose){
-				printf("Connected to database server...\n");
-			}
-			break;
-		case CONNECTION_BAD:
-			printf("Connection bad :(\nAborting...\n");
-			PQfinish(conn);
-			return -1;
-		default:
-			printf("Unknown status code, aborting.\n");
-			PQfinish(conn);
-			return -1;
+		return -1;
 	}
 	
 	//select mode procedure
