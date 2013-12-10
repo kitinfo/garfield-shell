@@ -123,7 +123,7 @@ int main(int argc, char** argv){
 	if(*user==0){
 		i=getlogin_r(user,MAX_USER_LEN);
 		if(i!=0){
-			printf("Failed to get user name, try --user\n\n");
+			printf("Failed to get user name (Return value %d, errno %d), try --user\n\n",i,errno);
 			exit(usage(argv[0]));
 		}
 	}
