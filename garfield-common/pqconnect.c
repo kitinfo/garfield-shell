@@ -26,7 +26,7 @@ PGconn* database_connect(char* host, char* port, char* dbname, char* user, char*
 			}
 			break;
 		case CONNECTION_BAD:
-			printf("Bad connection\nAborting...\n");
+			printf("Connection failure: %s\nAborting...\n",PQerrorMessage(conn));
 			PQfinish(conn);
 			return NULL;
 		default:
