@@ -1,3 +1,4 @@
 display user balance
 display buy history
 display stats (most bought snacks, transaction volume, etc)
+info about users

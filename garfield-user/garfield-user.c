@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdbool.h>
 #include <libpq-fe.h>
 
@@ -9,11 +10,19 @@ int usage(char* fn){
 
 bool beVerbose=false;
 
-//operation mdoes
+//operation modes
+#include "mode_list.c"
 
 int module_main(PGconn* db, int argc, char** argv){
-	printf("Mode is %s\n",argv[0]);
-	return 0;
+	int i;
+	if(!strcmp(argv[0],"list")){
+		i=mode_list(db,argc,argv);
+	}
+	else{
+		printf("No such mode \"%s\".\n",argv[0]);
+		i=usage("garfield-user");
+	}
+	return i;
 }
 
 #include "../garfield-common/module-argparse.c"
