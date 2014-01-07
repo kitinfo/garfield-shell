@@ -44,3 +44,5 @@ void buySnacks(char* input);
 void execBuy(int id);
 
 int getSnackID(char* snack);
+
+void debug(char* message);

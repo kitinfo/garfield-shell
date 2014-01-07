@@ -2,7 +2,7 @@ INSTALLPATH=/usr/local/bin
 .PHONY: all windows install
 
 all:
-	-mkdir bin
+	-mkdir -p bin
 	@cd garfield-snack && make
 	@cd shell && make
 	mv garfield-snack/garfield-snack bin/

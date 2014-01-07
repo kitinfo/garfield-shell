@@ -14,7 +14,7 @@
 
 int main(int argc, char** argv){
 	int i,c;
-	
+    (void) c;
 	PGconn* conn;
 	
 	char user[MAX_USER_LEN+1];
