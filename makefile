@@ -4,9 +4,9 @@ INSTALLPATH=/usr/local/bin
 all:
 	-mkdir -p bin
 	@cd garfield-snack && make
-	@cd shell && make
+	@cd garfield-shell-mono && make
 	mv garfield-snack/garfield-snack bin/
-	mv shell/garfield-shell bin/
+	mv garfield-shell-mono/Shell.exe bin/garfield-shell
 
 windows:
 	mkdir bin
