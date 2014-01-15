@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+	<title>Garfield Web Interface</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width">
+
+	<script type='text/javascript' src='garfield.js'>
+
+	</script>
+    </head>
+    <body>
+	<div id='input'>
+	    <form action='javascript:searchRequest()'>
+
+		<label>Suche: </label><input type='text' name='findString' id='findString'><br />
+		<input type='submit' name='search' value='Suchen'>
+	    </form>
+	</div>
+	<div id='findOutput'>
+	    <table>
+		<thead><tr>
+			<th>ID</th><th>Name</th><th>Preis</th>
+		    </tr>
+		</thead>
+		<tbody id='tableBody'>
+		</tbody>
+	    </table>
+	</div>
+
+	<div id='buy'>
+	    <form action='javascript:buyRequest()'>
+		<label>Für wen (Leer heißt Login name): </label><input type='text' name='buyName' id='userField'><br/>
+		<label>Ids: </label><input type='text' name='buyField' id='buyField'><br />
+		<input type='submit' name='buy' value='Kaufen'>
+	    </form>
+	</div>
+
+	<div id='buyOutput'>
+	    <table>
+		<thead><tr>
+			<th>ID</th><th>Name</th><th>Preis</th><th>User</th><th>Status</th>
+		    </tr>
+		</thead>
+		<tbody id='tableBuyBody'>
+		</tbody>
+	    </table>
+	</div>
+    </body>
+</html>
