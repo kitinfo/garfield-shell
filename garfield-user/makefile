@@ -6,7 +6,7 @@ endif
 .PHONY: all windows
 
 all:
-	$(CC) -o garfield-user -lpq -Wall $(PG_INCLUDES) garfield-user.c
+	$(CC) -o garfield-user -Wall $(PG_INCLUDES) garfield-user.c -lpq
 
 windows:
 	cc -o garfield-user.exe -lpq -ladvapi32 -Wall garfield-user.c
