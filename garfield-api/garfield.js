@@ -1,11 +1,11 @@
 var url = "db.php?";
+var findData = new Array();
+var cartData = new Array();
 
 /**
  * search on database and inputs this in the table
  */
 function searchRequest() {
-
-    
 
     var search = document.getElementById('findString').value;
 
@@ -13,26 +13,76 @@ function searchRequest() {
 
     var response = JSON.parse(request.response, true);
 
+
+    if (!checkStatus(response)) {
+	return;
+    }
+
+    
+
     var tbody = document.getElementById('tableBody');
     tbody.innerHTML = "";
+    findData = response.find;
 
-    response.find.forEach(function(data) {
+    findData.forEach(function(data) {
+
 	var item = document.createElement('tr');
 
-	var idItem = document.createElement('td');
-	idItem.textContent = data.snack_id;
-	item.appendChild(idItem);
+	var checkBoxItem = document.createElement('td');
+	var checkBox = document.createElement('input');
+	checkBox.setAttribute('type', 'checkbox');
+	checkBox.setAttribute('checked', 'checked');
+	checkBox.setAttribute('id', 'checkbox' + data.snack_id);
+	checkBox.setAttribute('class', 'checkboxAll');
 
-	var nameItem = document.createElement('td');
-	nameItem.textContent = data.snack_name;
-	item.appendChild(nameItem);
+	checkBoxItem.appendChild(checkBox);
+	item.appendChild(checkBoxItem);
 
-	var priceItem = document.createElement('td');
-	priceItem.textContent = data.snack_price;
-	item.appendChild(priceItem);
-	console.log(idItem);
+	item = buildBaseTable(item, data, 'find');
+
 	tbody.appendChild(item);
-    })
+    });
+
+    calcFindPrice();
+}
+
+
+function checkStatus(response) {
+
+    document.getElementById('status').textContent = response.status;
+
+    if (response.status == true || response.status[0] == true) {
+	return true;
+    }
+
+    return false;
+}
+
+function searchIDRequest(id) {
+    var request = syncGet(url + 'findid=' + id);
+
+    var response = JSON.parse(request.response);
+
+    if (!checkStatus(response)) {
+	return;
+    }
+
+    if (response.find.length < 1) {
+	document.getElementById('status').textContent = "No Entry found!";
+	return;
+    }
+
+
+    var val = response.find[0];
+
+
+    cartData.push(val);
+
+    var item = document.createElement('tr');
+
+    item = buildBaseTable(item, val, 'cart');
+
+    document.getElementById('cartTableBody').appendChild(item);
 }
 
 /**
@@ -64,9 +114,9 @@ function syncGet(url, user, pass) {
  *
  * sends a buy request to database
  */
-function buyRequest() {
+function buyRequest(buy) {
 
-    var buy = document.getElementById('buyField').value;
+    
 
     var user = document.getElementById('userField').value;
 
@@ -84,6 +134,10 @@ function buyRequest() {
 
     console.log(response['status']);
     console.log(response['output']);
+
+    checkStatus(response);
+
+
     for (i = 0; i < response['status'].length; i++) {
 
 	var row = buildDataRow(response['data'][i]);
@@ -111,17 +165,158 @@ function buildDataRow(data) {
     var row = document.createElement('tr');
 
     var idItem = document.createElement('td');
+    
     idItem.textContent = data.snack_id;
     row.appendChild(idItem);
 
     var nameItem = document.createElement('td');
+    
     nameItem.textContent = data.snack_name;
     row.appendChild(nameItem);
 
     var priceItem = document.createElement('td');
+    
     priceItem.textContent = data.snack_price;
     row.appendChild(priceItem);
     console.log(idItem);
 
     return row;
+}
+
+
+function toggleAll() {
+    var checkboxes = document.getElementsByClassName('checkboxAll');
+    if (document.getElementById("checkboxAll").checked == true) {
+
+
+	for (var i = 0; i < checkboxes.length; i++) {
+	    checkboxes[i].checked = true;
+	}
+    } else {
+	for (var i = 0; i < checkboxes.length; i++) {
+	    checkboxes[i].checked = false;
+	}
+    }
+
+    calcPrice();
+}
+
+function calcPrice() {
+    //TODO: calc prices
+}
+
+function buildBaseTable(tr, data, classTag) {
+
+    var item = tr;
+    
+
+    var idItem = document.createElement('td');
+    idItem.classList.add(classTag + "IDCol");
+    idItem.textContent = data.snack_id;
+    item.appendChild(idItem);
+
+    var nameItem = document.createElement('td');
+    nameItem.classList.add(classTag + "NameCol");
+    nameItem.textContent = data.snack_name;
+    item.appendChild(nameItem);
+
+    var priceItem = document.createElement('td');
+    priceItem.classList.add(classTag + "PriceCol");
+    priceItem.textContent = data.snack_price;
+    item.appendChild(priceItem);
+
+    var counterItem = document.createElement('td');
+    counterItem.classList.add(classTag + "CounterCol");
+    var spinner = document.createElement('input');
+    spinner.setAttribute('type', 'number');
+    spinner.setAttribute('min', "0");
+    spinner.setAttribute('step', "1");
+    spinner.setAttribute('value', "1");
+    spinner.setAttribute('id', classTag + 'Counter' + data.snack_id);
+    counterItem.appendChild(spinner);
+
+    item.appendChild(counterItem);
+
+    return item;
+}
+
+function addToCart() {
+
+    findData.forEach(function(val) {
+	addSingleToCart(val);
+	
+    });
+    calcCartPrice();
+}
+
+function addSingleToCart(val) {
+    var checkbox = document.getElementById("checkbox" + val.snack_id);
+
+    if (checkbox.checked) {
+
+	var counter = document.getElementById('findCounter' + val.snack_id);
+
+	if (counter.value !== "0") {
+
+	    var item = document.createElement('tr');
+
+	    item = buildBaseTable(item, val, 'cart');
+
+	    document.getElementById('cartTableBody').appendChild(item);
+
+	    document.getElementById('cartCounter' + val.snack_id).value = counter.value;
+
+	    cartData.push(val);
+	}
+
+    }
+}
+
+function calcCartPrice() {
+
+    var sumElem = document.getElementById('cartSum');
+
+    var sum = 0.00;
+    cartData.forEach(function(val) {
+	sum += (val.snack_price * parseInt(document.getElementById('cartCounter' + val.snack_id).value));
+    });
+    sumElem.textContent = sum.toFixed(2);
+}
+
+function calcFindPrice() {
+
+    var sumElem = document.getElementById('findSum');
+
+    var sum = 0.00;
+    findData.forEach(function(val) {
+	if (document.getElementById('checkbox' + val.snack_id).checked) {
+	    sum += (val.snack_price * parseInt(document.getElementById('findCounter' + val.snack_id).value));
+	}
+    });
+    sumElem.textContent = sum.toFixed(2);
+}
+
+function buyCart() {
+
+    cartData.forEach(function(val) {
+	console.log(val);
+	var counter = parseInt(document.getElementById('cartCounter' + val.snack_id).value);
+
+	while (counter > 0) {
+	    buyRequest(val.snack_id);
+	    counter--;
+	}
+
+	
+    });
+    clearCart();
+}
+
+function clearCart() {
+    document.getElementById('cartTableBody').textContent = "";
+    cartData = new Array();
+}
+
+function addID() {
+    searchIDRequest(document.getElementById('idField').value);
 }

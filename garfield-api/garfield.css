@@ -1,0 +1,74 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 01.02.2014, 19:53:53
+    Author     : mpease
+*/
+body {
+    width: 50%;
+    margin: 0 auto;
+    margin-top: 1em;
+    background-color: #aaa;
+    padding: 2%;
+    border-radius: 10px;
+}
+
+html {
+    background-color: #ddd;
+}
+
+header h1 {
+    text-align: center;
+    font-size: 2em;
+    font-weight: bold;
+}
+
+#status {
+    float: right;
+}
+#status:before {
+    content: "Status: ";
+}
+
+table {
+    width: 100%;
+    text-align: center;
+    border-collapse: collapse;
+}
+
+tfoot {
+    border-top: 1px solid black;
+}
+
+.cartNameCol, .findNameCol {
+    text-align: left;
+}
+
+.cartIDCol, .findIDCol {
+    font-weight: bold;
+}
+
+#findOutput {
+    width: 100%;
+}
+
+#find, #buy, #cart {
+    padding: 2%;
+    margin: 2%;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+h2 {
+    text-align: center;
+}
+#cartOptions {
+    float: right;
+}
+
+#userDiv {
+    float: right;
+}

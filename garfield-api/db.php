@@ -16,13 +16,22 @@ $port = 5435;
 
 if (isset($user) && !empty($user)) {
 
-    $retVal['status'] = "no input (or buy id=0)";
+    $retVal['status'] = array();
+    $retVal['status'][] = "no input (or buy id=0)";
 
     $find = $_GET['find'];
     $buy = $_GET['buy'];
+    $findid = $_GET['findid'];
 
-    $db = new PDO('pgsql:host=' . $host . ';port=' . $port . ';dbname=' . $dbname, $user, $pass);
+    try {
+	$db = new PDO('pgsql:host=' . $host . ';port=' . $port . ';dbname=' . $dbname, $user, $pass);
+    } catch (PDOException $e) {
+	$retVal['status'] = $e->getMessage();
+	die(json_encode($retVal));
+    }
+
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+
 
     if (isset($find) && !empty($find)) {
 
@@ -35,14 +44,13 @@ if (isset($user) && !empty($user)) {
 	} else {
 	    $retVal = buySnacks($db, $user, $snacks);
 	}
+    } else if (isset($findid) && !empty($findid)) {
+	$retVal = findID($db, $findid);
     }
 
     header("Access-Control-Allow-Origin: *");
 
-    echo json_encode($retVal);
-
-
-
+    echo json_encode($retVal, JSON_NUMERIC_CHECK);
 } else {
     header("WWW-Authenticate: Basic realm=\"SmartMonitor API Access (Invalid Credentials for " . $_SERVER['PHP_AUTH_USER'] . ")\"");
     header("HTTP/1.0 401 Unauthorized");
@@ -144,4 +152,29 @@ function getData($stm, $id) {
     $data = $stm->fetch(PDO::FETCH_ASSOC);
     $stm->closeCursor();
     return $data;
+}
+
+function findID($db, $id) {
+
+    $findQuery = "SELECT snacks.snack_id, snack_name, snack_price FROM garfield.snacks "
+	    . "JOIN garfield.snacks_available ON snacks_available.snack_id=snacks.snack_id WHERE snack_available "
+	    . "AND snacks.snack_id = :id";
+
+    try {
+
+	$stm = $db->prepare($findQuery);
+
+
+    $retVal['status'] = $stm->execute(array(
+	':id' => $id
+    ));
+    } catch (PDOException $e) {
+	$retVal['status'] = $e->getMessage();
+    }
+
+    $retVal['find'] = $stm->fetchAll(PDO::FETCH_ASSOC);
+
+    $stm->closeCursor();
+
+    return $retVal;
 }

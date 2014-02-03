@@ -10,39 +10,82 @@ and open the template in the editor.
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 
+	<link rel="stylesheet" type="text/css" href="garfield.css" />
+
 	<script type='text/javascript' src='garfield.js'>
 
 	</script>
     </head>
     <body>
-	<div id='input'>
+	<header>
+	    <div id="status"></div>
+	    <h1>Garfield Web Interface</h1>
+
+	</header>
+	<div id="find">
+	    <h2>Suche</h2>
+	    <div id='input'>
 	    <form action='javascript:searchRequest()'>
 
-		<label>Suche: </label><input type='text' name='findString' id='findString'><br />
+		<label for="findString">Suche: </label><input type='text' name='findString' id='findString'>
 		<input type='submit' name='search' value='Suchen'>
 	    </form>
 	</div>
 	<div id='findOutput'>
-	    <table>
+	    <table onchange="calcFindPrice()">
 		<thead><tr>
-			<th>ID</th><th>Name</th><th>Preis</th>
+			<th><input type="checkbox" checked="checked" onchange="toggleAll()" id="checkboxAll" /></th>
+			<th>ID</th><th>Name</th><th>Preis</th><th>Anzahl</th>
 		    </tr>
 		</thead>
 		<tbody id='tableBody'>
 		</tbody>
+		<tfoot>
+		<td>Anzahl:</td><td id="counter"></td><td></td><td>Gesamt: </td><td id="findSum"></td>
+	    </tfoot>
 	    </table>
+	    <input type="button" value="Add" id="transferButton" onclick ="addToCart()" />
+	</div>
 	</div>
 
-	<div id='buy'>
-	    <form action='javascript:buyRequest()'>
-		<label>Für wen (Leer heißt Login name): </label><input type='text' name='buyName' id='userField'><br/>
-		<label>Ids: </label><input type='text' name='buyField' id='buyField'><br />
-		<input type='submit' name='buy' value='Kaufen'>
-	    </form>
+	<div id="cart">
+	    <h2>Warenkorb</h2>
+	    <div id="cartOptions">
+		<form action="javascript:addID()">
+		    <label>Ids: </label><input type='text' name='buyField' id='idField'>
+		    <input type='submit' name='idAdd' value='Add'/>
+
+		    <input type="button" name="clearButton" onclick="clearCart()" value="Clear"/>
+		</form>
+		
+	    </div>
+	    <table onchange="calcCartPrice();">
+		<thead><tr>
+			<th>ID</th><th>Name</th><th>Preis</th><th>Anzahl</th>
+		    </tr>
+		</thead>
+		<tbody id='cartTableBody'>
+		</tbody>
+		<tfoot>
+		<td></td><td></td><td>Gesamt: </td><td id="cartSum"></td>
+	    </tfoot>
+	    </table>
+
+	    <div id='buyInput'>
+		<form action='javascript:buyRequest()'>
+		    <div id="userDiv"><label>Für wen (Leer heißt Login name): </label><input type='text' name='buyName' id='userField'></div>
+		    <input type="button" name="cartBuy" value="Cart Buy" onclick="buyCart()" />
+		</form>
+	    </div>
 	</div>
 
-	<div id='buyOutput'>
-	    <table>
+
+	<div id="buy">
+	    
+
+	    <div id='buyOutput'>
+		<h2>Log</h2>
+		<table>
 		<thead><tr>
 			<th>ID</th><th>Name</th><th>Preis</th><th>User</th><th>Status</th>
 		    </tr>
@@ -50,6 +93,7 @@ and open the template in the editor.
 		<tbody id='tableBuyBody'>
 		</tbody>
 	    </table>
+	</div>
 	</div>
     </body>
 </html>
