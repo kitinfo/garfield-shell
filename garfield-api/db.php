@@ -154,7 +154,7 @@ function buySnacks($db, $user, $snacks) {
 
 function getLastTimeStamp($db) {
 
-    $query = "SELECT user_trans_log_timestamp FROM garfield.user_trans_log LIMIT 1";
+    $query = "SELECT user_trans_log_timestamp FROM garfield.user_trans_log ORDER BY user_trans_log_timestamp DESC LIMIT 1";
 
     try {
 	$stm = $db->prepare($query);
@@ -223,3 +223,4 @@ function findID($db, $id) {
 
     return $retVal;
 }
+
