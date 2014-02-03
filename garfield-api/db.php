@@ -140,11 +140,34 @@ function buySnacks($db, $user, $snacks) {
 	$userID = getUserID($userStm, $user);
 	$retVal2 = buySnack($buyStm, $userID['user_id'], $id);
 	$retVal['status'][] = $retVal2['status'];
-
 	$retVal['output'][] = $retVal2['output'];
+
+
+	$retVal2 = getLastTimeStamp($db);
+
+	$retVal['timestamp'][] = $retVal2['timestamp'][0];
     }
 
     $retVal['user'] = $user;
+    return $retVal;
+}
+
+function getLastTimeStamp($db) {
+
+    $query = "SELECT user_trans_log_timestamp FROM garfield.user_trans_log LIMIT 1";
+
+    try {
+	$stm = $db->prepare($query);
+
+	$retVal['status'] = $stm->execute();
+
+	$retVal['timestamp'] = $stm->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+	$retVal['status'] = $e->getMessage();
+	return $retVal;
+    }
+
+    $stm->closeCursor();
     return $retVal;
 }
 
