@@ -12,7 +12,7 @@ $userTag = $_GET['user'];
 
 $dbname = "garfield";
 $host = "fsmi-db.fsmi.uni-karlsruhe.de";
-$port = 5435;
+$port = 5432;
 
 if (isset($user) && !empty($user)) {
 
