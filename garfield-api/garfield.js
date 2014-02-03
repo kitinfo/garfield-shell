@@ -320,3 +320,29 @@ function clearCart() {
 function addID() {
     searchIDRequest(document.getElementById('idField').value);
 }
+
+
+function fillFindDataList() {
+
+    var xhr = syncGet(url + "finddatalist");
+
+    var response = JSON.parse(xhr.response);
+
+    checkStatus(response);
+
+    var list = document.getElementById('findDataList');
+    list.innerHTML = "";
+
+
+    response.list.forEach(function(val) {
+
+	var option = document.createElement('option');
+	option.setAttribute('value', val.snack_name);
+	list.appendChild(option);
+
+    });
+
+
+}
+
+fillFindDataList();

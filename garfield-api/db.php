@@ -22,6 +22,7 @@ if (isset($user) && !empty($user)) {
     $find = $_GET['find'];
     $buy = $_GET['buy'];
     $findid = $_GET['findid'];
+    $findDataList = $_GET['finddatalist'];
 
     try {
 	$db = new PDO('pgsql:host=' . $host . ';port=' . $port . ';dbname=' . $dbname, $user, $pass);
@@ -46,16 +47,37 @@ if (isset($user) && !empty($user)) {
 	}
     } else if (isset($findid) && !empty($findid)) {
 	$retVal = findID($db, $findid);
+    } else if (isset($findDataList)) {
+	$retVal = getFindDataList($db);
     }
 
     header("Access-Control-Allow-Origin: *");
 
     echo json_encode($retVal, JSON_NUMERIC_CHECK);
 } else {
-    header("WWW-Authenticate: Basic realm=\"SmartMonitor API Access (Invalid Credentials for " . $_SERVER['PHP_AUTH_USER'] . ")\"");
+    header("WWW-Authenticate: Basic realm=\"Garfield API Access (Invalid Credentials for " . $_SERVER['PHP_AUTH_USER'] . ")\"");
     header("HTTP/1.0 401 Unauthorized");
 
     echo '{"status": "wrong user/password"}';
+}
+
+function getFindDataList($db) {
+
+    $findQuery = "SELECT snack_name FROM garfield.snacks "
+	    . "JOIN garfield.snacks_available ON snacks_available.snack_id=snacks.snack_id WHERE snack_available "
+	    . "GROUP BY snack_name";
+
+    try {
+	$stm = $db->prepare($findQuery);
+
+	$retVal['status'] = $stm->execute();
+    } catch (PDOException $e) {
+	$retVal['status'] = $e->getMessage();
+    }
+
+    $retVal['list'] = $stm->fetchAll(PDO::FETCH_ASSOC);
+    $stm->closeCursor();
+    return $retVal;
 }
 
 function querySnacksForTerms($db, $snacks) {
