@@ -12,7 +12,7 @@ $userTag = $_GET['user'];
 
 $dbname = "garfield";
 $host = "fsmi-db.fsmi.uni-karlsruhe.de";
-$port = 5432;
+$port = 5435;
 
 if (isset($user) && !empty($user)) {
 
@@ -23,6 +23,7 @@ if (isset($user) && !empty($user)) {
     $buy = $_GET['buy'];
     $findid = $_GET['findid'];
     $findDataList = $_GET['finddatalist'];
+    $userlog = $_GET['userlog'];
 
     try {
 	$db = new PDO('pgsql:host=' . $host . ';port=' . $port . ';dbname=' . $dbname, $user, $pass);
@@ -49,6 +50,15 @@ if (isset($user) && !empty($user)) {
 	$retVal = findID($db, $findid);
     } else if (isset($findDataList)) {
 	$retVal = getFindDataList($db);
+    } else if (isset($userlog)) {
+
+	$limit = 20;
+
+	if (!empty($userlog)) {
+	    $limit = $userlog;
+	}
+
+	$retVal = getUserLog($db, $limit);
     }
 
     header("Access-Control-Allow-Origin: *");
@@ -224,3 +234,15 @@ function findID($db, $id) {
     return $retVal;
 }
 
+function getUserLog($db, $limit) {
+
+    $logQuery = "SELECT * FROM garfield.user_trans_log JOIN ";
+
+    $stm = $db->prepare($logQuery);
+
+    $stm->execute(array(
+	":li" => $limit
+    ));
+
+    $retVal['log'] = $stm->fetchAll(PDO::FETCH_ASSOC);
+}

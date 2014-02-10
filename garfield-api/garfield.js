@@ -147,7 +147,10 @@ function buyRequest(buy) {
 	row.appendChild(userItem);
 
 	var timeStamp = document.createElement('td');
-	timeStamp.textContent = response['timestamp'][i].user_trans_log_timestamp;
+	console.log(response['status'][i]);
+	if (response['status'][i]) {
+	    timeStamp.textContent = response['timestamp'][i].user_trans_log_timestamp;
+	}
 	row.appendChild(timeStamp);
 
 

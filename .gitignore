@@ -2,3 +2,4 @@
 *.s
 *.o
 *.exe
+/garfield-api/nbproject/private/
