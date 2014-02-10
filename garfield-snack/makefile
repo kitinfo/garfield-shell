@@ -7,7 +7,7 @@ endif
 .PHONY: all windows
 
 all:
-	$(CC) -o garfield-snack -lpq -Wall $(PG_INCLUDES) garfield-snack.c
+	$(CC) -o garfield-snack -Wall $(PG_INCLUDES) garfield-snack.c -lpq
 
 windows:
 	cc -o garfield-snack.exe -lpq -ladvapi32 -lws2_32 -Wall garfield-snack.c
