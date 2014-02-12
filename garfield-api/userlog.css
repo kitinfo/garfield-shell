@@ -66,3 +66,15 @@ input[type=number] {
 .red {
     color: #DD0000;
 }
+
+
+tr:nth-child(even) {
+    background-color: #ccc;
+}
+
+tr:nth-child(odd) {
+    background-color: #ddd;
+}
+th {
+    background-color: #aaa;
+}
