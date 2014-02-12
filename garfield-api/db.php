@@ -40,6 +40,7 @@ if (isset($user) && !empty($user)) {
     $findid = $_GET['findid'];
     $findDataList = $_GET['finddatalist'];
     $userlog = $_GET['userlog'];
+    $balance = $_GET['balance'];
 
     try {
 	$db = new PDO('pgsql:host=' . $host . ';port=' . $port . ';dbname=' . $dbname, $user, $pass);
@@ -75,6 +76,12 @@ if (isset($user) && !empty($user)) {
 	}
 
 	$retVal = getUserLog($db, $limit);
+	$retVal2 = getBalance($db, $user);
+
+	$retVal["balance"] = $retVal2["balance"];
+    } else if (isset($balance)) {
+
+	$retVal = getBalance($db, $user);
     }
 
     header("Access-Control-Allow-Origin: *");
@@ -252,7 +259,7 @@ function findID($db, $id) {
 
 function getUserLog($db, $limit) {
 
-    $logQuery = "SELECT to_char(user_trans_log_timestamp, 'YYYY-MM:DD HH24:MI:SS') AS timestamp, "
+    $logQuery = "SELECT to_char(user_trans_log_timestamp, 'YYYY-MM-DD HH24:MI:SS') AS timestamp, "
 	    . "user_trans_log_performed_by_user_id AS pID, user_id AS user_id , "
 	    . "snack_name AS desc, user_trans_log_quantity AS balance, "
 	    . "snack_sales_log.type_id AS type "
@@ -261,14 +268,14 @@ function getUserLog($db, $limit) {
 	    . "JOIN garfield.snack_sales_log "
 	    . "ON (snack_user_buy_log.snack_sales_log_id = snack_sales_log.snack_sales_log_id) "
 	    . "JOIN garfield.snacks ON (snack_sales_log.snack_id = snacks.snack_id) "
-	    . "UNION SELECT to_char(user_trans_log_timestamp, 'YYYY-MM:DD HH24:MI:SS') AS timestamp, "
+	    . "UNION SELECT to_char(user_trans_log_timestamp, 'YYYY-MM-DD HH24:MI:SS') AS timestamp, "
 	    . "user_trans_log_performed_by_user_id AS pID, user_id AS user_id , "
 	    . "user_to_user_trans_log_description AS desc, "
 	    . "user_trans_log_quantity AS balance, user_trans_log.type_id AS type "
 	    . "FROM garfield.user_trans_log "
 	    . "JOIN garfield.user_to_user_trans_log "
 	    . "ON (user_trans_log.user_trans_log_id = user_trans_log_target_id) "
-	    . "UNION SELECT to_char(user_trans_log_timestamp, 'YYYY-MM:DD HH24:MI:SS') AS timestamp, "
+	    . "UNION SELECT to_char(user_trans_log_timestamp, 'YYYY-MM-DD HH24:MI:SS') AS timestamp, "
 	    . "user_trans_log_performed_by_user_id AS pID, user_id AS user_id , "
 	    . "'' AS desc, user_trans_log_quantity AS balance, "
 	    . "user_trans_log.type_id AS type "
@@ -283,6 +290,27 @@ function getUserLog($db, $limit) {
 
     $retVal['log'] = $stm->fetchAll(PDO::FETCH_ASSOC);
     $retVal['status'] = $stm->errorInfo();
+    $stm->closeCursor();
+
+    return $retVal;
+}
+
+function getBalance($db, $user) {
+
+    $sqlUser = "SELECT user_id FROM garfield.users WHERE user_name = ?";
+    $stm = $db->prepare($sqlUser);
+
+    $userID = getUserID($stm, $user);
+
+    $query = "SELECT * FROM garfield.user_balances WHERE user_id = :user";
+
+    $stm = $db->prepare($query);
+
+    $stm->execute(array(":user" => $userID["user_id"]));
+
+    $retVal["balance"] = $stm->fetch(PDO::FETCH_OBJ);
+    $retVal["status"] = $stm->errorInfo();
+
     $stm->closeCursor();
 
     return $retVal;

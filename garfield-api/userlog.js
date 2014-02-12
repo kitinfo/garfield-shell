@@ -32,14 +32,30 @@ function ajaxRequest() {
 
 
 /**
- Perform a synchronous GET request
- This function does not do any error checking, so exceptions might
- be thrown.
+ Make an asynchronous GET request
+ Calls /readyfunc/ with the request as parameter upon completion (readyState == 4)
  */
-function syncGet(url, user, pass) {
+function asyncGet(url, readyfunc, errfunc, user, pass) {
     var request = new this.ajaxRequest();
-    request.open("GET", url, false, user, pass);
-    request.send(null);
+    request.onreadystatechange =
+	    function() {
+		if (request.readyState == 4) {
+		    if (request.status == 200) {
+			readyfunc(request);
+		    } else {
+			errfunc(request);
+		    }
+		}
+	    };
+
+    request.open("GET", url, true, user, pass);
+    try {
+	request.send(null);
+    }
+    catch (e) {
+	errfunc(e);
+    }
+
     return request;
 }
 
@@ -47,13 +63,19 @@ function refresh() {
 
     var limit = document.getElementById(limitTag);
 
-    var xhr = syncGet(url + "userlog=" + limit.value);
+    var xhr = asyncGet(url + "userlog=" + limit.value, function(xhr) {
+	var response = JSON.parse(xhr.response);
+	document.getElementById('status').textContent = response.status[0];
 
-    var response = JSON.parse(xhr.response);
-    document.getElementById('status').textContent = response.status[0];
+	buildLog(response.log);
 
-    buildLog(response.log);
+	var balance = response.balance.balance.toFixed(2);
 
+	document.getElementById("balance").textContent = balance;
+	if (balance < 0) {
+	    document.getElementById("balance").classList.add("red");
+	}
+    });
 }
 
 
@@ -71,10 +93,22 @@ function buildLog(log) {
 	timestampCol.textContent = val.timestamp;
 	row.appendChild(timestampCol);
 
+	var userCol = document.createElement('td');
+	userCol.classList.add('colUser');
+	userCol.textContent = val.pid;
+	row.appendChild(userCol);
+
 	var nameCol = document.createElement('td');
 	nameCol.classList.add('colName');
 	nameCol.textContent = val.desc;
 	row.appendChild(nameCol);
+
+	
+
+	var typeCol = document.createElement('td');
+	typeCol.classList.add('colType');
+	typeCol.textContent = getType(val.type);
+	row.appendChild(typeCol);
 
 	var priceCol = document.createElement('td');
 	priceCol.classList.add('colPrice');
@@ -83,16 +117,7 @@ function buildLog(log) {
 	}
 	priceCol.textContent = val.balance.toFixed(2);
 	row.appendChild(priceCol);
-
-	var typeCol = document.createElement('td');
-	typeCol.classList.add('colType');
-	typeCol.textContent = getType(val.type);
-	row.appendChild(typeCol);
-
-	var userCol = document.createElement('td');
-	userCol.classList.add('colUser');
-	userCol.textContent = val.pid;
-	row.appendChild(userCol);
+	
 
 	tBody.appendChild(row);
     });
