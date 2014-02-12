@@ -52,7 +52,7 @@ input[type=number] {
     text-align: right;
 }
 
-.colTimestamp, .colName {
+.colName {
     text-align: left;
 }
 
@@ -61,4 +61,8 @@ input[type=number] {
     margin: 2%;
     border: 1px solid black;
     border-radius: 10px;
+}
+
+.red {
+    color: #DD0000;
 }

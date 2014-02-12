@@ -13,7 +13,8 @@ var TYPES = {
     TRANSFER: "Transfer",
     DEPOSIT: "Aufladung",
     WITHDRAWAL: "Abbuchung",
-   OPENING_VALUE: "Eröffnungsstand"
+    OPENING_VALUE: "Eröffnungsstand",
+    PRINTER_ACCOUNTING: "Druck"
 };
 
 
@@ -77,7 +78,10 @@ function buildLog(log) {
 
 	var priceCol = document.createElement('td');
 	priceCol.classList.add('colPrice');
-	priceCol.textContent = val.balance;
+	if (val.balance < 0) {
+	    row.classList.add('red');
+	}
+	priceCol.textContent = val.balance.toFixed(2);
 	row.appendChild(priceCol);
 
 	var typeCol = document.createElement('td');
