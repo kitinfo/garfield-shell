@@ -41,6 +41,7 @@ if (isset($user) && !empty($user)) {
     $findDataList = $_GET['finddatalist'];
     $userlog = $_GET['userlog'];
     $balance = $_GET['balance'];
+    $userSearch = $_GET['usersearch'];
 
     try {
 	$db = new PDO('pgsql:host=' . $host . ';port=' . $port . ';dbname=' . $dbname, $user, $pass);
@@ -79,9 +80,33 @@ if (isset($user) && !empty($user)) {
 	$retVal2 = getBalance($db, $user);
 
 	$retVal["balance"] = $retVal2["balance"];
-    } else if (isset($balance)) {
+    }
+    if (isset($balance)) {
 
 	$retVal = getBalance($db, $user);
+    }
+    if (isset($userSearch)) {
+
+
+	if (!empty($userSearch)) {
+
+	    $sqlUser = "SELECT user_name FROM garfield.users WHERE user_id = ?";
+
+	$stm = $db->prepare($sqlUser);
+
+	$retVal['name'] = getUserID($stm, $userSearch)['user_name'];
+	} else {
+	    $sqlUser = "SELECT user_id, user_name FROM garfield.users";
+
+	    $stm = $db->prepare($sqlUser);
+
+	    $stm->execute();
+
+	    $retVal['users'] = $stm->fetchAll(PDO::FETCH_ASSOC);
+	    $retVal['status'] = $stm->errorInfo();
+
+	    $stm->closeCursor();
+	}
     }
 
     header("Access-Control-Allow-Origin: *");

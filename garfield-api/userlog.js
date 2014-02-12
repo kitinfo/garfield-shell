@@ -7,6 +7,7 @@
 var url = "db.php?";
 var limitTag = "limitSpinner";
 var tableBody = "logTBody";
+var userList = new Array();
 
 var TYPES = {
     SNACK_BUY: "Snackkauf",
@@ -75,7 +76,35 @@ function refresh() {
 	if (balance < 0) {
 	    document.getElementById("balance").classList.add("red");
 	}
+
+	getUserNames();
     });
+
+}
+
+
+function getUserNames() {
+
+    var userTags = document.getElementsByClassName('colUser');
+
+    [].forEach.call(userTags, function(val) {
+
+	if (!Number.isNaN(val.textContent)) {
+	    if (userList[val.textContent]) {
+		val.textContent = userList[val.textContent];
+	    } else {
+		val.textContent = getUserNameFromTag(val.textContent);
+	    }
+	}
+    });
+}
+
+function getUserNameFromTag(val) {
+    var xhr = syncGet(url + "usersearch=" + val);
+
+    var response = JSON.parse(xhr.response);
+    userList[val] = response.name;
+    return response.name;
 }
 
 
@@ -102,8 +131,6 @@ function buildLog(log) {
 	nameCol.classList.add('colName');
 	nameCol.textContent = val.desc;
 	row.appendChild(nameCol);
-
-	
 
 	var typeCol = document.createElement('td');
 	typeCol.classList.add('colType');
@@ -136,4 +163,18 @@ function getType(typeID) {
 	}
     });
     return type;
+}
+
+
+
+/**
+ Perform a synchronous GET request
+ This function does not do any error checking, so exceptions might
+ be thrown.
+ */
+function syncGet(url, user, pass) {
+    var request = new this.ajaxRequest();
+    request.open("GET", url, false, user, pass);
+    request.send(null);
+    return request;
 }
