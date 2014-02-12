@@ -13,12 +13,9 @@ function searchRequest() {
 
     var response = JSON.parse(request.response, true);
 
-
     if (!checkStatus(response)) {
 	return;
     }
-
-    
 
     var tbody = document.getElementById('tableBody');
     tbody.innerHTML = "";
@@ -326,6 +323,7 @@ function clearCart() {
 
 function addID() {
     searchIDRequest(document.getElementById('idField').value);
+    calcCartPrice();
 }
 
 
