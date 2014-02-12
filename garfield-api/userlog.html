@@ -12,32 +12,28 @@ and open the template in the editor.
 
 	<link rel="stylesheet" type="text/css" href="userlog.css" />
     </head>
-    <body>
+    <body onload="refresh();">
+	<div id="status"></div>
 	<header>
-	    <div id="status"></div>
 	    <h1>Garfield User Log</h1>
-		    </header>
-
+	</header>
 	<nav></nav>
 
 	<div id="content">
-	    <form action="refresh()">
-		<label for="limitSpinner">Limit: </label><input type="number" min="0" value="20" id="limitSpinner" />
-		<input type="submit" value="limit" name="limitButton" />
-	    </form>
-
+	    <div id="options">
+		<label for="limitSpinner">Limit: </label><input type="number" min="0" value="20" id="limitSpinner" onchange="refresh();"/>
+	    </div>
 	    <table>
 		<thead>
-		<th>Timestamp</th><th>ID</th><th>Name</th><th>Preis</th><th>Typ</th><th>Käufer</th>
-	    </thead>
+		<th>Timestamp</th><th>Name</th><th>Preis</th><th>Typ</th><th>Käufer ID</th>
+		</thead>
 
-		<tbody>
-
+		<tbody id="logTBody">
 		</tbody>
 
 		<tfoot>
-		<td>Balance: </td><td id="balance"></td><td></td><td></td><td></td><td></td>
-	    </tfoot>
+		<td>Balance: </td><td id="balance"></td><td></td><td></td><td></td>
+		</tfoot>
 	    </table>
 
 	</div>

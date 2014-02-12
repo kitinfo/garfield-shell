@@ -6,13 +6,29 @@
  * and open the template in the editor.
  */
 
+
+$logTypes = array(
+    OPENING_VALUE,
+    SNACK_BUY,
+    TRANSFER,
+    DEPOSIT,
+    PRINTER_ACCOUNTING,
+    WITHDRAWAL,
+    MISC_INCOME,
+    CLOSING_VALUE,
+    SNACK_CANCEL,
+    MISC_SPENDING,
+);
+
+
+
 $user = $_SERVER['PHP_AUTH_USER'];
 $pass = $_SERVER['PHP_AUTH_PW'];
 $userTag = $_GET['user'];
 
 $dbname = "garfield";
 $host = "fsmi-db.fsmi.uni-karlsruhe.de";
-$port = 5435;
+$port = 5432;
 
 if (isset($user) && !empty($user)) {
 
@@ -236,7 +252,28 @@ function findID($db, $id) {
 
 function getUserLog($db, $limit) {
 
-    $logQuery = "SELECT * FROM garfield.user_trans_log JOIN ";
+    $logQuery = "SELECT user_trans_log_timestamp AS timestamp, "
+	    . "user_trans_log_performed_by_user_id AS pID, user_id AS user_id , "
+	    . "snack_name AS desc, user_trans_log_quantity AS balance, "
+	    . "snack_sales_log.type_id AS type "
+	    . "FROM garfield.user_trans_log JOIN garfield.snack_user_buy_log "
+	    . "ON (user_trans_log.user_trans_log_id = snack_user_buy_log.user_trans_log_id) "
+	    . "JOIN garfield.snack_sales_log "
+	    . "ON (snack_user_buy_log.snack_sales_log_id = snack_sales_log.snack_sales_log_id) "
+	    . "JOIN garfield.snacks ON (snack_sales_log.snack_id = snacks.snack_id) "
+	    . "UNION SELECT user_trans_log_timestamp AS timestamp, "
+	    . "user_trans_log_performed_by_user_id AS pID, user_id AS user_id , "
+	    . "user_to_user_trans_log_description AS desc, "
+	    . "user_trans_log_quantity AS balance, user_trans_log.type_id AS type "
+	    . "FROM garfield.user_trans_log "
+	    . "JOIN garfield.user_to_user_trans_log "
+	    . "ON (user_trans_log.user_trans_log_id = user_trans_log_target_id) "
+	    . "UNION SELECT user_trans_log_timestamp AS timestamp, "
+	    . "user_trans_log_performed_by_user_id AS pID, user_id AS user_id , "
+	    . "'' AS desc, user_trans_log_quantity AS balance, "
+	    . "user_trans_log.type_id AS type "
+	    . "FROM garfield.user_trans_log "
+	    . "WHERE type_id != 'TRANSFER' AND type_id != 'SNACK_BUY' ORDER BY timestamp DESC LIMIT :li";
 
     $stm = $db->prepare($logQuery);
 
@@ -245,4 +282,8 @@ function getUserLog($db, $limit) {
     ));
 
     $retVal['log'] = $stm->fetchAll(PDO::FETCH_ASSOC);
+    $retVal['status'] = $stm->errorInfo();
+    $stm->closeCursor();
+
+    return $retVal;
 }
