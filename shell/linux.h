@@ -1,6 +1,6 @@
 #pragma once
-#define SNACKCMD "/garfield-snack"
-#define USERCMD "/garfield-user"
+#define SNACKCMD "garfield-snack"
+#define USERCMD "garfield-user"
 #define BUYCMD "buy"
 #define FINDCMD "find"
 #define LISTCMD "list"

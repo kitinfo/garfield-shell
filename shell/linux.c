@@ -21,13 +21,13 @@ int execBuyCmd(char* user, char* password, int id) {
 }
 
 char* buildCmd(char* garfieldCmd, char* user, char* pass) {
-	char* cwd = getcwd(NULL, 0);
-	int len = strlen(cwd) + MAXLENGTH * 3;
+	//char* cwd = ""; //getcwd(NULL, 0);
+	int len = MAXLENGTH * 3; //strlen(cwd) + MAXLENGTH * 3;
 	char* cmd = malloc(len);
 
-	snprintf(cmd, len, "%s%s %s \"%s\" %s \"%s\"", cwd,
+	snprintf(cmd, len, "%s %s \"%s\" %s \"%s\"",
 		garfieldCmd, USER_ARG, user, PASS_ARG, pass);
-	free(cwd);
+	//free(cwd);
 	return cmd;
 }
 
