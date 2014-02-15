@@ -1,7 +1,15 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <errno.h>
 #include <stdbool.h>
 #include <libpq-fe.h>
+
+#ifndef _WIN32
+	#include <arpa/inet.h>
+#else
+	#include <winsock2.h>
+#endif
 
 int usage(char* fn){
 	printf("garfield-user utility\n");

@@ -17,7 +17,7 @@ PGresult* querySnacksForTerms(PGconn* db, int argc, char** argv){
 	//allocate memory for query arg
 	queryString=malloc((size)*sizeof(char));
 	if(!queryString){
-		printf("Failed to allocate memory for query string!");
+		printf("Failed to allocate memory for query string\n");
 		return NULL;
 	}
 	
@@ -43,7 +43,7 @@ PGresult* querySnacksForTerms(PGconn* db, int argc, char** argv){
 	free(queryString);
 	
 	if(PQresultStatus(result)!=PGRES_TUPLES_OK){//FIXME there might be another valid error code
-		printf("Querying the snacks table failed (%s)!",PQresultErrorMessage(result));
+		printf("Querying the snacks table failed (%s)\n",PQresultErrorMessage(result));
 		PQclear(result); 
 		return NULL;
 	}
