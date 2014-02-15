@@ -11,10 +11,7 @@
 	#include <winsock2.h>
 #endif
 
-int usage(char* fn){
-	printf("garfield-user utility\n");
-	return -1;
-}
+int usage(char* fn);
 
 bool beVerbose=false;
 
@@ -24,7 +21,7 @@ bool beVerbose=false;
 
 int module_main(PGconn* db, int argc, char** argv){
 	int i;
-	if(!strcmp(argv[0],"list")){
+	if(!strcmp(argv[0],"list")||!strcmp(argv[0],"search")||!strcmp(argv[0],"find")){
 		i=mode_list(db,argc,argv);
 	}
 	else if(!strcmp(argv[0],"balance")){
@@ -38,3 +35,20 @@ int module_main(PGconn* db, int argc, char** argv){
 }
 
 #include "../garfield-common/module-argparse.c"
+
+int usage(char* fn){
+	printf("garfield-user shell utility\n");
+	printf("Interact with the user subsystem of Garfield\n\n");
+
+	//options
+	meta_usage(fn);
+
+	//modes
+	printf("\nAvailable modes:\n");
+	printf("\tbalance\t\t\tPrint connecting users balance\n");
+	printf("\tlist <id|name>\t\tSearch user by name\n");
+	printf("\thistory\t\t\tDisplay account history\n");
+	printf("\tstats\t\t\tDisplat account statistics\n");
+
+	return -1;
+}

@@ -12,37 +12,7 @@
 	#include <winsock2.h>
 #endif
 
-int usage(char* fn){
-	printf("garfield-snack shell utility\n");
-	
-	//options
-	printf("Usage: %s [options] <mode> [mode-args]\n",fn);
-	printf("Available options:\n");
-	printf("\t--user <user>\t\tDatabase user name\n");
-	printf("\t--pass <password>\tDatabase password\n");
-	printf("\t--server <server>\tDatabase server address\n");
-	printf("\t--port <port>\t\tDatabase server port\n");
-	printf("\t--dbname <dbname>\tDatabase name\n");
-	printf("\t--verbose\t\tPrint some debug info\n");
-	printf("\t--pgpass\t\tUse credentials supplied via .pgpass\n");
-	
-	//modes
-	printf("\nAvailable modes:\n");
-	printf("\tfind <term>\t\tSearch by barcode/snack name\n");
-	printf("\tbuy <snack-id>\t\tBuy snack by ID\n");
-	printf("\tbuy -s <term>\t\tBuy snack by name (if search result is one row)\n");
-	printf("\tbuy -u <user> <snackid>\tBuy snack for specified user\n");
-	printf("\tinfo <snackid>\t\tQuery information for a given snack\n");
-	
-	//examples
-	printf("\nExamples:\n");
-	printf("%s find mate\t\tFind snacks matching *mate*\n",fn);
-	printf("%s find ritter sport\tFind snacks matching *ritter sport*\n",fn);
-	printf("%s buy -u user 828\t\tBuy snack #828 as 'user'\n",fn);
-	printf("%s buy -s <barcode>\t\tBuy snack by barcode\n",fn);
-	printf("%s info 828\t\t\tShow information about snack #828\n",fn);
-	return -1;
-}
+int usage(char* fn);
 
 bool beVerbose=false;
 
@@ -71,3 +41,28 @@ int module_main(PGconn* db, int argc, char** argv){
 }
 
 #include "../garfield-common/module-argparse.c"
+
+int usage(char* fn){
+	printf("garfield-snack shell utility\n");
+	printf("Interact with the snack subsystem of Garfield\n\n");
+		
+	//options
+	meta_usage(fn);
+
+	//modes
+	printf("\nAvailable modes:\n");
+	printf("\tfind <term>\t\tSearch by barcode/snack name\n");
+	printf("\tbuy <snack-id>\t\tBuy snack by ID\n");
+	printf("\tbuy -s <term>\t\tBuy snack by name (if search result is one row)\n");
+	printf("\tbuy -u <user> <snackid>\tBuy snack for specified user\n");
+	printf("\tinfo <snackid>\t\tQuery information for a given snack\n");
+	
+	//examples
+	printf("\nExamples:\n");
+	printf("%s find mate\t\tFind snacks matching *mate*\n",fn);
+	printf("%s find ritter sport\tFind snacks matching *ritter sport*\n",fn);
+	printf("%s buy -u user 828\t\tBuy snack #828 as 'user'\n",fn);
+	printf("%s buy -s <barcode>\t\tBuy snack by barcode\n",fn);
+	printf("%s info 828\t\t\tShow information about snack #828\n",fn);
+	return -1;
+}

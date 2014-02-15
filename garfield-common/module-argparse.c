@@ -12,9 +12,20 @@
 #define MAX_PASS_LEN 254
 #define MAX_USER_LEN 254
 
+void meta_usage(char* module_name){
+	        printf("Usage: %s [options] <mode> [mode-args]\n",module_name);
+		printf("Available options:\n");
+		printf("\t--user <user>\t\tDatabase user name\n");
+		printf("\t--pass <password>\tDatabase password\n");
+		printf("\t--server <server>\tDatabase server address\n");
+		printf("\t--port <port>\t\tDatabase server port\n");
+		printf("\t--dbname <dbname>\tDatabase name\n");
+		printf("\t--verbose\t\tPrint some debug info\n");
+		printf("\t--pgpass\t\tUse credentials supplied via .pgpass\n");
+}
+
 int main(int argc, char** argv){
-	int i,c;
-    (void) c;
+	int i;
 	PGconn* conn;
 	
 	char user[MAX_USER_LEN+1];
