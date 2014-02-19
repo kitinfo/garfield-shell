@@ -1,5 +1,6 @@
 PGresult* querySnacksForTerms(PGconn* db, int argc, char** argv){
-	static const char* QUERY_SNACKS="SELECT snacks.snack_id, snack_name, snack_price FROM garfield.snacks JOIN garfield.snacks_available ON snacks_available.snack_id=snacks.snack_id WHERE snack_available AND (snack_name ILIKE $1 OR snack_barcode LIKE $1)";
+	//static const char* QUERY_SNACKS="SELECT snacks.snack_id, snack_name, snack_price FROM garfield.snacks JOIN garfield.snacks_available ON snacks_available.snack_id=snacks.snack_id WHERE snack_available AND (snack_name ILIKE $1 OR snack_barcode LIKE $1)";
+	static const char* QUERY_SNACKS="SELECT snacks.snack_id, snack_name, snack_price, locations.location_name FROM garfield.snacks JOIN garfield.snacks_available ON snacks_available.snack_id = snacks.snack_id JOIN garfield.locations ON locations.location_id = snacks.location_id WHERE snack_available AND (snack_name ILIKE $1 OR snack_barcode LIKE $1)";
 	int i=0,c=0;
 	unsigned size=0;
 	char* queryString=NULL;
@@ -71,7 +72,7 @@ int mode_find(PGconn* db, int argc, char** argv){
 		printf("Query returned %d rows\n",size);
 	}
 	for(i=0;i<size;i++){
-		printf("%5s => %s @ %s Eur\n",PQgetvalue(result,i,0),PQgetvalue(result,i,1),PQgetvalue(result,i,2));
+		printf("%5s (%3s) => %s @ %s Eur\n",PQgetvalue(result,i,0),PQgetvalue(result,i,3),PQgetvalue(result,i,1),PQgetvalue(result,i,2));
 	}
 	PQclear(result);
 	return size;

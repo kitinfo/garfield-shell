@@ -12,4 +12,6 @@
 		return 0;
 	}
 	#define getlogin_r _getlogin_r
+#else
+	//todo create wrapper testing for getlogin_r and then just use $LOGNAME
 #endif
