@@ -9,4 +9,4 @@ all:
 	$(CC) -o garfield-user -Wall $(PG_INCLUDES) garfield-user.c -lpq
 
 windows:
-	cc -o garfield-user.exe -lpq -ladvapi32 -Wall garfield-user.c
+	cc -o garfield-user.exe -lpq -ladvapi32 -lws2_32 -Wall garfield-user.c

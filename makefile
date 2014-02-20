@@ -15,6 +15,7 @@ windows:
 	cd garfield-snack && make windows
 	cd garfield-user && make windows
 	mv garfield-snack/garfield-snack.exe bin/
+	mv garfield-user/garfield-user.exe bin/
 
 install:
 	install -m 0755 bin/garfield-shell $(INSTALLPATH)
