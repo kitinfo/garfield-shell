@@ -4,8 +4,8 @@ PGconn* database_connect(char* host, char* port, char* dbname, char* user, char*
 	PGconn* conn=NULL;
 	
 	//set up connection parameters
-	char const* keywords[]={"host","port","dbname","user","password",NULL};
-	char* values[]={host,port,dbname,user,pass,NULL};
+	char const* keywords[]={"host","port","dbname","user","password", "sslmode",NULL};
+	char* values[]={host,port,dbname,user,pass,"require",NULL};
 	
 	if(!pass||*pass==0){
 		keywords[4]=NULL;
