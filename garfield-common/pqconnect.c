@@ -1,11 +1,12 @@
 #include <libpq-fe.h>
+#define SSLMODE "require"
 
 PGconn* database_connect(char* host, char* port, char* dbname, char* user, char* pass, bool verbose){
 	PGconn* conn=NULL;
 	
 	//set up connection parameters
 	char const* keywords[]={"host","port","dbname","user","password", "sslmode",NULL};
-	char* values[]={host,port,dbname,user,pass,"require",NULL};
+	char* values[]={host,port,dbname,user,pass,SSLMODE,NULL};
 	
 	if(!pass||*pass==0){
 		keywords[4]=NULL;
