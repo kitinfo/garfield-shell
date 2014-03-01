@@ -44,7 +44,7 @@ if (isset($user) && !empty($user)) {
     $userSearch = $_GET['usersearch'];
 
     try {
-	$db = new PDO('pgsql:host=' . $host . ';port=' . $port . ';dbname=' . $dbname, $user, $pass);
+	$db = new PDO('pgsql:host=' . $host . ';port=' . $port . ';dbname=' . $dbname . ';sslmode=require', $user, $pass);
     } catch (PDOException $e) {
 	$retVal['status'] = $e->getMessage();
 	die(json_encode($retVal));
