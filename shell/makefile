@@ -1,10 +1,10 @@
 .PHONY: all debug windows
 
 all:
-	$(CC) -o garfield-shell -Wall main.c linux.c
+	$(CC) -o garfield-shell -Wall sources/*.c
 
 debug:
-	$(CC) -o garfield-shell -Wall -g main.c linux.c
+	$(CC) -o garfield-shell -Wall -g sources/*.c
 
 windows:
-	cc -o garfield-shell.exe -Wall main.c
+	cc -o garfield-shell.exe -Wall sources/shell_main.c

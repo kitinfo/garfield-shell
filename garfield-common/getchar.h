@@ -1,6 +1,7 @@
 #ifndef _WIN32
 	#include <termios.h>
 	#include <unistd.h>
+	#include <stdio.h>
 
 	//this emulates conio.h's getch().
 	//via http://cboard.cprogramming.com/faq-board/27714-faq-there-getch-conio-equivalent-linux-unix.html
