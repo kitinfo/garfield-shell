@@ -24,3 +24,15 @@ char* getFindCmd(char* snack, char* user) {
 	free(cwd);
 	return cmd;
 }
+
+char* getUserCmd(char* search, char* user) {
+
+	char* cwd = buildCmd(USERCMD,user);
+	int len = strlen(cwd) + MAXLENGTH;
+	char* cmd = malloc(len);
+
+
+	snprintf(cmd, len, "%s %s \"%s\"", cwd, LISTCMD, search);
+	free(cwd);
+	return cmd;
+}

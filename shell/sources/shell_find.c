@@ -4,6 +4,7 @@
 #include "../headers/shell_io.h"
 #include "../headers/shell_exec.h"
 #include "../headers/shell_cmd.h"
+#include "../headers/shell_user.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -27,6 +28,10 @@ void find(char* input) {
 		sFirstCut(input, dest, 6);
 		debug("exec find snack cmd");
 		findSnack(dest, getUser(), getPassword());
+    } else if (begins(input, "user ")) {
+    	sFirstCut(input, dest, 5);
+    	debug("exec find user cmd");
+    	findUser(dest, getUser(), getPassword());
     } else {
 		debug("no match found in find");
 		debug("try snack");
