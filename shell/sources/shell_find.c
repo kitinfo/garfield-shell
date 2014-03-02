@@ -8,25 +8,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int findSnackByID(char* snack,char* user, char* pass) {
-	//TODO: new implementation
-	/*
-	char* cmd = getFindCmd(snack, user);
-
-	FILE* out = popen(cmd, "r");
-
-	int id = -1;
-
-	fscanf(out,"%d", &id);
-	printf("id: %d\n",id);
-	pclose(out);
-	free(cmd);
-	
-	return id;
-	*/
-	return 0;
-}
-
 int findSnack(char* snack, char* user, char* pass) {
 
 	char* cmd = getFindCmd(snack, user);

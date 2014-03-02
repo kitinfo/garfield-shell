@@ -46,21 +46,6 @@ void execBuy(int id) {
     execBuyCmd(getUser(), getPassword(), id);
 }
 
-int getSnackID(char* snack) {
-
-    return findSnackByID(snack, getUser(), getPassword());
-}
-
-void buyMate() {
-
-    int id = getSnackID(MATE);
-    if (id < 0) {
-		return;
-    }
-    debug("start buy with id");
-    execBuy(id);
-}
-
 void buySnacks(char* input) {
     char* snacks;
     snacks = strtok(input, " ");
@@ -84,7 +69,7 @@ void buy(char* input) {
 		buySnacks(dest);
     } else if (begins(input, "mate")) {
 		debug("exec buy mate");
-		buyMate();
+		execBuyWithName(MATE, getUser(), getPassword());
     } else {
 		debug("no match in buy");
 		printf("Don't know what you want...\n");
