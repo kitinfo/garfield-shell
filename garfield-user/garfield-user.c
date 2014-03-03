@@ -18,6 +18,7 @@ bool beVerbose=false;
 //operation modes
 #include "mode_list.c"
 #include "mode_balance.c"
+#include "mode_history.c"
 
 int module_main(PGconn* db, int argc, char** argv){
 	int i;
@@ -26,6 +27,9 @@ int module_main(PGconn* db, int argc, char** argv){
 	}
 	else if(!strcmp(argv[0],"balance")){
 		i=mode_balance(db,argc,argv);
+	}
+	else if(!strcmp(argv[0],"history")){
+		i=mode_history(db,argc,argv);
 	}
 	else{
 		printf("No such mode \"%s\".\n",argv[0]);
