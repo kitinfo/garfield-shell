@@ -10,7 +10,7 @@ complete -F _garfieldsnack garfield-snack
 #garfield-shell
 _garfieldshell() {
 	local cur=${COMP_WORDS[COMP_CWORD]}
-        COMPREPLY=( $(compgen -W "-u -p -d" -- $cur) )
+        COMPREPLY=( $(compgen -W "-u -p -d -g --user --pass --help -h --debug --pgpass " -- $cur) )
 }
 complete -F _garfieldshell garfield-shell
 
