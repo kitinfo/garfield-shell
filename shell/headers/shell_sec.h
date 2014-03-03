@@ -1,4 +1,5 @@
 #pragma once
+#include <stdbool.h>
 
 void setPassword(char* pass);
 
@@ -13,3 +14,7 @@ char* getPassword();
 char* getUser();
 
 void initSec();
+
+void setPGPass(bool flag);
+
+bool getPGPass();

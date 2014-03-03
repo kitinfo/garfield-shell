@@ -16,21 +16,35 @@ void parseSet(char* input) {
     
     char dest[MAXLENGTH];
     if (begins(input, "user ")) {
-	sFirstCut(input, dest, 5);
-	debug("set user");
-	setUser(dest);
-	return;
+		sFirstCut(input, dest, 5);
+		debug("set user");
+		setUser(dest);
+		return;
     } else if (begins(input, "pass ")) {
-	sFirstCut(input, dest, 5);
+		sFirstCut(input, dest, 5);
 
-	if (strlen(dest) < 1) {
-	    debug("ask for password");
-	    askPassword();
-	    return;
-	}
-	debug("set password");
-	setPassword(dest);
-	return;
+		if (strlen(dest) < 1) {
+			debug("ask for password");
+			askPassword();
+			return;
+		}
+		debug("set password");
+		setPassword(dest);
+		return;
+    } else if (begins(input, "debug ")) {
+    	sFirstCut(input, dest, 6);
+    	if (begins(input, "true") || begins(input, "on")) {
+    		setDebug(true);
+    	} else if (begins(input, "false") || begins(input, "off")) {
+    		setDebug(false);
+    	}
+    } else if (begins(input, "pgpass ")) {
+    	sFirstCut(input, dest, 7);
+    	if (begins(input, "true") || begins(input, "on")) {
+    		setPGPass(true);
+    	} else if (begins(input, "false") || begins(input, "off")) {
+    		setPGPass(false);
+    	}
     }
     debug("no match in set");
     printf("Don't know what you want...\n");
@@ -44,7 +58,6 @@ int shell() {
 
     debug("shell init");
     checkLogin();
-    printf("\n");
 
     char input[MAXLENGTH];
     for (;;) {

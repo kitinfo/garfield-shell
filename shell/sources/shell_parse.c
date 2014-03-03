@@ -15,7 +15,7 @@ void parseArguments(int argc, char* argv[]) {
 				setUser(argv[i+1]);
 				i++;
 			}
-			if(i+1<argc&&!strcmp(argv[i],"-u")){
+			else if(i+1<argc&&!strcmp(argv[i],"-u")){
 				setUser(argv[i+1]);
 				i++;
 			}
@@ -40,10 +40,10 @@ void parseArguments(int argc, char* argv[]) {
 				setDebug(true);
 			}
 			else if(!strcmp(argv[i],"--pgpass")){
-				//TODO pgpass imp
+				setPGPass(true);
 			}
 			else if(!strcmp(argv[i],"-g")){
-				//TODO pgpass imp
+				setPGPass(true);
 			}
 			else {
 				printf("Invalid arguments.\n");

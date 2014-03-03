@@ -1,6 +1,7 @@
 #include "../headers/shell_sec.h"
 #include <unistd.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 
 int popenAction(char* cmd) {
@@ -10,8 +11,9 @@ int popenAction(char* cmd) {
 	if (pipe == NULL) {
 		return -1;
 	}
-
-	fprintf(pipe, getPassword());
+	if (!getPGPass()) {
+		fprintf(pipe, getPassword());
+	}
 
 	pclose(pipe);
 

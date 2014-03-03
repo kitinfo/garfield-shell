@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 /**
  * for saving user and password
@@ -12,6 +13,7 @@ struct {
     char* password;
 } login;
 
+bool pgpass = false;
 
 void initSec() {
 	// get memory for password and user
@@ -25,6 +27,10 @@ void setUser(char* username) {
 
 void setPassword(char* pass) {
     strcpy(login.password, pass);
+}
+
+void setPGPass(bool flag) {
+	pgpass = flag;
 }
 
 void askPassword() {
@@ -48,17 +54,22 @@ void askPassword() {
 }
 
 void checkLogin() {
-    if (strlen(login.user) < 1) {
-	printf("We need a user: ");
-	char dest[MAXLENGTH];
-	read_line(dest);
-	setUser(dest);
-    }
-    if (strlen(login.password) < 1) {
-	printf("We need a password: ");
-	askPassword();
-    }
 
+
+
+	if (strlen(login.user) < 1) {
+		printf("We need a user: ");
+		char dest[MAXLENGTH];
+		read_line(dest);
+		setUser(dest);
+	}
+	if (!pgpass) {
+		if (strlen(login.password) < 1) {
+			printf("We need a password: ");
+			askPassword();
+			printf("\n");
+		}
+    }
 }
 
 char* getPassword() {
@@ -68,3 +79,9 @@ char* getPassword() {
 char* getUser() {
 	return login.user;
 }
+
+bool getPGPass() {
+	return pgpass;
+}
+
+

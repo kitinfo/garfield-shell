@@ -4,14 +4,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 char* buildCmd(char* garfieldCmd) {
 
 	int len = MAXLENGTH;
 	char* cmd = malloc(len);
 
-	snprintf(cmd, len, "%s %s \"%s\"",
-		garfieldCmd, USER_ARG, getUser());
+	if (getPGPass()) {
+		snprintf(cmd, len, "%s %s %s \"%s\"", garfieldCmd, PGPASS_ARG, USER_ARG, getUser());
+	} else {
+		snprintf(cmd, len, "%s %s \"%s\"", garfieldCmd, USER_ARG, getUser());
+	}
+	
 	return cmd;
 }
 
