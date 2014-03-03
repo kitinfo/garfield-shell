@@ -8,9 +8,11 @@ void printHelp() {
     //options
     printf("Usage: %s [options] <mode> [mode-args]\n", fn);
     printf("Available options:\n");
-    printf("\t-u <user>\tDatabase user name\n");
-    printf("\t-p <password>\tDatabase password\n");
-    printf("\t-d\t\tPrint some debug info\n");
+    printf("\t-u | --user <user>\tGarfield user name\n");
+    printf("\t-p | --pass <password>\tGarfield password\n");
+    printf("\t-d | --debug\t\tPrint some debug info\n");
+    printf("\t-g | --pgpass\t\tUse pgpass file\n");
+    printf("\t-h | --help\t\tShow this help\n");
 
     //examples
     printf("\nExamples:\n");
@@ -24,17 +26,21 @@ void printInternHelp() {
     printf("List of commands:\n");
     printf("\t set\n");
     printf("\t\t user <user>\t - sets the user\n");
-    printf("\t\t password <pass>\t - sets the password,\n");
-    printf("\t\t\t\t ask if no argument\n");
+    printf("\t\t password <pass> - sets the password,\n");
+    printf("\t\t pgpass\n");
+    printf("\t\t   <on|true>\t - use pgpass\n");
+    printf("\t\t   <off|false>\t - don't use pgpass\n");
+    printf("\t\t debug\n");
+    printf("\t\t   <on|true>\t - show debugging info\n");
+    printf("\t\t   <off|false>\t - don't show debugging info\n");
+    printf("\t\t\t\t   ask if no argument\n");
     printf("\t list\n");
-    printf("\t\t user <select>\t - prints all user,\n");
-    printf("\t\t\t\t if we have a select, search\n");
+    printf("\t\t user <name>\t - search for user by name\n");
     printf("\t find\n");
     printf("\t\t user <select>\t - search a user in database\n");
     printf("\t\t snack <select>\t - search a snack in database\n");
     printf("\t buy\n");
-    printf("\t\t snack <select>\t - buy a snack,\n");
-    printf("\t\t\t\t select is the snack id (find it with search)\n");
+    printf("\t\t snack <id>\t - buy a snack by id\n");
     printf("\t\t mate\t\t - buy a mate^^\n");
 
 }
