@@ -1,0 +1,23 @@
+
+# garfield-snack
+_garfieldsnack() {
+
+	local cur=${COMP_WORDS[COMP_CWORD]}
+	COMPREPLY=( $(compgen -W "--user --help --pass --server --port --dbname --pgpass --verbose find buy -s -u info" -- $cur) )
+}
+complete -F _garfieldsnack garfield-snack
+
+#garfield-shell
+_garfieldshell() {
+	local cur=${COMP_WORDS[COMP_CWORD]}
+        COMPREPLY=( $(compgen -W "-u -p -d" -- $cur) )
+}
+complete -F _garfieldshell garfield-shell
+
+#garfield-user
+_garfielduser() {
+
+local cur=${COMP_WORDS[COMP_CWORD]}
+        COMPREPLY=( $(compgen -W "--user --pass --server --port --dbname --verbose --pgpass balance list history stats" -- $cur) )
+}
+complete -F _garfielduser garfield-user
