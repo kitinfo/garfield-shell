@@ -3,12 +3,12 @@
 #include "../headers/shell_debug.h"
 #include <stdlib.h>
 
-int findUser(char* search, char* loginUser, char* pass) {
+int findUser(char* search) {
 
-	char* cmd = getUserCmd(search, loginUser);
+	char* cmd = getCmd(search, USERCMD, LISTCMD);
 	debug(cmd);
 
-	int status = popenAction(cmd, pass);
+	int status = popenAction(cmd);
 
 	free(cmd);
 

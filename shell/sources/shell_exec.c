@@ -1,8 +1,9 @@
+#include "../headers/shell_sec.h"
 #include <unistd.h>
 #include <stdio.h>
 
 
-int popenAction(char* cmd, char* pw) {
+int popenAction(char* cmd) {
 
 	FILE* pipe = popen(cmd, "w");
 
@@ -10,7 +11,7 @@ int popenAction(char* cmd, char* pw) {
 		return -1;
 	}
 
-	fprintf(pipe, pw);
+	fprintf(pipe, getPassword());
 
 	pclose(pipe);
 

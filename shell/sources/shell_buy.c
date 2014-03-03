@@ -9,41 +9,36 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int execBuyWithName(char* snack, char* user, char* pass) {
+int execBuyWithName(char* snack) {
 
-	char* cwd = buildCmd(SNACKCMD, user);
+	char* cwd = buildCmd(SNACKCMD);
 
 	int len = strlen(cwd) + MAXLENGTH;
 
 	char* cmd = malloc(len);
 	snprintf(cmd, len,"%s %s -s %s", cwd, BUYCMD, snack);
-        int status = popenAction(cmd, pass);
+        int status = popenAction(cmd);
         free(cwd);
         free(cmd);
 
         return status;
 }
 
-int execBuyCmd(char* user, char* password, int id) {
-	//do some magic
-	char* cwd = buildCmd(SNACKCMD, user);
+int execBuy(int id) {
+    printf("Buy snack with id: %d\n", id);
+    //do some magic
+	char* cwd = buildCmd(SNACKCMD);
 	int len = strlen(cwd) + MAXLENGTH;
 	char* cmd = malloc(len);
 
 	snprintf(cmd, len,"%s %s %d", cwd, BUYCMD, id);
 
-	int status = popenAction(cmd, password);
+	int status = popenAction(cmd);
 
 	free(cwd);
 	free(cmd);
 
 	return status;
-}
-
-void execBuy(int id) {
-    // buy
-    printf("Buy snack with id: %d\n", id);
-    execBuyCmd(getUser(), getPassword(), id);
 }
 
 void buySnacks(char* input) {
@@ -54,7 +49,7 @@ void buySnacks(char* input) {
 		if (sscanf(snacks, "%d", &id) == 1) {
 			execBuy(id);
 		} else {
-			execBuyWithName(snacks, getUser(), getPassword());
+			execBuyWithName(snacks);
 		}
 		snacks = strtok(NULL, " ");
     }
@@ -69,7 +64,7 @@ void buy(char* input) {
 		buySnacks(dest);
     } else if (begins(input, "mate")) {
 		debug("exec buy mate");
-		execBuyWithName(MATE, getUser(), getPassword());
+		execBuyWithName(MATE);
     } else {
 		debug("no match in buy");
 		printf("Don't know what you want...\n");

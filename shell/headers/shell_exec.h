@@ -3,4 +3,4 @@
 /**
  * executes the command
  */
-int popenAction(char* cmd, char* pw);
+int popenAction(char* cmd);

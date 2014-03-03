@@ -9,12 +9,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int findSnack(char* snack, char* user, char* pass) {
+int findSnack(char* snack) {
 
-	char* cmd = getFindCmd(snack, user);
+	char* cmd = getCmd(snack, SNACKCMD, FINDCMD);
 	debug(cmd);
 
-	int status = popenAction(cmd, pass);
+	int status = popenAction(cmd);
 
 	free(cmd);
 
@@ -27,14 +27,14 @@ void find(char* input) {
     if (begins(input, "snack ")) {
 		sFirstCut(input, dest, 6);
 		debug("exec find snack cmd");
-		findSnack(dest, getUser(), getPassword());
+		findSnack(dest);
     } else if (begins(input, "user ")) {
     	sFirstCut(input, dest, 5);
     	debug("exec find user cmd");
-    	findUser(dest, getUser(), getPassword());
+    	findUser(dest);
     } else {
 		debug("no match found in find");
 		debug("try snack");
-		findSnack(input, getUser(), getPassword());
+		findSnack(input);
     }
 }

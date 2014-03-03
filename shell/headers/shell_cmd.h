@@ -8,8 +8,6 @@
 #define LISTCMD "list"
 #define MATE "4029764001807"
 
-char* buildCmd(char* garfieldCmd, char* user);
+char* buildCmd(char* garfieldCmd);
 
-char* getFindCmd(char* snack, char* user);
-
-char* getUserCmd(char* search, char* user);
+char* getCmd(char* tag, char* progCmd, char* searchCmd);

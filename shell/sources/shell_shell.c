@@ -44,6 +44,7 @@ int shell() {
 
     debug("shell init");
     checkLogin();
+    printf("\n");
 
     char input[MAXLENGTH];
     for (;;) {
