@@ -6,6 +6,7 @@
 #include <ctype.h>
 #include <malloc.h>
 #include <inttypes.h>
+#include <signal.h>
 
 #include "kbserver.h"
 
@@ -13,6 +14,7 @@
 #include "config.c"
 #include "cfgparse.c"
 #include "argparse.c"
+#include "sighandle.c"
 
 int usage(char* fn){
 	printf("garfield-pos kbserver utility\n\n");	
@@ -58,9 +60,19 @@ int main(int argc, char** argv){
 	}
 
 	//set up signal handlers
+	signal(SIGPIPE, SIG_IGN);
+	signal(SIGINT, sig_interrupt);
+
 	//prepare client queue
+	//TODO
+	
 	//open event descriptor
+	//TODO
+
 	//open listening socket
+	//TODO
+
+	//main loop
 	//call select
 	//upon input, write stuff to clients
 	//TODO

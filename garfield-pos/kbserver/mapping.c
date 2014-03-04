@@ -1,8 +1,12 @@
-MAPPING* map_elem(CONFIG_PARAMS* cfg, uint16_t scancode){
+MAPPING* map_elem(CONFIG_PARAMS* cfg, uint16_t scancode, bool create){
 	MAPPING* iter;
 
 	if(!cfg->mapping_head||cfg->mapping_head->scancode>scancode){
 		//create, set up as head
+		if(!create){
+			return NULL;
+		}
+
 		MAPPING* new=calloc(1,sizeof(MAPPING));
 		new->scancode=scancode;
 		new->next=cfg->mapping_head;
@@ -17,6 +21,10 @@ MAPPING* map_elem(CONFIG_PARAMS* cfg, uint16_t scancode){
 		}
 		if(iter->next&&iter->next->scancode>scancode){
 			//insert in front
+			if(!create){
+				return NULL;
+			}
+
 			MAPPING* new=calloc(1,sizeof(MAPPING));
 			new->scancode=scancode;
 			new->next=iter->next;
@@ -25,6 +33,10 @@ MAPPING* map_elem(CONFIG_PARAMS* cfg, uint16_t scancode){
 		}
 		if(!iter->next){
 			//insert in back
+			if(!create){
+				return NULL;
+			}
+
 			MAPPING* new=calloc(1,sizeof(MAPPING));
 			new->scancode=scancode;
 			new->next=NULL;
@@ -42,7 +54,7 @@ bool map_add(CONFIG_PARAMS* cfg, uint16_t scancode, char* output){
 		printf("Mapping scancode %d to \"%s\"\n", scancode, output);
 	}
 
-	MAPPING* element=map_elem(cfg, scancode);
+	MAPPING* element=map_elem(cfg, scancode, true);
 	if(!element){
 		return false;
 	}
@@ -52,7 +64,8 @@ bool map_add(CONFIG_PARAMS* cfg, uint16_t scancode, char* output){
 }
 
 char* map_get(CONFIG_PARAMS* cfg, uint16_t scancode){
-	return map_elem(cfg, scancode)->map_target;
+	MAPPING* element=map_elem(cfg, scancode, false);
+	return (element)?element->map_target:NULL;
 }
 
 bool map_free(CONFIG_PARAMS* cfg){
