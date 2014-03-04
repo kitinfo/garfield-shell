@@ -9,4 +9,5 @@ typedef struct /*_CFG_PARAMS*/ {
 	char* bind_host;	//bindhost, allocated by cfgparse
 	int port;		//local port
 	bool send_raw;		//send raw scancodes
+	bool exclusive_access;	//request exclusive access
 } CONFIG_PARAMS;

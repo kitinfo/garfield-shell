@@ -46,10 +46,16 @@ int parse_config(char* input_file, CONFIG_PARAMS* cfg){
 			//handle port line
 			cfg->port=strtoul(line_buffer+param, NULL, 10);
 		}
-		else if(!strncmp(line_buffer+offset,"send_raw",8)){
+		else if(!strncmp(line_buffer+offset, "send_raw", 8)){
 			//handle send_raw line
 			if(!strncmp(line_buffer+param, "true", 4)){
 				cfg->send_raw=true;
+			}
+		}
+		else if(!strncmp(line_buffer+offset, "exclusive", 9)){
+			//handle exclusive line
+			if(!strncmp(line_buffer+param, "true", 4)){
+				cfg->exclusive_access=true;
 			}
 		}
 		else if(!strncmp(line_buffer+offset,"map",3)){
