@@ -1,6 +1,28 @@
 bool cfg_sanity_check(CONFIG_PARAMS* cfg){
-	//TODO
-	return false;
+	if(!cfg->input_device){
+		printf("No input device specified\n");
+		return false;
+	}
+
+	if(!cfg->bind_host){
+		printf("No bind address specified\n");
+		return false;
+	}
+
+	if(cfg->port==0){
+		printf("Invalid port\n");
+		return false;
+	}
+
+	if(cfg->verbosity>0){
+		printf("Using verbosity level %d\n",cfg->verbosity);
+		printf("Using input device %s\n",cfg->input_device);
+		printf("Binding to host %s Port %d\n",cfg->bind_host, cfg->port);
+		printf("Fall back to sending raw scancodes: %s\n",cfg->send_raw?"true":"false");
+		printf("Open device in exclusive mode: %s\n",cfg->exclusive_access?"true":"false");
+	}
+
+	return true;
 }
 
 bool cfg_free(CONFIG_PARAMS* cfg){
@@ -12,7 +34,7 @@ bool cfg_free(CONFIG_PARAMS* cfg){
 		free(cfg->bind_host);
 	}
 
-	return true;
+	return map_free(cfg);
 }
 
 char* cfg_parse_string(char* input){

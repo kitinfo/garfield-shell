@@ -1,4 +1,4 @@
 .PHONY: all
 
 all:
-	$(CC) -Wall kbserver.c -o kbserver
+	$(CC) -Wall -g kbserver.c -o kbserver

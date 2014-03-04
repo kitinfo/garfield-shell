@@ -1,3 +1,15 @@
+void line_strip_trail(char* line){
+	int i=strlen(line)-1;
+	for(;i>=0;i--){
+		if(isspace(line[i])){
+			line[i]=0;
+		}
+		else{
+			return;
+		}
+	}
+}
+
 int parse_config(char* input_file, CONFIG_PARAMS* cfg){
 	int offset, param;	
 	char line_buffer[MAX_CFGLINE_LENGTH+1];
@@ -20,6 +32,9 @@ int parse_config(char* input_file, CONFIG_PARAMS* cfg){
 			continue;
 		}
 
+		//remove trailing space characters
+		line_strip_trail(line_buffer);
+
 		//skip past argument name
 		param=offset;
 		for(;!isspace(line_buffer[param]);param++){
@@ -29,7 +44,7 @@ int parse_config(char* input_file, CONFIG_PARAMS* cfg){
 		}
 		
 		if(cfg->verbosity>0){
-			printf("Line: %s",line_buffer);
+			printf("Line: %s\n",line_buffer);
 		}
 
 		if(!strncmp(line_buffer+offset, "device", 6)){
@@ -74,14 +89,14 @@ int parse_config(char* input_file, CONFIG_PARAMS* cfg){
 				continue;
 			}
 
-			if(!add_mapping(cfg, scancode, map_target)){
+			if(!map_add(cfg, scancode, map_target)){
 				printf("Failed to add mapping for scancode %d\n", scancode);
 				free(map_target);
 				continue;
 			}
 		}
 		else{
-			printf("Unrecognized config line: %s",line_buffer+offset);
+			printf("Unrecognized config line: %s\n",line_buffer+offset);
 		}
 	}
 

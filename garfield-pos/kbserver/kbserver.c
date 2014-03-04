@@ -9,8 +9,8 @@
 
 #include "kbserver.h"
 
-#include "config.c"
 #include "mapping.c"
+#include "config.c"
 #include "cfgparse.c"
 #include "argparse.c"
 
@@ -50,6 +50,22 @@ int main(int argc, char** argv){
 	}
 
 	printf("kbserver v%s starting\n",VERSION);
+	
+	if(!cfg_sanity_check(&cfg)){
+		printf("Config failed the sanity check, aborting\n");
+		cfg_free(&cfg);
+		return -1;
+	}
 
+	//set up signal handlers
+	//prepare client queue
+	//open event descriptor
+	//open listening socket
+	//call select
+	//upon input, write stuff to clients
+	//TODO
+
+	cfg_free(&cfg);
+	printf("kbserver shut down\n");
 	return 0;
 }
