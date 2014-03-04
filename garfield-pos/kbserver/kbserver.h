@@ -1,6 +1,7 @@
 #define VERSION "0.1 hackedy hack"
 
 #define MAX_CFGLINE_LENGTH 1024
+#define LISTEN_QUEUE_LENGTH 30
 
 typedef struct _MAPPING {
 	uint16_t scancode;

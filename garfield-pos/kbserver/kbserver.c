@@ -7,6 +7,14 @@
 #include <malloc.h>
 #include <inttypes.h>
 #include <signal.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <linux/input.h>
+#include <unistd.h>
 
 #include "kbserver.h"
 
@@ -14,7 +22,9 @@
 #include "config.c"
 #include "cfgparse.c"
 #include "argparse.c"
+#include "evinput.c"
 #include "sighandle.c"
+#include "socket_comms.c"
 
 int usage(char* fn){
 	printf("garfield-pos kbserver utility\n\n");	
@@ -22,11 +32,24 @@ int usage(char* fn){
 	return -1;
 }
 
+volatile bool shutdown_server=false;
+
 int main(int argc, char** argv){
 	CONFIG_PARAMS cfg;
+	int i;
 	int error=0;
+	int ev_fd=-1;
+	int listen_fd=-1;
+	int maxfd;
+	int bytes;
+	int client_fds[LISTEN_QUEUE_LENGTH];
+	char read_buffer[128];
+	struct timeval tv;
+	fd_set readfds;
+	struct input_event ev_data;
 
 	memset(&cfg, 0, sizeof(CONFIG_PARAMS));
+	memset(client_fds, -1, sizeof(client_fds));
 
 	error=parse_arguments(argc-1, argv+1, &cfg);
 
@@ -63,20 +86,112 @@ int main(int argc, char** argv){
 	signal(SIGPIPE, SIG_IGN);
 	signal(SIGINT, sig_interrupt);
 
-	//prepare client queue
-	//TODO
-	
 	//open event descriptor
-	//TODO
+	ev_fd=evin_open(&cfg);
+	if(ev_fd<0){
+		//TODO cleanup
+		return -1;
+	}
 
 	//open listening socket
-	//TODO
+	listen_fd=sock_open(&cfg);
+	if(listen_fd<0){
+		//TODO cleanup
+		return -1;
+	}
 
 	//main loop
-	//call select
-	//upon input, write stuff to clients
-	//TODO
+	while(!shutdown_server){
+		maxfd=(ev_fd>listen_fd)?ev_fd:listen_fd;
 
+		//prepare timeouts & fd sets
+		tv.tv_sec=2;
+		tv.tv_usec=0;
+
+		FD_ZERO(&readfds);
+		FD_SET(ev_fd, &readfds);
+		FD_SET(listen_fd, &readfds);
+		for(i=0;i<LISTEN_QUEUE_LENGTH;i++){
+			if(client_fds[i]>0){
+				if(client_fds[i]>maxfd){
+					maxfd=client_fds[i];
+				}
+				FD_SET(client_fds[i], &readfds);
+			}
+		}
+
+		//call select
+		error=select(maxfd+1, &readfds, NULL, NULL, &tv);
+		if(error<0){
+			perror("select");
+			break;
+		}
+
+		if(FD_ISSET(ev_fd, &readfds)){
+			//read event
+			bytes=read(ev_fd, &ev_data, sizeof(ev_data));
+			if(bytes<0){
+				perror("evfd read");
+				break;
+			}
+
+			//handle event data
+			if(ev_data.type==EV_KEY){
+				if(ev_data.value==0){
+					//key press
+					char* map_target=map_get(&cfg, ev_data.code);
+					if(map_target||cfg.send_raw){
+						//send data
+						for(i=0;i<LISTEN_QUEUE_LENGTH;i++){
+							if(client_fds[i]>0){
+								if(map_target){
+									bytes=send(client_fds[i], map_target, strlen(map_target), 0);
+								}
+								else{
+									bytes=send(client_fds[i], &(ev_data.code), sizeof(ev_data.code), 0);
+								}
+								if(bytes<0){
+									perror("client_send");
+									close(client_fds[i]);
+									client_fds[i]=-1;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if(FD_ISSET(listen_fd, &readfds)){
+			//handle new client
+			if(cfg.verbosity>0){
+				printf("New client\n");
+			}
+			//find client slot
+			for(i=0;i<LISTEN_QUEUE_LENGTH;i++){
+				if(client_fds[i]<0){
+					//accept into that
+					client_fds[i]=accept(listen_fd, NULL, NULL);
+					break;
+				}
+			}
+		}
+
+		for(i=0;i<LISTEN_QUEUE_LENGTH;i++){
+			if(client_fds[i]>0&&FD_ISSET(client_fds[i],&readfds)){
+				//handle & ignore client input
+				bytes=recv(client_fds[i], &read_buffer, sizeof(read_buffer),0);
+				if(bytes<=0){
+					perror("client_read");
+					close(client_fds[i]);
+					client_fds[i]=-1;
+				}
+			}
+		}
+	}
+
+	sock_close(listen_fd);
+	evin_close(ev_fd);
 	cfg_free(&cfg);
 	printf("kbserver shut down\n");
 	return 0;
