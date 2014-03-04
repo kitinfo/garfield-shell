@@ -5,8 +5,12 @@
 #include <errno.h>
 #include <ctype.h>
 #include <malloc.h>
+#include <inttypes.h>
 
 #include "kbserver.h"
+
+#include "config.c"
+#include "mapping.c"
 #include "cfgparse.c"
 #include "argparse.c"
 

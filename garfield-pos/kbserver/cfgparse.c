@@ -10,8 +10,6 @@ int parse_config(char* input_file, CONFIG_PARAMS* cfg){
 
 	while(fgets(line_buffer, MAX_CFGLINE_LENGTH, handle)!=NULL){
 	//handle config line
-		printf("Line: %s",line_buffer);
-		
 		//skip leading whitespace characters
 		offset=0;
 		for(;isspace(line_buffer[offset]);offset++){
@@ -28,6 +26,10 @@ int parse_config(char* input_file, CONFIG_PARAMS* cfg){
 		}
 		//skip to argument
 		for(;isspace(line_buffer[param])&&line_buffer[param]!='\n';param++){
+		}
+		
+		if(cfg->verbosity>0){
+			printf("Line: %s",line_buffer);
 		}
 
 		if(!strncmp(line_buffer+offset, "device", 6)){
@@ -52,10 +54,28 @@ int parse_config(char* input_file, CONFIG_PARAMS* cfg){
 		}
 		else if(!strncmp(line_buffer+offset,"map",3)){
 			//handle map line
-			//TODO
+			char* endptr;
+			char* map_target;
+
+			uint16_t scancode=strtoul(line_buffer+param, &endptr, 10);
+			
+			for(;isspace(endptr[0]);endptr++){
+			}
+
+			map_target=cfg_parse_string(endptr);
+			if(!map_target){
+				printf("Failed to translate string: %s (Scancode %d)\n", endptr, scancode);
+				continue;
+			}
+
+			if(!add_mapping(cfg, scancode, map_target)){
+				printf("Failed to add mapping for scancode %d\n", scancode);
+				free(map_target);
+				continue;
+			}
 		}
 		else{
-			printf("Unrecognized config line: %s",line_buffer[offset]);
+			printf("Unrecognized config line: %s",line_buffer+offset);
 		}
 	}
 
