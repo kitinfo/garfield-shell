@@ -89,14 +89,15 @@ int main(int argc, char** argv){
 	//open event descriptor
 	ev_fd=evin_open(&cfg);
 	if(ev_fd<0){
-		//TODO cleanup
+		cfg_free(&cfg);
 		return -1;
 	}
 
 	//open listening socket
 	listen_fd=sock_open(&cfg);
 	if(listen_fd<0){
-		//TODO cleanup
+		evin_close(ev_fd);
+		cfg_free(&cfg);
 		return -1;
 	}
 

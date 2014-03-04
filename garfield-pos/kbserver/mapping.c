@@ -59,6 +59,10 @@ bool map_add(CONFIG_PARAMS* cfg, uint16_t scancode, char* output){
 		return false;
 	}
 
+	if(element->map_target){
+		free(element->map_target);
+	}
+
 	element->map_target=output;
 	return true;
 }

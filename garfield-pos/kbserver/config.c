@@ -26,6 +26,8 @@ bool cfg_sanity_check(CONFIG_PARAMS* cfg){
 }
 
 bool cfg_free(CONFIG_PARAMS* cfg){
+	printf("Freeing allocated memory\n");
+
 	if(cfg->input_device){
 		free(cfg->input_device);
 	}
