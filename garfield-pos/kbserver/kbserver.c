@@ -22,9 +22,9 @@
 #include "config.c"
 #include "cfgparse.c"
 #include "argparse.c"
-#include "evinput.c"
+#include "evfd.c"
 #include "sighandle.c"
-#include "socket_comms.c"
+#include "sockfd.c"
 
 int usage(char* fn){
 	printf("garfield-pos kbserver utility\n\n");	
