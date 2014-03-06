@@ -18,7 +18,7 @@ int sock_open(CONFIG_PARAMS* cfg){
 		return -1;
 	}
 
-	for(addr_it=info;info!=NULL;addr_it=addr_it->ai_next){
+	for(addr_it=info;addr_it!=NULL;addr_it=addr_it->ai_next){
 		fd=socket(addr_it->ai_family, addr_it->ai_socktype, addr_it->ai_protocol);
 		if(fd<0){
 			continue;

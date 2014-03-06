@@ -9,6 +9,7 @@
 
 #include "portability/sleep.h"
 #include "portability/getpass.c"
+#include "portability/xsocket.h"
 
 #include "garfield-pos.h"
 #include "config.c"
@@ -62,6 +63,7 @@ int main(int argc, char** argv){
 
 	//connect to remote devices
 	if(!comms_open(&cfg)){
+		comms_close(&cfg);
 		pq_close(&(cfg.db));
 		cfg_free(&cfg);
 		return -1;
