@@ -24,6 +24,7 @@ typedef struct /*_DB_SPEC*/ {
 
 typedef struct /*_CONFIG_PARAMS*/ {
 	char* cfg_file;
+	int verbosity;
 	DATABASE db;
 	CONNECTION* connections;
 	int connection_count;

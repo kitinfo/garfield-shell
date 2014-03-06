@@ -9,11 +9,42 @@
 #include "garfield-pos.h"
 
 int main(int argc, char** argv){
-	//read commandline args
-	//read config file
-	//connect to database
-	//connect to input devices
-	//run the state machine
+	CONFIG cfg;
 
+	cfg_init(&cfg);
+
+	//read commandline args
+	if(!arg_parse(&cfg, argc-1, argv+1)){
+		return -1;
+	}
+
+	//read config file
+	if(!cfg.cfg_file){
+		printf("No config file supplied\n");
+		return -1;
+	}
+	if(!cfg_read(&cfg, cfg.cfg_file)){
+		return -1;
+	}
+
+	//connect to database
+	if(!pq_connect(&(cfg.db))){
+		cfg_free(&cfg);
+		return -1;
+	}
+
+	//connect to remote devices
+	if(!comms_open(&cfg)){
+		pq_close(&(cfg.db));
+		cfg_free(&cfg);
+		return -1;
+	}
+	
+	//run the state machine
+	//TODO
+
+	comms_close(&cfg);
+	pq_close(&(cfg.db));
+	cfg_free(&cfg);
 	return 0;
 }
