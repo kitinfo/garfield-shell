@@ -16,6 +16,7 @@ typedef struct /*_DB_SPEC*/ {
 	char* server;
 	uint16_t port;
 	char* user;
+	char* pass;
 	char* db_name;
 	bool persist_connection;
 	bool use_pgpass;
@@ -25,7 +26,7 @@ typedef struct /*_DB_SPEC*/ {
 typedef struct /*_CONFIG_PARAMS*/ {
 	char* cfg_file;
 	int verbosity;
-	DATABASE db;
-	CONNECTION* connections;
 	int connection_count;
+	CONNECTION* connections;
+	DATABASE db;
 } CONFIG;
