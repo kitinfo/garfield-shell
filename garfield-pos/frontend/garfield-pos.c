@@ -56,9 +56,14 @@ int main(int argc, char** argv){
 	}
 
 	//connect to database
-	if(!pq_connect(&(cfg.db))){
-		cfg_free(&cfg);
-		return -1;
+	if(cfg.db.persist_connection){
+		if(!pq_connect(&(cfg.db))){
+			cfg_free(&cfg);
+			return -1;
+		}
+		if(cfg.verbosity>1){
+			printf("Database connection established\n");	
+		}
 	}
 
 	//connect to remote devices
