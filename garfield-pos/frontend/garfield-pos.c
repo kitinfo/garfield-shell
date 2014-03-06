@@ -7,6 +7,10 @@
 #include "portability/sleep.h"
 
 #include "garfield-pos.h"
+#include "config.c"
+#include "argparse.c"
+#include "pgconn.c"
+#include "tcpconn.c"
 
 int main(int argc, char** argv){
 	CONFIG cfg;
@@ -24,6 +28,10 @@ int main(int argc, char** argv){
 		return -1;
 	}
 	if(!cfg_read(&cfg, cfg.cfg_file)){
+		return -1;
+	}
+	if(!cfg_sane(&cfg)){
+		cfg_free(&cfg);
 		return -1;
 	}
 
