@@ -1,4 +1,6 @@
 #define VERSION "0.1"
+#define MAX_CFGLINE_LENGTH 1024
+#define MAX_PASSWORD_LENGTH 128
 
 typedef enum /*_CONNECTION_TYPE*/ {
 	CONN_INPUT,

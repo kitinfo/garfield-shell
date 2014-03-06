@@ -17,9 +17,9 @@ bool arg_parse(CONFIG* cfg, int argc, char** argv){
 				case 'h':
 					return false;
 				case 'v':
-					for(c=1;argv[c]=='v';c++){
+					for(c=1;argv[i][c]=='v';c++){
 					}
-					cfg->verbosity=c;
+					cfg->verbosity=c-1;
 					break;
 				default:
 					printf("Unrecognized option %s\n", argv[i]);
