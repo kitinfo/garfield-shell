@@ -1,2 +1,2 @@
 non-persistent connection stuff
-set up signal handlers
+input buffer overflow handling

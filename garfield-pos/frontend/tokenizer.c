@@ -65,6 +65,19 @@ int tok_lasttype_offset(INPUT_TOKEN t){
 	return -1;
 }
 
+int tok_last_offset_from(char* buffer, int end){
+	int len=end-1;
+	INPUT_TOKEN t;
+
+	for(;len>0;len--){
+		t=tok_read(buffer+len);
+		if(t!=TOKEN_INCOMPLETE&&t!=TOKEN_INVALID){
+			return len;
+		}
+	}
+	return -1;
+}
+
 const char* tok_dbg_string(INPUT_TOKEN t){
 	switch(t){
 		case TOKEN_INCOMPLETE:

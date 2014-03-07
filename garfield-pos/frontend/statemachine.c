@@ -20,6 +20,7 @@ TRANSITION_RESULT state_barcode(INPUT_TOKEN token){
 
 	switch(token){
 		case TOKEN_BACKSPACE:
+			//TODO check if last token was numeral
 			res.action=TOKEN_REMOVE;
 			break;
 		case TOKEN_NUMERAL:
@@ -43,6 +44,7 @@ TRANSITION_RESULT state_plu(INPUT_TOKEN token){
 
 	switch(token){
 		case TOKEN_BACKSPACE:
+			//TODO check if last token is numeral
 			res.action=TOKEN_REMOVE;
 			break;
 		case TOKEN_NUMERAL:
@@ -100,6 +102,7 @@ TRANSITION_RESULT state_storno(INPUT_TOKEN token){
 			res.action=TOKEN_KEEP;
 			break;
 		case TOKEN_BACKSPACE:
+			//TODO check if last token if numeral
 			res.action=TOKEN_REMOVE;
 			break;
 		case TOKEN_STORNO:
@@ -130,6 +133,7 @@ TRANSITION_RESULT state_pay(INPUT_TOKEN token){
 			res.action=TOKEN_KEEP;
 			break;
 		case TOKEN_BACKSPACE:
+			//TODO check if last token is numeral
 			res.action=TOKEN_REMOVE;
 			break;
 		case TOKEN_ENTER:

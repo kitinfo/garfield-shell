@@ -4,7 +4,7 @@
 int garfield_pos(CONFIG* cfg){
 	struct timeval tv;
 	fd_set readfds;
-	int fd_max, i, c, error, bytes, offset=0, active_token=0, head_offset;
+	int fd_max, i, c, e,  error, bytes, offset=0, active_token=0, head_offset;
 	INPUT_TOKEN token;
 	TRANSITION_RESULT trans;
 
@@ -111,11 +111,24 @@ int garfield_pos(CONFIG* cfg){
 							break;
 						case TOKEN_REMOVE:
 							//TODO remove this and the last token
+							e=tok_last_offset_from(INPUT.data, c-tok_length(token));
+							if(e<0){
+								e=0;
+							}
+							if(tok_read(INPUT.data+e)!=TOKEN_NUMERAL&&tok_read(INPUT.data+e)!=TOKEN_BACKSPACE){
+								e+=tok_length(tok_read(INPUT.data+e));
+							}
+							//xxxxx123BSPi4
+							//       e   c
+							//removeloop
+							for(;INPUT.data[c]!=0;e++){
+								INPUT.data[e]=INPUT.data[c];
+							}
+							INPUT.data[e]=0;
+							c=e;
 							break;
 					}
 				}
-
-				//
 
 				//shift parse_head to 0
 				if(INPUT.parse_head!=INPUT.data){
