@@ -238,7 +238,7 @@ bool cfg_sane(CONFIG* cfg){
 		printf("Database server: %s Port %d\n", cfg->db.server, cfg->db.port);
 		printf("Database name: %s\n", cfg->db.db_name);
 		printf("Database user name: %s\n", cfg->db.user);
-		printf("Connections are %spersistent\n", (cfg->db.persist_connection)?"":"non-");
+		printf("Database connection is %spersistent\n", (cfg->db.persist_connection)?"":"non-");
 		printf("Using pgpass: %s\n", (cfg->db.use_pgpass)?"yes":"no");
 	}
 

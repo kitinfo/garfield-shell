@@ -19,6 +19,7 @@ typedef enum /*_LOGIC_STATE*/ {
 } POS_STATE;
 
 typedef enum /*_INPUT_TOKEN*/ {
+	TOKEN_INCOMPLETE,
 	TOKEN_INVALID,
 	TOKEN_PAY,
 	TOKEN_PLU,
@@ -28,6 +29,17 @@ typedef enum /*_INPUT_TOKEN*/ {
 	TOKEN_BACKSPACE,
 	TOKEN_NUMERAL
 } INPUT_TOKEN;
+
+typedef enum /*_TOKEN_ACTION*/ {
+	TOKEN_KEEP,	//keep token in parse buffer
+	TOKEN_DISCARD,	//discard all tokens up to this one
+	TOKEN_REMOVE	//remove this and the previous token
+} TOKEN_ACTION;
+
+typedef struct /*_TRANSITION_RESULT*/ {
+	POS_STATE state;
+	TOKEN_ACTION action;
+} TRANSITION_RESULT;
 
 typedef struct /*_CART_SNACK_ITEM*/ {
 	int snackid;
@@ -67,3 +79,9 @@ struct {
 	int items;
 	bool shutdown;
 } POS;
+
+struct {
+	char data[INPUT_BUFFER_LENGTH];
+	char* parse_head;
+//	char* data_append;
+} INPUT;

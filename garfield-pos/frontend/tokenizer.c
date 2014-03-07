@@ -1,4 +1,4 @@
-INPUT_TOKEN read_token(char* input){
+INPUT_TOKEN tok_read(char* input){
 	if(isdigit(input[0])){
 		return TOKEN_NUMERAL;
 	}
@@ -27,10 +27,12 @@ INPUT_TOKEN read_token(char* input){
 		return TOKEN_BACKSPACE;
 	}
 
+	//TODO check for incomplete matches
+
 	return TOKEN_INVALID;
 }
 
-int token_length(INPUT_TOKEN token){
+int tok_length(INPUT_TOKEN token){
 	switch(token){
 		case TOKEN_PAY:
 			return 3+2;
@@ -45,8 +47,34 @@ int token_length(INPUT_TOKEN token){
 		case TOKEN_BACKSPACE:
 			return 9;
 		case TOKEN_NUMERAL:
+			return 1;
+		case TOKEN_INCOMPLETE:
 			return 0;
 		default:
 			return 1;
 	}
+}
+
+const char* tok_dbg_string(INPUT_TOKEN t){
+	switch(t){
+		case TOKEN_INCOMPLETE:
+			return "TOKEN_INCOMPLETE";
+		case TOKEN_INVALID:
+			return "TOKEN_INVALID";
+		case TOKEN_PAY:
+			return "TOKEN_PAY";
+		case TOKEN_PLU:
+			return "TOKEN_PLU";
+		case TOKEN_STORNO:
+			return "TOKEN_STORNO";
+		case TOKEN_CANCEL:
+			return "TOKEN_CANCEL";
+		case TOKEN_ENTER:
+			return "TOKEN_ENTER";
+		case TOKEN_BACKSPACE:
+			return "TOKEN_BACKSPACE";
+		case TOKEN_NUMERAL:
+			return "TOKEN_NUMERAL";
+	}
+	return "UNKNOWN";
 }
