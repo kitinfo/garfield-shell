@@ -42,7 +42,7 @@ typedef struct /*_TRANSITION_RESULT*/ {
 } TRANSITION_RESULT;
 
 typedef struct /*_CART_SNACK_ITEM*/ {
-	int snackid;
+	int id;
 	double price;
 } CART_ITEM;
 

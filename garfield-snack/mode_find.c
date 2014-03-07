@@ -40,7 +40,9 @@ PGresult* querySnacksForTerms(PGconn* db, int argc, char** argv){
 	
 	//run query
 	PGresult* result=PQexecParams(db,QUERY_SNACKS,1,NULL,(const char**)&queryString,NULL,NULL,0);
-	
+
+	//FIXME result might be NULL
+
 	free(queryString);
 	
 	if(PQresultStatus(result)!=PGRES_TUPLES_OK){//FIXME there might be another valid error code

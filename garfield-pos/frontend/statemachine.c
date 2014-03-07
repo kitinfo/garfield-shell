@@ -1,3 +1,6 @@
+#include "database.c"
+#include "cart.c"
+
 TRANSITION_RESULT state_idle(INPUT_TOKEN token, CONFIG* cfg){
 	TRANSITION_RESULT res={STATE_IDLE, TOKEN_DISCARD};
 
@@ -17,6 +20,7 @@ TRANSITION_RESULT state_idle(INPUT_TOKEN token, CONFIG* cfg){
 
 TRANSITION_RESULT state_barcode(INPUT_TOKEN token, CONFIG* cfg){
 	TRANSITION_RESULT res={STATE_BARCODE, TOKEN_DISCARD};
+	CART_ITEM item;
 
 	switch(token){
 		case TOKEN_BACKSPACE:
@@ -27,8 +31,19 @@ TRANSITION_RESULT state_barcode(INPUT_TOKEN token, CONFIG* cfg){
 			res.action=TOKEN_KEEP;
 			break;
 		case TOKEN_ENTER:
-			//TODO resolve snack, add to cart
-			///no break here
+			//resolve snack, add to cart
+			item=db_query_item(cfg, INPUT.parse_head);
+			if(cfg->verbosity>1){
+				printf("Returned item ID: %d, Price: %f\n", item.id, item.price);
+			}
+			
+			if(item.id<=0){
+				printf(">Not recognized\n");
+			//	portable_sleep(500);
+			}
+
+			cart_store(item, cfg);
+			//no break here
 		case TOKEN_CANCEL:
 			res.state=STATE_DISPLAY;
 			break;
@@ -41,6 +56,7 @@ TRANSITION_RESULT state_barcode(INPUT_TOKEN token, CONFIG* cfg){
 TRANSITION_RESULT state_plu(INPUT_TOKEN token, CONFIG* cfg){
 	TRANSITION_RESULT res={STATE_PLU, TOKEN_DISCARD};
 	int last_numeric;
+	CART_ITEM item;
 
 	switch(token){
 		case TOKEN_BACKSPACE:
@@ -53,8 +69,13 @@ TRANSITION_RESULT state_plu(INPUT_TOKEN token, CONFIG* cfg){
 			res.action=TOKEN_KEEP;
 			break;
 		case TOKEN_ENTER:
-			printf("\n");
-			//TODO resolve snack, add to cart
+			item=db_query_item(cfg, INPUT.parse_head);
+			if(cfg->verbosity>1){
+				printf("Returned item ID: %d, Price: %f\n", item.id, item.price);
+			}
+			
+			cart_store(item, cfg);
+			
 			///no break here
 		case TOKEN_CANCEL:
 			res.state=STATE_DISPLAY;
@@ -77,6 +98,7 @@ TRANSITION_RESULT state_display(INPUT_TOKEN token, CONFIG* cfg){
 			res.state=STATE_PLU;
 			break;
 		case TOKEN_CANCEL:
+			POS.items=0;
 			res.state=STATE_IDLE;
 			break;
 		case TOKEN_STORNO:
@@ -107,6 +129,9 @@ TRANSITION_RESULT state_storno(INPUT_TOKEN token, CONFIG* cfg){
 			break;
 		case TOKEN_STORNO:
 			//TODO remove last item from cart
+			if(POS.items>0){
+				POS.items--;
+			}
 			res.state=STATE_DISPLAY;
 			break;
 		case TOKEN_ENTER:
@@ -181,7 +206,7 @@ void state_enter(POS_STATE s){
 			printf("\f>PLU: ");
 			break;
 		case STATE_DISPLAY:
-			printf("\f>Last item x.xx\r\n>Total:     x.xx \n");
+			printf("\f>Last item: %.2f\r\n>%3d Total: %.2f\n", (POS.items>0)?POS.cart[POS.items-1].price:0.f, POS.items, cart_get_total());
 			break;
 		case STATE_STORNO:
 			printf("\f>Storno: ");
