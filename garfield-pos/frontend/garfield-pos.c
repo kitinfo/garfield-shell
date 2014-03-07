@@ -6,6 +6,7 @@
 #include <libpq-fe.h>
 #include <errno.h>
 #include <ctype.h>
+#include <signal.h>
 
 #include "portability/sleep.h"
 #include "portability/getpass.c"
@@ -16,6 +17,8 @@
 #include "argparse.c"
 #include "pgconn.c"
 #include "tcpconn.c"
+#include "logic.c"
+#include "sighandle.c"
 
 int main(int argc, char** argv){
 	CONFIG cfg;
@@ -55,7 +58,7 @@ int main(int argc, char** argv){
 		return -1;
 	}
 
-	//connect to database
+	//connect to database if persistent
 	if(cfg.db.persist_connection){
 		if(!pq_connect(&(cfg.db))){
 			cfg_free(&cfg);
@@ -74,8 +77,11 @@ int main(int argc, char** argv){
 		return -1;
 	}
 	
+	//set up signal handlers
+	signal(SIGINT, sig_interrupt);
+
 	//run the state machine
-	//TODO
+	garfield_pos(&cfg);
 
 	comms_close(&cfg);
 	pq_close(&(cfg.db));

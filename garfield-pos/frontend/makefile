@@ -4,7 +4,10 @@ ifeq ($(PG_INCLUDES),-I)
 endif
 
 
-.PHONY: all
+.PHONY: all ldebug
 
 all:
 	$(CC) -Wall -g $(PG_INCLUDES) garfield-pos.c -o garfield-pos -lpq
+
+ldebug:
+	valgrind --leak-check=full ./garfield-pos -vvvv -f local.conf

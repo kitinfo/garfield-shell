@@ -26,12 +26,18 @@ int tcp_connect(char* host, int portnum){
 
 	if(fd<0){
 		perror("comms_open");
+		freeaddrinfo(list);
 		return -1;
 	}
 
 
 	//FIXME this might need to be in the loop. check it.
 	status=connect(fd, list_it->ai_addr, list_it->ai_addrlen);
+	if(status<0){
+		perror("connect");
+		freeaddrinfo(list);
+		return -1;
+	}
 
 	freeaddrinfo(list);
 	return fd;

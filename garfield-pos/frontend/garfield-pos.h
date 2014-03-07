@@ -2,11 +2,26 @@
 #define MAX_CFGLINE_LENGTH 1024
 #define MAX_PASSWORD_LENGTH 128
 #define PGRES_SSLMODE "require"
+#define INPUT_BUFFER_LENGTH 128
 
 typedef enum /*_CONNECTION_TYPE*/ {
 	CONN_INPUT,
 	CONN_OUTPUT
 } CONNECTION_TYPE;
+
+typedef enum /*_LOGIC_STATE*/ {
+	STATE_IDLE,
+	STATE_BARCODE,
+	STATE_PLU,
+	STATE_DISPLAY,
+	STATE_STORNO,
+	STATE_PAY
+} POS_STATE;
+
+typedef struct /*_CART_SNACK_ITEM*/ {
+	int snackid;
+	double price;
+} CART_ITEM;
 
 typedef struct /*_CONNECTION_SPEC*/ {
 	char* host;
@@ -33,3 +48,11 @@ typedef struct /*_CONFIG_PARAMS*/ {
 	CONNECTION* connections;
 	DATABASE db;
 } CONFIG;
+
+struct {
+	POS_STATE state;
+	CART_ITEM* cart;
+	int items_allocated;
+	int items;
+	bool shutdown;
+} POS;
