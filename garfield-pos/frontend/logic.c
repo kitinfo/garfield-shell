@@ -1,3 +1,58 @@
+INPUT_TOKEN read_token(char* input){
+	int len=strlen(input);
+
+	if(isdigit(input[0])){
+		return TOKEN_NUMERAL;
+	}
+
+	if(!strncmp(input, "PAY\r\n", 5)){
+		return TOKEN_PAY;
+	}
+
+	if(!strncmp(input, "PLU\r\n", 5)){
+		return TOKEN_PLU;
+	}
+
+	if(!strncmp(input, "STORNO\r\n", 8)){
+		return TOKEN_STORNO;
+	}
+
+	if(!strncmp(input, "CANCEL\r\n", 8)){
+		return TOKEN_CANCEL;
+	}
+
+	if(!strncmp(input, "ENTER\r\n", 7)){
+		return TOKEN_ENTER;
+	}
+
+	if(!strncmp(input, "BACKSPACE", 9)){
+		return TOKEN_BACKSPACE;
+	}
+
+	return TOKEN_INVALID;
+}
+
+int token_length(INPUT_TOKEN token){
+	switch(token){
+		case TOKEN_PAY:
+			return 3+2;
+		case TOKEN_PLU:
+			return 3+2;
+		case TOKEN_STORNO:
+			return 6+2;
+		case TOKEN_CANCEL:
+			return 6+2;
+		case TOKEN_ENTER:
+			return 5+2;
+		case TOKEN_BACKSPACE:
+			return 9;
+		case TOKEN_NUMERAL:
+			return 0;
+		default:
+			return 1;
+	}
+}
+
 int garfield_pos(CONFIG* cfg){
 	struct timeval tv;
 	fd_set readfds;
@@ -43,24 +98,14 @@ int garfield_pos(CONFIG* cfg){
 		for(i=0;i<cfg->connection_count;i++){
 			if(FD_ISSET(cfg->connections[i].fd, &readfds)){
 				bytes=recv(cfg->connections[i].fd, input_buffer+offset, sizeof(input_buffer)-offset, 0);
+				input_buffer[offset+bytes]=0;
 				if(cfg->verbosity>3){
 					printf("%d bytes of data from conn %d\n", bytes, i);
 				}
 				
-				//valid input sequences
-				//PAY\r\n
-				//PLU\r\n
-				//STORNO\r\n
-				//CANCEL\r\n
-				//ENTER\r\n
-				//BACKSPACE
-				//0123456789
-				//
-				//[0-9|BACKSPACE]*ENTER\r\n
-
-				//process until 'bytes' is done
-				//if stuff left, move to beginning and set offset accordingly
-				//else reset offset
+				//read tokens from input stream
+				//while numeric -> increment offset (limit!)
+				//if !numeric -> execute and reset
 			}
 		}
 	}

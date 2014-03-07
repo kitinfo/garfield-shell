@@ -18,6 +18,17 @@ typedef enum /*_LOGIC_STATE*/ {
 	STATE_PAY
 } POS_STATE;
 
+typedef enum /*_INPUT_TOKEN*/ {
+	TOKEN_INVALID,
+	TOKEN_PAY,
+	TOKEN_PLU,
+	TOKEN_STORNO,
+	TOKEN_CANCEL,
+	TOKEN_ENTER,
+	TOKEN_BACKSPACE,
+	TOKEN_NUMERAL
+} INPUT_TOKEN;
+
 typedef struct /*_CART_SNACK_ITEM*/ {
 	int snackid;
 	double price;
