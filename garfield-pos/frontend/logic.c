@@ -1,12 +1,10 @@
-#include <tokenizer.c>
+#include "tokenizer.c"
 
 int garfield_pos(CONFIG* cfg){
 	struct timeval tv;
 	fd_set readfds;
-	int fd_max, i, c, error, bytes, offset=0;
+	int fd_max, i, error, bytes, offset=0;
 	char input_buffer[INPUT_BUFFER_LENGTH];
-	INPUT_TOKEN token;
-	bool do_reset;
 
 	//set up initial state
 	POS.state=STATE_IDLE;
