@@ -87,8 +87,10 @@ int garfield_pos(CONFIG* cfg){
 					trans=transition(POS.state, token);
 					c+=tok_length(token);
 
-					printf("State %d, Token %s, Output state %d\n", POS.state, tok_dbg_string(token), trans.state);	
+					if(cfg->verbosity>3){
+						printf("(%s | %s) => %s %s\n", state_dbg_string(POS.state), tok_dbg_string(token), state_dbg_string(trans.state), action_dbg_string(trans.action));	
 
+					}
 					//apply results
 					POS.state=trans.state;
 					switch(trans.action){
@@ -111,9 +113,16 @@ int garfield_pos(CONFIG* cfg){
 						INPUT.data[c]=INPUT.parse_head[c];
 					}
 					INPUT.data[c]=0;
+					offset=c;
 				}
-
-				printf("Buffer after processing: \"%s\"\n", INPUT.data);
+				else{
+					offset=strlen(INPUT.data);
+				}
+				
+				if(cfg->verbosity>3){
+					printf("Buffer after processing: \"%s\"\n", INPUT.data);
+					printf("Current input offset is %d\n", offset);
+				}
 			}
 		}
 	}
