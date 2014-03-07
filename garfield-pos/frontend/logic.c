@@ -95,10 +95,8 @@ int garfield_pos(CONFIG* cfg){
 					}
 					fflush(stdout); //FIXME this is stupid
 
-					//TODO add token_head variable to minimize parsing overhead
-				
 					//display output	
-					if(POS.state!=trans.state){ //FIXME this might need to be called every transition
+					if(POS.state!=trans.state){
 						state_enter(trans.state);
 					}
 
