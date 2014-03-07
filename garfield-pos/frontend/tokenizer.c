@@ -55,6 +55,16 @@ int tok_length(INPUT_TOKEN token){
 	}
 }
 
+int tok_lasttype_offset(INPUT_TOKEN t){
+	int len=strlen(INPUT.parse_head);
+	for(;len>=0;len--){
+		if(tok_read(INPUT.parse_head+len)==t){
+			return len;
+		}
+	}
+	return -1;
+}
+
 const char* tok_dbg_string(INPUT_TOKEN t){
 	switch(t){
 		case TOKEN_INCOMPLETE:

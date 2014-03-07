@@ -4,7 +4,7 @@
 int garfield_pos(CONFIG* cfg){
 	struct timeval tv;
 	fd_set readfds;
-	int fd_max, i, c, error, bytes, offset=0;
+	int fd_max, i, c, error, bytes, offset=0, active_token=0, head_offset;
 	INPUT_TOKEN token;
 	TRANSITION_RESULT trans;
 
@@ -19,7 +19,9 @@ int garfield_pos(CONFIG* cfg){
 	INPUT.parse_head=INPUT.data;
 
 	//TODO send welcoming message to display
+	printf("\f");
 	printf(">GarfieldPOS v%s\n",VERSION);
+	state_enter(POS.state);
 
 	while(!POS.shutdown){	
 		tv.tv_sec=10;
@@ -73,7 +75,7 @@ int garfield_pos(CONFIG* cfg){
 				
 				INPUT.parse_head=INPUT.data;
 				token=TOKEN_INVALID;
-				c=0;
+				c=active_token;
 
 				while(INPUT.data[c]!=0){
 					//recognize token
@@ -91,6 +93,15 @@ int garfield_pos(CONFIG* cfg){
 						printf("(%s | %s) => %s %s\n", state_dbg_string(POS.state), tok_dbg_string(token), state_dbg_string(trans.state), action_dbg_string(trans.action));	
 
 					}
+					fflush(stdout); //FIXME this is stupid
+
+					//TODO add token_head variable to minimize parsing overhead
+				
+					//display output	
+					if(POS.state!=trans.state){ //FIXME this might need to be called every transition
+						state_enter(trans.state);
+					}
+
 					//apply results
 					POS.state=trans.state;
 					switch(trans.action){
@@ -101,14 +112,17 @@ int garfield_pos(CONFIG* cfg){
 							INPUT.parse_head=INPUT.data+c;
 							break;
 						case TOKEN_REMOVE:
-							//remove this and the last token.
-							//TODO
+							//TODO remove this and the last token
 							break;
 					}
 				}
 
+				//
+
 				//shift parse_head to 0
 				if(INPUT.parse_head!=INPUT.data){
+					head_offset=INPUT.parse_head-INPUT.data;
+					active_token=c-head_offset;
 					for(c=0;INPUT.parse_head[c]!=0;c++){
 						INPUT.data[c]=INPUT.parse_head[c];
 					}
@@ -116,10 +130,13 @@ int garfield_pos(CONFIG* cfg){
 					offset=c;
 				}
 				else{
+					head_offset=0;
 					offset=strlen(INPUT.data);
+					active_token=c;
 				}
 				
 				if(cfg->verbosity>3){
+					printf("parse_head offset is %d, active token is %d\n",head_offset, active_token);
 					printf("Buffer after processing: \"%s\"\n", INPUT.data);
 					printf("Current input offset is %d\n", offset);
 				}

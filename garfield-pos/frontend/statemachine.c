@@ -12,6 +12,7 @@ TRANSITION_RESULT state_idle(INPUT_TOKEN token){
 		default:
 			return res;
 	}
+	return res;
 }
 
 TRANSITION_RESULT state_barcode(INPUT_TOKEN token){
@@ -33,19 +34,24 @@ TRANSITION_RESULT state_barcode(INPUT_TOKEN token){
 		default:
 			return res;
 	}
+	return res;
 }
 
 TRANSITION_RESULT state_plu(INPUT_TOKEN token){
 	TRANSITION_RESULT res={STATE_PLU, TOKEN_DISCARD};
+	int last_numeric;
 
 	switch(token){
 		case TOKEN_BACKSPACE:
 			res.action=TOKEN_REMOVE;
 			break;
 		case TOKEN_NUMERAL:
+			last_numeric=tok_lasttype_offset(TOKEN_NUMERAL);
+			printf("%c",INPUT.parse_head[last_numeric]);
 			res.action=TOKEN_KEEP;
 			break;
 		case TOKEN_ENTER:
+			printf("\n");
 			//TODO resolve snack, add to cart
 			///no break here
 		case TOKEN_CANCEL:
@@ -54,6 +60,7 @@ TRANSITION_RESULT state_plu(INPUT_TOKEN token){
 		default:
 			return res;
 	}
+	return res;
 }
 
 TRANSITION_RESULT state_display(INPUT_TOKEN token){
@@ -79,19 +86,28 @@ TRANSITION_RESULT state_display(INPUT_TOKEN token){
 		default:
 			return res;
 	}
+	return res;
 }
 
 TRANSITION_RESULT state_storno(INPUT_TOKEN token){
 	TRANSITION_RESULT res={STATE_STORNO, TOKEN_DISCARD};
+	int last_numeral;
 
 	switch(token){
 		case TOKEN_NUMERAL:
+			last_numeral=tok_lasttype_offset(TOKEN_NUMERAL);
+			printf("%c",INPUT.parse_head[last_numeral]);
 			res.action=TOKEN_KEEP;
 			break;
 		case TOKEN_BACKSPACE:
 			res.action=TOKEN_REMOVE;
 			break;
+		case TOKEN_STORNO:
+			//TODO remove last item from cart
+			res.state=STATE_DISPLAY;
+			break;
 		case TOKEN_ENTER:
+			printf("\n");
 			//TODO resolve snack, remove from cart
 			//no break here
 		case TOKEN_CANCEL:
@@ -100,19 +116,24 @@ TRANSITION_RESULT state_storno(INPUT_TOKEN token){
 		default:
 			return res;
 	}
+	return res;
 }
 
 TRANSITION_RESULT state_pay(INPUT_TOKEN token){
 	TRANSITION_RESULT res={STATE_PAY, TOKEN_DISCARD};
+	int last_numeral;
 
 	switch(token){
 		case TOKEN_NUMERAL:
+			last_numeral=tok_lasttype_offset(TOKEN_NUMERAL);
+			printf("%c",INPUT.parse_head[last_numeral]);
 			res.action=TOKEN_KEEP;
 			break;
 		case TOKEN_BACKSPACE:
 			res.action=TOKEN_REMOVE;
 			break;
 		case TOKEN_ENTER:
+			printf("\n");
 			//TODO execute payment
 			res.state=STATE_IDLE;
 			break;
@@ -122,6 +143,7 @@ TRANSITION_RESULT state_pay(INPUT_TOKEN token){
 		default:
 			return res;
 	}
+	return res;
 }
 
 TRANSITION_RESULT transition(POS_STATE state, INPUT_TOKEN token){
@@ -141,6 +163,30 @@ TRANSITION_RESULT transition(POS_STATE state, INPUT_TOKEN token){
 	}
 	TRANSITION_RESULT def={STATE_IDLE, TOKEN_DISCARD};
 	return def;
+}
+
+void state_enter(POS_STATE s){
+	switch(s){
+		case STATE_IDLE:
+			printf("\f> ** GarfieldPOS ** \n");
+			break;
+		case STATE_BARCODE:
+			printf("\f>Scanning...\n");
+			break;
+		case STATE_PLU:
+			printf("\f>PLU: ");
+			break;
+		case STATE_DISPLAY:
+			printf("\f>Last item x.xx\r\n>Total:     x.xx \n");
+			break;
+		case STATE_STORNO:
+			printf("\f>Storno: ");
+			break;
+		case STATE_PAY:
+			printf("\f>Fachschafter: ");
+			break;
+	}
+	fflush(stdout);
 }
 
 const char* state_dbg_string(POS_STATE s){
