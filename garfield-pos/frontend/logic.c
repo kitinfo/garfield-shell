@@ -18,7 +18,7 @@ int garfield_pos(CONFIG* cfg){
 	memset(INPUT.data, 0, sizeof(INPUT.data));
 	INPUT.parse_head=INPUT.data;
 
-	//TODO send welcoming message to display
+	//FIXME handle output via tcp
 	printf("\f");
 	printf(">GarfieldPOS v%s\n",VERSION);
 	state_enter(POS.state);
@@ -86,7 +86,7 @@ int garfield_pos(CONFIG* cfg){
 					}
 
 					//do transition
-					trans=transition(POS.state, token);
+					trans=transition(POS.state, token, cfg);
 					c+=tok_length(token);
 
 					if(cfg->verbosity>3){
@@ -110,7 +110,7 @@ int garfield_pos(CONFIG* cfg){
 							INPUT.parse_head=INPUT.data+c;
 							break;
 						case TOKEN_REMOVE:
-							//TODO remove this and the last token
+							//remove this and the last token
 							e=tok_last_offset_from(INPUT.data, c-tok_length(token));
 							if(e<0){
 								e=0;
@@ -118,9 +118,6 @@ int garfield_pos(CONFIG* cfg){
 							if(tok_read(INPUT.data+e)!=TOKEN_NUMERAL&&tok_read(INPUT.data+e)!=TOKEN_BACKSPACE){
 								e+=tok_length(tok_read(INPUT.data+e));
 							}
-							//xxxxx123BSPi4
-							//       e   c
-							//removeloop
 							for(;INPUT.data[c]!=0;e++){
 								INPUT.data[e]=INPUT.data[c];
 							}

@@ -1,4 +1,4 @@
-TRANSITION_RESULT state_idle(INPUT_TOKEN token){
+TRANSITION_RESULT state_idle(INPUT_TOKEN token, CONFIG* cfg){
 	TRANSITION_RESULT res={STATE_IDLE, TOKEN_DISCARD};
 
 	switch(token){
@@ -15,12 +15,12 @@ TRANSITION_RESULT state_idle(INPUT_TOKEN token){
 	return res;
 }
 
-TRANSITION_RESULT state_barcode(INPUT_TOKEN token){
+TRANSITION_RESULT state_barcode(INPUT_TOKEN token, CONFIG* cfg){
 	TRANSITION_RESULT res={STATE_BARCODE, TOKEN_DISCARD};
 
 	switch(token){
 		case TOKEN_BACKSPACE:
-			//TODO check if last token was numeral
+			printf("\b");
 			res.action=TOKEN_REMOVE;
 			break;
 		case TOKEN_NUMERAL:
@@ -38,13 +38,13 @@ TRANSITION_RESULT state_barcode(INPUT_TOKEN token){
 	return res;
 }
 
-TRANSITION_RESULT state_plu(INPUT_TOKEN token){
+TRANSITION_RESULT state_plu(INPUT_TOKEN token, CONFIG* cfg){
 	TRANSITION_RESULT res={STATE_PLU, TOKEN_DISCARD};
 	int last_numeric;
 
 	switch(token){
 		case TOKEN_BACKSPACE:
-			//TODO check if last token is numeral
+			printf("\b");
 			res.action=TOKEN_REMOVE;
 			break;
 		case TOKEN_NUMERAL:
@@ -65,7 +65,7 @@ TRANSITION_RESULT state_plu(INPUT_TOKEN token){
 	return res;
 }
 
-TRANSITION_RESULT state_display(INPUT_TOKEN token){
+TRANSITION_RESULT state_display(INPUT_TOKEN token, CONFIG* cfg){
 	TRANSITION_RESULT res={STATE_DISPLAY, TOKEN_DISCARD};
 
 	switch(token){
@@ -91,7 +91,7 @@ TRANSITION_RESULT state_display(INPUT_TOKEN token){
 	return res;
 }
 
-TRANSITION_RESULT state_storno(INPUT_TOKEN token){
+TRANSITION_RESULT state_storno(INPUT_TOKEN token, CONFIG* cfg){
 	TRANSITION_RESULT res={STATE_STORNO, TOKEN_DISCARD};
 	int last_numeral;
 
@@ -102,7 +102,7 @@ TRANSITION_RESULT state_storno(INPUT_TOKEN token){
 			res.action=TOKEN_KEEP;
 			break;
 		case TOKEN_BACKSPACE:
-			//TODO check if last token if numeral
+			printf("\b");
 			res.action=TOKEN_REMOVE;
 			break;
 		case TOKEN_STORNO:
@@ -122,7 +122,7 @@ TRANSITION_RESULT state_storno(INPUT_TOKEN token){
 	return res;
 }
 
-TRANSITION_RESULT state_pay(INPUT_TOKEN token){
+TRANSITION_RESULT state_pay(INPUT_TOKEN token, CONFIG* cfg){
 	TRANSITION_RESULT res={STATE_PAY, TOKEN_DISCARD};
 	int last_numeral;
 
@@ -133,7 +133,7 @@ TRANSITION_RESULT state_pay(INPUT_TOKEN token){
 			res.action=TOKEN_KEEP;
 			break;
 		case TOKEN_BACKSPACE:
-			//TODO check if last token is numeral
+			printf("\b");
 			res.action=TOKEN_REMOVE;
 			break;
 		case TOKEN_ENTER:
@@ -150,20 +150,20 @@ TRANSITION_RESULT state_pay(INPUT_TOKEN token){
 	return res;
 }
 
-TRANSITION_RESULT transition(POS_STATE state, INPUT_TOKEN token){
+TRANSITION_RESULT transition(POS_STATE state, INPUT_TOKEN token, CONFIG* cfg){
 	switch(state){
 		case STATE_IDLE:
-			return state_idle(token);
+			return state_idle(token, cfg);
 		case STATE_BARCODE:
-			return state_barcode(token);
+			return state_barcode(token, cfg);
 		case STATE_PLU:
-			return state_plu(token);
+			return state_plu(token, cfg);
 		case STATE_DISPLAY:
-			return state_display(token);
+			return state_display(token, cfg);
 		case STATE_STORNO:
-			return state_storno(token);
+			return state_storno(token, cfg);
 		case STATE_PAY:
-			return state_pay(token);
+			return state_pay(token, cfg);
 	}
 	TRANSITION_RESULT def={STATE_IDLE, TOKEN_DISCARD};
 	return def;

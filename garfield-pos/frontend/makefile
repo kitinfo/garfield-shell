@@ -11,3 +11,6 @@ all:
 
 ldebug:
 	valgrind --leak-check=full ./garfield-pos -vvvv -f local.conf
+
+debug:
+	valgrind --leak-check=full --show-reachable=yes ./garfield-pos -vvvv -f pos.conf

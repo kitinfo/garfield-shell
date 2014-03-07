@@ -83,5 +83,4 @@ struct {
 struct {
 	char data[INPUT_BUFFER_LENGTH];
 	char* parse_head;
-//	char* data_append;
 } INPUT;

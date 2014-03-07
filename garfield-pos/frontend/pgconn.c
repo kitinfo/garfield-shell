@@ -22,6 +22,7 @@ bool pq_connect(DATABASE* cfg){
 
 void pq_close(DATABASE* db){
 	if(db->conn){
+		printf("Closing database connection\n");
 		PQfinish(db->conn);
 		db->conn=NULL;
 	}
