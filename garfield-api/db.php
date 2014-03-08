@@ -55,10 +55,10 @@ if (isset($user) && !empty($user) && isset($pass) && !empty($pass)) {
 
     if (isset($find) && !empty($find)) {
 
-	$snacks = split(";", $find);
+	$snacks = explode(";", $find);
 	$retVal = querySnacksForTerms($db, $snacks);
     } else if (isset($buy) && !empty($buy)) {
-	$snacks = split(";", $buy);
+	$snacks = explode(";", $buy);
 	if (isset($userTag) && !empty($userTag)) {
 	    $retVal = buySnacks($db, $userTag, $snacks);
 	} else {
