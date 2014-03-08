@@ -10,6 +10,28 @@ var findData = new Array();
 var cartData = new Array();
 
 document.getElementById("logout").setAttribute('href', getURLPath("d@"));
+readCookie();
+
+function readCookie() {
+
+	if (document.cookie) {
+		var cookie = JSON.parse(document.cookie);
+		
+		document.getElementById("option" + cookie.place).selected = "selected";
+	}
+}
+
+function setCookie() {
+
+	var place = document.getElementById("placeSelect").value;
+
+	var saveData = {
+		place: place
+	}
+
+	document.cookie = JSON.stringify(saveData);
+}
+
 
 /**
  * search on database and inputs this in the table

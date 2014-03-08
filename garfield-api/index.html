@@ -18,6 +18,7 @@ and open the template in the editor.
 	<nav>
 	    <a href="index.html">Garfield Snack</a>
 	    <a href="userlog.html">Log</a>
+	    <a href="#" onclick="setCookie()">Save Cookie</a>
 	    <a id="logout" href="">Logout</a>
 	</nav>
 	<div id="status"></div>
@@ -33,8 +34,8 @@ and open the template in the editor.
 
 		<label for="findString">Suche: </label><input type='text' list="findDataList" name='findString' id='findString'>
 		<select id="placeSelect">
-			<option>FSI</option>
-			<option>FSM</option>
+			<option id="optionFSI">FSI</option>
+			<option id="optionFSM">FSM</option>
 		</select>
 		<input type='submit' name='search' value='Suchen'>
 		<datalist id="findDataList"></datalist>
