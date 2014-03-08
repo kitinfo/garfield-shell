@@ -30,7 +30,7 @@ $dbname = "garfield";
 $host = "fsmi-db.fsmi.uni-karlsruhe.de";
 $port = 5432;
 
-if (isset($user) && !empty($user)) {
+if (isset($user) && !empty($user) && isset($pass) && !empty($pass)) {
 
     $retVal['status'] = array();
     $retVal['status'][] = "no input (or buy id=0)";
@@ -293,14 +293,14 @@ function getUserLog($db, $limit) {
 	    . "JOIN garfield.snack_sales_log "
 	    . "ON (snack_user_buy_log.snack_sales_log_id = snack_sales_log.snack_sales_log_id) "
 	    . "JOIN garfield.snacks ON (snack_sales_log.snack_id = snacks.snack_id) "
-	    . "UNION SELECT to_char(user_trans_log_timestamp, 'YYYY-MM-DD HH24:MI:SS') AS timestamp, "
+	    . "UNION ALL SELECT to_char(user_trans_log_timestamp, 'YYYY-MM-DD HH24:MI:SS') AS timestamp, "
 	    . "user_trans_log_performed_by_user_id AS pid, "
 	    . "user_to_user_trans_log_description AS desc, "
 	    . "user_trans_log_quantity AS balance, user_trans_log.type_id AS type "
 	    . "FROM garfield.user_trans_log "
 	    . "JOIN garfield.user_to_user_trans_log "
 	    . "ON (user_trans_log.user_trans_log_id = user_trans_log_target_id) "
-	    . "UNION SELECT to_char(user_trans_log_timestamp, 'YYYY-MM-DD HH24:MI:SS') AS timestamp, "
+	    . "UNION ALL SELECT to_char(user_trans_log_timestamp, 'YYYY-MM-DD HH24:MI:SS') AS timestamp, "
 	    . "user_trans_log_performed_by_user_id AS pid, "
 	    . "'' AS desc, user_trans_log_quantity AS balance, "
 	    . "user_trans_log.type_id AS type "

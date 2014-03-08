@@ -1,6 +1,15 @@
-var url = "db.php?";
+function getURLPath(user) {
+	var path = location.pathname.split('/');
+	path.pop();
+	path = location.protocol + "//" + user + location.host + path.join("/") + "/db.php?";
+	return path;
+}
+
+var url = getURLPath("");
 var findData = new Array();
 var cartData = new Array();
+
+document.getElementById("logout").setAttribute('href', getURLPath("d@"));
 
 /**
  * search on database and inputs this in the table
