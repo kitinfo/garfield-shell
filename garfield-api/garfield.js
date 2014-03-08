@@ -17,8 +17,9 @@ document.getElementById("logout").setAttribute('href', getURLPath("d@"));
 function searchRequest() {
 
     var search = document.getElementById('findString').value;
+    var place = document.getElementById('placeSelect').selectedIndex + 1;
 
-    var request = syncGet(url + "find=" + search);
+    var request = syncGet(url + "find=" + search + '&place=' + place);
 
     var response = JSON.parse(request.response, true);
 

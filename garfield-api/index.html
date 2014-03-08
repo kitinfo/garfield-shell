@@ -32,8 +32,11 @@ and open the template in the editor.
 	    <form action='javascript:searchRequest()'>
 
 		<label for="findString">Suche: </label><input type='text' list="findDataList" name='findString' id='findString'>
+		<select id="placeSelect">
+			<option>FSI</option>
+			<option>FSM</option>
+		</select>
 		<input type='submit' name='search' value='Suchen'>
-
 		<datalist id="findDataList"></datalist>
 	    </form>
 	</div>
