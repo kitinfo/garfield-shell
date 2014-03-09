@@ -17,6 +17,43 @@ void db_conn_end(CONFIG* cfg){
 	}
 }
 
+bool db_buy_snack(CONFIG* cfg, GARFIELD_USER user, CART_ITEM snack){
+	static const char* BUY_SINGLE_SNACK="SELECT garfield.snack_buy($1::integer, $2::integer)";
+	bool rv=false;
+
+	if(!db_conn_begin(cfg)){
+		if(cfg->verbosity>1){
+			printf("Failed to begin database communication\n");
+		}
+		return false;
+	}
+
+	int user_id=htonl(user.account_no);
+	int snack_id=htonl(snack.id);
+
+	const char* values[2]={(char*) &user_id, (char*) &snack_id};
+	int lengths[2]={sizeof(user_id), sizeof(snack_id)};
+	int binary[2]={1,1};
+
+	PGresult* result=PQexecParams(cfg->db.conn, BUY_SINGLE_SNACK, 2, NULL, values, lengths, binary, 0);
+
+	if(result){
+		if(PQresultStatus(result)==PGRES_TUPLES_OK){
+			if(cfg->verbosity>3){
+				printf("Successfully bought snack %d\n", snack.id);
+			}
+			rv=true;
+		}
+		else if(cfg->verbosity>2){
+			printf("Failed to buy snack %d (%s)\n", snack.id, PQresultErrorMessage(result));
+		}
+		PQclear(result);
+	}
+
+	db_conn_end(cfg);
+	return rv;
+}
+
 GARFIELD_USER db_query_user(CONFIG* cfg, int unixid){
 	static const char* QUERY_USER_BY_UNIXID="SELECT print_account_no AS unixid, \
 							users.user_id AS accountno, \
@@ -25,7 +62,10 @@ GARFIELD_USER db_query_user(CONFIG* cfg, int unixid){
 						JOIN garfield.users \
 							ON print_accounts.user_id=users.user_id \
 						WHERE print_account_no=$1::integer";
+
+	static const char* QUERY_ACCOUNT_BY_USERNAME="SELECT user_id FROM garfield.users WHERE user_name = $1";
 	GARFIELD_USER rv;
+	int uid=unixid;
 	rv.unixid=-1;
 
 	if(!db_conn_begin(cfg)){
@@ -65,6 +105,39 @@ GARFIELD_USER db_query_user(CONFIG* cfg, int unixid){
 		}
 		PQclear(result);
 	}
+
+	#ifdef USER_LOOKUP_FALLBACK_ENABLED
+		if(rv.unixid<=0){
+			struct passwd* info=getpwuid(uid);
+			if(info){
+				if(cfg->verbosity>2){
+					printf("User lookup fallback found match\n");
+				}
+
+				strncpy(rv.name, info->pw_name, MAX_USERNAME_LENGTH);
+				//TODO get garfield account no
+				PGresult* result=PQexecParams(cfg->db.conn, QUERY_ACCOUNT_BY_USERNAME, 1, NULL, (const char**)&(info->pw_name), NULL, NULL, 0);
+				if(result){
+					if(PQresultStatus(result)==PGRES_TUPLES_OK){
+						if(PQntuples(result)==1){
+							rv.unixid=uid;
+							rv.account_no=strtoul(PQgetvalue(result, 0, 0), NULL, 10);
+							if(cfg->verbosity>2){
+								printf("Fallback resolved user %s\n", rv.name);
+							}
+						}
+						else if(cfg->verbosity>2){
+							printf("Fallback resolved to %d rows\n", PQntuples(result));
+						}
+					}
+					else if(cfg->verbosity>1){
+						printf("Fallback query failed\n");
+					}
+					PQclear(result);
+				}
+			}
+		}
+	#endif
 
 	db_conn_end(cfg);
 	return rv;

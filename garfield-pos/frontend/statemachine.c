@@ -178,7 +178,7 @@ TRANSITION_RESULT state_storno(INPUT_TOKEN token, CONFIG* cfg){
 
 TRANSITION_RESULT state_pay(INPUT_TOKEN token, CONFIG* cfg){
 	TRANSITION_RESULT res={STATE_PAY, TOKEN_DISCARD};
-	int last_numeral;
+	int last_numeral, i;
 	GARFIELD_USER user;
 
 	switch(token){
@@ -203,7 +203,14 @@ TRANSITION_RESULT state_pay(INPUT_TOKEN token, CONFIG* cfg){
 				break;
 			}
 
-			//TODO buy snacks
+			//buy snacks
+			for(i=0;i<POS.items;i++){
+				if(!db_buy_snack(cfg, user, POS.cart[i])){
+					if(cfg->verbosity>0){
+						printf("Failed to buy snack %d\n", POS.cart[i].id);
+					}
+				}
+			}
 
 			printf(">%s    -%.2f\n", user.name, cart_get_total());
 			portable_sleep(1000);

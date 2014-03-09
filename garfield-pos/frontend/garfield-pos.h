@@ -4,6 +4,12 @@
 #define PGRES_SSLMODE "require"
 #define INPUT_BUFFER_LENGTH 128
 #define MAX_USERNAME_LENGTH 128
+#define USER_LOOKUP_FALLBACK_ENABLED
+
+#ifdef USER_LOOKUP_FALLBACK_ENABLED
+	#include <sys/types.h>
+	#include <pwd.h>
+#endif
 
 typedef enum /*_CONNECTION_TYPE*/ {
 	CONN_INPUT,
