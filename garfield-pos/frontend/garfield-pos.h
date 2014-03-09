@@ -3,6 +3,7 @@
 #define MAX_PASSWORD_LENGTH 128
 #define PGRES_SSLMODE "require"
 #define INPUT_BUFFER_LENGTH 128
+#define MAX_USERNAME_LENGTH 128
 
 typedef enum /*_CONNECTION_TYPE*/ {
 	CONN_INPUT,
@@ -45,6 +46,12 @@ typedef struct /*_CART_SNACK_ITEM*/ {
 	int id;
 	double price;
 } CART_ITEM;
+
+typedef struct /*_GARFIELD_USER*/ {
+	int unixid;
+	int account_no;
+	char name[MAX_USERNAME_LENGTH+1];
+} GARFIELD_USER;
 
 typedef struct /*_CONNECTION_SPEC*/ {
 	char* host;

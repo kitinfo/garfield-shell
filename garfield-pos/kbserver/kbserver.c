@@ -147,6 +147,9 @@ int main(int argc, char** argv){
 							if(client_fds[i]>0){
 								if(map_target){
 									bytes=send(client_fds[i], map_target, strlen(map_target), 0);
+									if(bytes<strlen(map_target)&&cfg.verbosity>0){
+										printf("Incomplete send\n");
+									}
 								}
 								else{
 									bytes=send(client_fds[i], &(ev_data.code), sizeof(ev_data.code), 0);

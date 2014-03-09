@@ -39,7 +39,7 @@ TRANSITION_RESULT state_barcode(INPUT_TOKEN token, CONFIG* cfg){
 			
 			if(item.id<=0){
 				printf(">Not recognized\n");
-			//	portable_sleep(500);
+				portable_sleep(1000);
 			}
 
 			cart_store(item, cfg);
@@ -74,6 +74,11 @@ TRANSITION_RESULT state_plu(INPUT_TOKEN token, CONFIG* cfg){
 				printf("Returned item ID: %d, Price: %f\n", item.id, item.price);
 			}
 			
+			if(item.id<=0){
+				printf(">Not recognized\n");
+				portable_sleep(1000);
+			}
+
 			cart_store(item, cfg);
 			
 			///no break here
@@ -115,7 +120,8 @@ TRANSITION_RESULT state_display(INPUT_TOKEN token, CONFIG* cfg){
 
 TRANSITION_RESULT state_storno(INPUT_TOKEN token, CONFIG* cfg){
 	TRANSITION_RESULT res={STATE_STORNO, TOKEN_DISCARD};
-	int last_numeral;
+	int last_numeral, i;
+	CART_ITEM item;
 
 	switch(token){
 		case TOKEN_NUMERAL:
@@ -128,15 +134,38 @@ TRANSITION_RESULT state_storno(INPUT_TOKEN token, CONFIG* cfg){
 			res.action=TOKEN_REMOVE;
 			break;
 		case TOKEN_STORNO:
-			//TODO remove last item from cart
+			//remove last item from cart
 			if(POS.items>0){
 				POS.items--;
 			}
 			res.state=STATE_DISPLAY;
 			break;
 		case TOKEN_ENTER:
-			printf("\n");
-			//TODO resolve snack, remove from cart
+			//resolve snack
+			item=db_query_item(cfg, INPUT.parse_head);
+			if(cfg->verbosity>1){
+				printf("Returned item ID: %d, Price: %f\n", item.id, item.price);
+			}
+			
+			if(item.id<=0){
+				printf(">Not recognized\n");
+				portable_sleep(1000);
+			}
+			else{
+				for(i=0;i<POS.items;i++){
+					if(POS.cart[i].id==item.id){
+						if(cfg->verbosity>2){
+							printf("Item to be removed found at cart position %d\n", i);
+						}
+						for(;i<POS.items-1;i++){
+							POS.cart[i]=POS.cart[i+1];
+						}
+						POS.items--;
+						break;
+					}
+				}
+			}
+
 			//no break here
 		case TOKEN_CANCEL:
 			res.state=STATE_DISPLAY;
@@ -150,6 +179,7 @@ TRANSITION_RESULT state_storno(INPUT_TOKEN token, CONFIG* cfg){
 TRANSITION_RESULT state_pay(INPUT_TOKEN token, CONFIG* cfg){
 	TRANSITION_RESULT res={STATE_PAY, TOKEN_DISCARD};
 	int last_numeral;
+	GARFIELD_USER user;
 
 	switch(token){
 		case TOKEN_NUMERAL:
@@ -163,7 +193,22 @@ TRANSITION_RESULT state_pay(INPUT_TOKEN token, CONFIG* cfg){
 			break;
 		case TOKEN_ENTER:
 			printf("\n");
-			//TODO execute payment
+			user.unixid=strtoul(INPUT.parse_head, NULL, 10);
+			user=db_query_user(cfg, user.unixid);
+
+			if(user.unixid<=0){
+				printf(">Not recognized\n");
+				portable_sleep(1000);
+				res.state=STATE_DISPLAY;
+				break;
+			}
+
+			//TODO buy snacks
+
+			printf(">%s    -%.2f\n", user.name, cart_get_total());
+			portable_sleep(1000);
+
+			POS.items=0;
 			res.state=STATE_IDLE;
 			break;
 		case TOKEN_CANCEL:
@@ -212,7 +257,7 @@ void state_enter(POS_STATE s){
 			printf("\f>Storno: ");
 			break;
 		case STATE_PAY:
-			printf("\f>Fachschafter: ");
+			printf("\f>UID: ");
 			break;
 	}
 	fflush(stdout);

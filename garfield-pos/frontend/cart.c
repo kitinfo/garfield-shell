@@ -44,7 +44,9 @@ float cart_get_total(){
 	int i;
 	float sum=0.f;
 	for(i=0;i<POS.items;i++){
-		sum+=POS.cart[i].price;
+		if(POS.cart[i].id>0){
+			sum+=POS.cart[i].price;
+		}
 	}
 	return sum;
 }

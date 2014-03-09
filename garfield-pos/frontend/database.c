@@ -17,6 +17,59 @@ void db_conn_end(CONFIG* cfg){
 	}
 }
 
+GARFIELD_USER db_query_user(CONFIG* cfg, int unixid){
+	static const char* QUERY_USER_BY_UNIXID="SELECT print_account_no AS unixid, \
+							users.user_id AS accountno, \
+							user_name \
+						FROM garfield.print_accounts \
+						JOIN garfield.users \
+							ON print_accounts.user_id=users.user_id \
+						WHERE print_account_no=$1::integer";
+	GARFIELD_USER rv;
+	rv.unixid=-1;
+
+	if(!db_conn_begin(cfg)){
+		if(cfg->verbosity>1){
+			printf("Failed to begin database communication\n");
+		}
+		return rv;
+	}
+
+	if(cfg->verbosity>2){
+		printf("Searching for user with id %d\n", unixid);
+	}
+
+	unixid=htonl(unixid);
+	const char* values[1]={(char*)&unixid};
+	int lengths[1]={sizeof(unixid)};
+	int binary[1]={1};
+
+	PGresult* result=PQexecParams(cfg->db.conn, QUERY_USER_BY_UNIXID, 1, NULL, values, lengths, binary, 0);
+
+	if(result){
+		if(PQresultStatus(result)==PGRES_TUPLES_OK){
+			if(PQntuples(result)==1){
+				rv.unixid=strtoul(PQgetvalue(result, 0, 0), NULL, 10);
+				rv.account_no=strtoul(PQgetvalue(result, 0, 1), NULL, 10);
+				strncpy(rv.name, PQgetvalue(result, 0, 2), MAX_USERNAME_LENGTH);
+				if(cfg->verbosity>2){
+					printf("Resolved to user %s\n", rv.name);
+				}
+			}
+			else if(cfg->verbosity>2){
+				printf("Query returned %d matches\n", PQntuples(result));
+			}
+		}
+		else if(cfg->verbosity>1){
+			printf("User query failed\n");
+		}
+		PQclear(result);
+	}
+
+	db_conn_end(cfg);
+	return rv;
+}
+
 CART_ITEM db_query_item(CONFIG* cfg, char* barcode){
 	static const char* QUERY_SNACK="SELECT \
 		snacks.snack_id, snack_name, snack_price \
