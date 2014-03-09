@@ -1,3 +1,16 @@
+bool tok_match_prefix(char* stream, char* token){
+	int i, len=strlen(token);
+	for(i=0;i<len;i++){
+		if(stream[i]==0){
+			return true;
+		}
+		if(stream[i]!=token[i]){
+			return false;
+		}
+	}
+	return true;
+}
+
 INPUT_TOKEN tok_read(char* input){
 	if(isdigit(input[0])){
 		return TOKEN_NUMERAL;
@@ -27,7 +40,29 @@ INPUT_TOKEN tok_read(char* input){
 		return TOKEN_BACKSPACE;
 	}
 
-	//TODO check for incomplete matches
+	if(tok_match_prefix(input, "PAY\r\n")){
+		return TOKEN_INCOMPLETE;
+	}
+
+	if(tok_match_prefix(input, "PLU\r\n")){
+		return TOKEN_INCOMPLETE;
+	}
+
+	if(tok_match_prefix(input, "STORNO\r\n")){
+		return TOKEN_INCOMPLETE;
+	}
+
+	if(tok_match_prefix(input, "CANCEL\r\n")){
+		return TOKEN_INCOMPLETE;
+	}
+
+	if(tok_match_prefix(input, "ENTER\r\n")){
+		return TOKEN_INCOMPLETE;
+	}
+
+	if(tok_match_prefix(input, "BACKSPACE")){
+		return TOKEN_INCOMPLETE;
+	}
 
 	return TOKEN_INVALID;
 }
