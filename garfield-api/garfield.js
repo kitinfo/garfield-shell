@@ -10,6 +10,93 @@ var findData = new Array();
 var cartData = new Array();
 
 document.getElementById("logout").setAttribute('href', getURLPath("d@"));
+readCookie();
+
+function readCookie() {
+
+	if (document.cookie) {
+		var cookie = JSON.parse(document.cookie);
+		
+		document.getElementById("option" + cookie.place).selected = "selected";
+	}
+}
+
+/**
+ * set place in cookie
+ */
+function setCookie() {
+
+	var place = document.getElementById("placeSelect").value;
+	
+	var cart = new Array();
+	
+	if (document.cookie) {
+		var cart = JSON.parse(document.cookie).cart;
+	}
+
+	var saveData = {
+		place: place,
+		cart: cart
+	}
+
+	document.cookie = JSON.stringify(saveData);
+}
+
+/**
+ * load cart from cookie
+ */
+function loadCart() {
+
+	if (document.cookie) {
+	
+		var cookie = JSON.parse(document.cookie);
+
+		clearCart();
+		cookie.cart.forEach(function(val) {
+		
+			if (searchIDRequest(val.id)) {
+				document.getElementById('cartCounter' + val.id).value = val.counter;
+			}
+		});
+		
+		calcCartPrice();
+	}
+
+}
+
+/**
+ * save the cart in cookie
+ */
+function saveCart() {
+
+	var place;
+
+	if (document.cookie) {
+	
+		place = JSON.parse(document.cookie).place;
+	} else {
+		place = document.getElementById('placeSelect').value;
+	}
+	
+	var cart = new Array();
+	
+	cartData.forEach(function(val) {
+	
+		val.counter = document.getElementById('cartCounter' + val.snack_id).value;
+	
+		cart.push({
+			id: val.snack_id,
+			counter: val.counter
+		});
+	});
+	
+	var saveData = {
+		place: place,
+		cart: cart
+	}
+	document.cookie = JSON.stringify(saveData);
+}
+
 
 /**
  * search on database and inputs this in the table
@@ -17,8 +104,9 @@ document.getElementById("logout").setAttribute('href', getURLPath("d@"));
 function searchRequest() {
 
     var search = document.getElementById('findString').value;
+    var place = document.getElementById('placeSelect').selectedIndex + 1;
 
-    var request = syncGet(url + "find=" + search);
+    var request = syncGet(url + "find=" + search + '&place=' + place);
 
     var response = JSON.parse(request.response, true);
 
@@ -84,12 +172,13 @@ function searchIDRequest(id) {
 
     if (response.find.length < 1) {
 	document.getElementById('status').textContent = "No Entry found!";
-	return;
+	return false;
 	}
 	var val = response.find[0];
     }
 
     addSingleToCart(val, 1);
+    return true;
 }
 
 /**
@@ -342,6 +431,7 @@ function buyCart() {
 function clearCart() {
     document.getElementById('cartTableBody').textContent = "";
     cartData = new Array();
+    calcCartPrice();
 }
 
 function addID() {

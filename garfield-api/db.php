@@ -55,10 +55,10 @@ if (isset($user) && !empty($user) && isset($pass) && !empty($pass)) {
 
     if (isset($find) && !empty($find)) {
 
-	$snacks = split(";", $find);
+	$snacks = explode(";", $find);
 	$retVal = querySnacksForTerms($db, $snacks);
     } else if (isset($buy) && !empty($buy)) {
-	$snacks = split(";", $buy);
+	$snacks = explode(";", $buy);
 	if (isset($userTag) && !empty($userTag)) {
 	    $retVal = buySnacks($db, $userTag, $snacks);
 	} else {
@@ -144,14 +144,19 @@ function querySnacksForTerms($db, $snacks) {
 
     $retVal['find'] = array();
 
-
     $findQuery = "SELECT snacks.snack_id, snack_name, snack_price FROM garfield.snacks "
 	    . "JOIN garfield.snacks_available ON snacks_available.snack_id=snacks.snack_id WHERE snack_available "
 	    . "AND (snack_name ILIKE :p1 OR snack_barcode LIKE :p2)";
+	$place = $_GET['place'];
+	if (isset($place) && !empty($place)) {
+		$findQuery .= " AND snacks.location_id = :loc";
+		$placeCor = true;
+	}
 
     $stm = $db->prepare($findQuery);
 
     foreach ($snacks as $snack) {
+    
 	$retVal2 = querySnacks($stm, $snack);
 
 	foreach ($retVal2['status'] as $val) {
@@ -171,10 +176,20 @@ function querySnacks($stm, $snack) {
 
     $snack = "%" . $snack . "%";
 
-	$retVal['status'][] = $stm->execute(array(
-	':p1' => $snack,
-	    ':p2' => $snack
-	));
+	$place = $_GET['place'];
+	if (isset($place) && !empty($place)) {
+		$values = array(
+			':p1' => $snack,
+	    		':p2' => $snack,
+	    		':loc' => $place
+		);
+	} else {
+		$values = array(
+			':p1' => $snack,
+	    		':p2' => $snack
+		);
+	}
+	$retVal['status'][] = $stm->execute($values);
 
 	$retVal['find'] = $stm->fetchAll(PDO::FETCH_ASSOC);
     $stm->closeCursor();
@@ -259,9 +274,12 @@ function getData($stm, $id) {
 
 function findID($db, $id) {
 
-    $findQuery = "SELECT snacks.snack_id, snack_name, snack_price FROM garfield.snacks "
+	$place = $_GET['place'];
+
+		$findQuery = "SELECT snacks.snack_id, snack_name, snack_price FROM garfield.snacks "
 	    . "JOIN garfield.snacks_available ON snacks_available.snack_id=snacks.snack_id WHERE snack_available "
 	    . "AND snacks.snack_id = :id";
+
 
     try {
 
