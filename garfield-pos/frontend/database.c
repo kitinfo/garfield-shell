@@ -115,7 +115,6 @@ GARFIELD_USER db_query_user(CONFIG* cfg, int unixid){
 				}
 
 				strncpy(rv.name, info->pw_name, MAX_USERNAME_LENGTH);
-				//TODO get garfield account no
 				PGresult* result=PQexecParams(cfg->db.conn, QUERY_ACCOUNT_BY_USERNAME, 1, NULL, (const char**)&(info->pw_name), NULL, NULL, 0);
 				if(result){
 					if(PQresultStatus(result)==PGRES_TUPLES_OK){
