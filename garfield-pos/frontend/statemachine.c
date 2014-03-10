@@ -75,7 +75,7 @@ TRANSITION_RESULT state_plu(INPUT_TOKEN token, CONFIG* cfg){
 			}
 			
 			if(item.id<=0){
-				printf(">Not recognized\n");
+				printf("\r\n>Not recognized\n");
 				portable_sleep(1000);
 			}
 
@@ -148,7 +148,7 @@ TRANSITION_RESULT state_storno(INPUT_TOKEN token, CONFIG* cfg){
 			}
 			
 			if(item.id<=0){
-				printf(">Not recognized\n");
+				printf("\r\n>Not recognized\n");
 				portable_sleep(1000);
 			}
 			else{
