@@ -31,9 +31,11 @@ int garfield_pos(CONFIG* cfg){
 		fd_max=-1;
 		FD_ZERO(&readfds);
 		for(i=0;i<cfg->connection_count;i++){
-			FD_SET(cfg->connections[i].fd, &readfds);
-			if(cfg->connections[i].fd>fd_max){
-				fd_max=cfg->connections[i].fd;
+			if(cfg->connections[i].fd>0){
+				FD_SET(cfg->connections[i].fd, &readfds);
+				if(cfg->connections[i].fd>fd_max){
+					fd_max=cfg->connections[i].fd;
+				}
 			}
 		}
 
@@ -49,7 +51,7 @@ int garfield_pos(CONFIG* cfg){
 		}
 
 		for(i=0;i<cfg->connection_count;i++){
-			if(FD_ISSET(cfg->connections[i].fd, &readfds)){
+			if(cfg->connections[i].fd>0&&FD_ISSET(cfg->connections[i].fd, &readfds)){
 				bytes=recv(cfg->connections[i].fd, INPUT.data+offset, sizeof(INPUT.data)-offset, 0);
 				
 				if(bytes<0){
@@ -57,8 +59,10 @@ int garfield_pos(CONFIG* cfg){
 				}
 
 				if(bytes==0){
-					printf("Connection %d lost, reconnecting...\n", i);
-					//TODO reconnect
+					if(cfg->verbosity>1){
+						printf("Connection %d lost, reconnecting with next iteration\n", i);
+					}
+					cfg->connections[i].fd=-1;
 					continue;
 				}
 
@@ -148,6 +152,13 @@ int garfield_pos(CONFIG* cfg){
 					printf("Buffer after processing: \"%s\"\n", INPUT.data);
 					printf("Current input offset is %d\n", offset);
 				}
+			}
+			else if(cfg->connections[i].fd<0){
+				//reconnect lost connection
+				if(cfg->verbosity>2){
+					fprintf(stderr, "Reconnecting connections %d\n",i);
+				}
+				cfg->connections[i].fd=tcp_connect(cfg->connections[i].host, cfg->connections[i].port);
 			}
 		}
 	}
