@@ -102,6 +102,7 @@ int garfield_pos(CONFIG* cfg){
 					if(POS.state!=trans.state){
 						state_enter(trans.state);
 					}
+					fflush(stdout);
 
 					//apply results
 					POS.state=trans.state;
