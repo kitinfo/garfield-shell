@@ -32,7 +32,7 @@ int main(int argc, char** argv){
 
 	//read config file
 	if(!cfg.cfg_file){
-		printf("No config file supplied\n");
+		fprintf(stderr, "No config file supplied\n");
 		return -1;
 	}
 	if(!cfg_read(&cfg, cfg.cfg_file)){
@@ -44,7 +44,7 @@ int main(int argc, char** argv){
 	if(!cfg.db.use_pgpass){
 		cfg.db.pass=calloc(sizeof(char),MAX_PASSWORD_LENGTH+1);
 		if(!cfg.db.pass){
-			printf("Failed to allocate memory\n");
+			fprintf(stderr, "Failed to allocate memory\n");
 			cfg_free(&cfg);
 			return -1;
 		}
@@ -64,8 +64,8 @@ int main(int argc, char** argv){
 			cfg_free(&cfg);
 			return -1;
 		}
-		if(cfg.verbosity>1){
-			printf("Database connection established\n");	
+		if(cfg.verbosity>2){
+			fprintf(stderr, "Database connection established\n");	
 		}
 	}
 

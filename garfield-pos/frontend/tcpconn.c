@@ -12,7 +12,7 @@ int tcp_connect(char* host, int portnum){
 
 	status=getaddrinfo(host, port, &hints, &list);
 	if(status!=0){
-		printf("Error: %s\n", gai_strerror(status));
+		fprintf(stderr, "tcp_connect: %s\n", gai_strerror(status));
 		return -1;
 	}
 
@@ -54,11 +54,13 @@ bool comms_open(CONFIG* cfg){
 	for(i=0;i<cfg->connection_count;i++){
 		cfg->connections[i].fd=tcp_connect(cfg->connections[i].host, cfg->connections[i].port);
 		if(cfg->connections[i].fd<0){
-			printf("Failed to connect to %s on port %d\n", cfg->connections[i].host, cfg->connections[i].port);
+			if(cfg->verbosity>0){
+				fprintf(stderr, "Failed to connect to %s on port %d\n", cfg->connections[i].host, cfg->connections[i].port);
+			}
 			return false;
 		}
 		if(cfg->verbosity>2){
-			printf("Connection to %s:%d established\n", cfg->connections[i].host, cfg->connections[i].port);
+			fprintf(stderr, "Connection to %s:%d established\n", cfg->connections[i].host, cfg->connections[i].port);
 		}
 	}
 
@@ -71,7 +73,7 @@ void comms_close(CONFIG* cfg){
 	for(i=0;i<cfg->connection_count;i++){
 		if(cfg->connections[i].fd>0){
 			if(cfg->verbosity>2){
-				printf("Closing connection to %s:%d\n", cfg->connections[i].host, cfg->connections[i].port);
+				fprintf(stderr, "Closing connection to %s:%d\n", cfg->connections[i].host, cfg->connections[i].port);
 			}
 			closesocket(cfg->connections[i].fd);
 		}

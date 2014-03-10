@@ -19,8 +19,8 @@ int garfield_pos(CONFIG* cfg){
 	INPUT.parse_head=INPUT.data;
 
 	//FIXME handle output via tcp
-	printf("\f");
-	printf(">GarfieldPOS v%s\n",VERSION);
+	printf("\f>GarfieldPOS v%s\n",VERSION);
+	portable_sleep(1000);
 	state_enter(POS.state);
 
 	while(!POS.shutdown){	
@@ -46,8 +46,8 @@ int garfield_pos(CONFIG* cfg){
 		}
 
 		//process input
-		if(cfg->verbosity>2){
-			printf("Input ready from %d descriptors\n", error);
+		if(cfg->verbosity>3){
+			fprintf(stderr, "Input ready from %d descriptors\n", error);
 		}
 
 		for(i=0;i<cfg->connection_count;i++){
@@ -59,8 +59,8 @@ int garfield_pos(CONFIG* cfg){
 				}
 
 				if(bytes==0){
-					if(cfg->verbosity>1){
-						printf("Connection %d lost, reconnecting with next iteration\n", i);
+					if(cfg->verbosity>2){
+						fprintf(stderr, "Connection %d lost, reconnecting with next iteration\n", i);
 					}
 					cfg->connections[i].fd=-1;
 					continue;
@@ -70,11 +70,11 @@ int garfield_pos(CONFIG* cfg){
 				INPUT.data[offset+bytes]=0;
 
 				if(cfg->verbosity>2){
-					printf("%d bytes of data from conn %d\n", bytes, i);
+					fprintf(stderr, "%d bytes of data from conn %d\n", bytes, i);
 				}
 
 				if(cfg->verbosity>3){
-					printf("Current buffer: \"%s\"\n", INPUT.data);
+					fprintf(stderr, "Current buffer: \"%s\"\n", INPUT.data);
 				}
 				
 				INPUT.parse_head=INPUT.data;
@@ -94,10 +94,9 @@ int garfield_pos(CONFIG* cfg){
 					c+=tok_length(token);
 
 					if(cfg->verbosity>3){
-						printf("(%s | %s) => %s %s\n", state_dbg_string(POS.state), tok_dbg_string(token), state_dbg_string(trans.state), action_dbg_string(trans.action));	
+						fprintf(stderr, "(%s | %s) => %s %s\n", state_dbg_string(POS.state), tok_dbg_string(token), state_dbg_string(trans.state), action_dbg_string(trans.action));	
 
 					}
-					fflush(stdout); //FIXME this is stupid
 
 					//display output	
 					if(POS.state!=trans.state){
@@ -148,15 +147,15 @@ int garfield_pos(CONFIG* cfg){
 				}
 				
 				if(cfg->verbosity>3){
-					printf("parse_head offset is %d, active token is %d\n",head_offset, active_token);
-					printf("Buffer after processing: \"%s\"\n", INPUT.data);
-					printf("Current input offset is %d\n", offset);
+					fprintf(stderr, "parse_head offset is %d, active token is %d\n",head_offset, active_token);
+					fprintf(stderr, "Buffer after processing: \"%s\"\n", INPUT.data);
+					fprintf(stderr, "Current input offset is %d\n", offset);
 				}
 			}
 			else if(cfg->connections[i].fd<0){
 				//reconnect lost connection
 				if(cfg->verbosity>2){
-					fprintf(stderr, "Reconnecting connections %d\n",i);
+					fprintf(stderr, "Reconnecting connection %d\n",i);
 				}
 				cfg->connections[i].fd=tcp_connect(cfg->connections[i].host, cfg->connections[i].port);
 			}

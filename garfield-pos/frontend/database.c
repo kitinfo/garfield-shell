@@ -1,7 +1,7 @@
 bool db_conn_begin(CONFIG* cfg){
 	if(!cfg->db.conn){
 		if(cfg->verbosity>2){
-			printf("Connecting to database\n");
+			fprintf(stderr, "Connecting to database\n");
 		}
 		return pq_connect(&(cfg->db));
 	}
@@ -11,7 +11,7 @@ bool db_conn_begin(CONFIG* cfg){
 void db_conn_end(CONFIG* cfg){
 	if(!cfg->db.persist_connection&&cfg->db.conn){
 		if(cfg->verbosity>2){
-			printf("Closing non-persistent database connection\n");
+			fprintf(stderr, "Closing non-persistent database connection\n");
 		}
 		pq_close(&(cfg->db));
 	}
@@ -22,8 +22,8 @@ bool db_buy_snack(CONFIG* cfg, GARFIELD_USER user, CART_ITEM snack){
 	bool rv=false;
 
 	if(!db_conn_begin(cfg)){
-		if(cfg->verbosity>1){
-			printf("Failed to begin database communication\n");
+		if(cfg->verbosity>0){
+			fprintf(stderr, "Failed to begin database communication\n");
 		}
 		return false;
 	}
@@ -40,12 +40,12 @@ bool db_buy_snack(CONFIG* cfg, GARFIELD_USER user, CART_ITEM snack){
 	if(result){
 		if(PQresultStatus(result)==PGRES_TUPLES_OK){
 			if(cfg->verbosity>3){
-				printf("Successfully bought snack %d\n", snack.id);
+				fprintf(stderr, "Successfully bought snack %d\n", snack.id);
 			}
 			rv=true;
 		}
-		else if(cfg->verbosity>2){
-			printf("Failed to buy snack %d (%s)\n", snack.id, PQresultErrorMessage(result));
+		else if(cfg->verbosity>1){
+			fprintf(stderr, "Failed to buy snack %d (%s)\n", snack.id, PQresultErrorMessage(result));
 		}
 		PQclear(result);
 	}
@@ -69,14 +69,14 @@ GARFIELD_USER db_query_user(CONFIG* cfg, int unixid){
 	rv.unixid=-1;
 
 	if(!db_conn_begin(cfg)){
-		if(cfg->verbosity>1){
-			printf("Failed to begin database communication\n");
+		if(cfg->verbosity>0){
+			fprintf(stderr, "Failed to begin database communication\n");
 		}
 		return rv;
 	}
 
-	if(cfg->verbosity>2){
-		printf("Searching for user with id %d\n", unixid);
+	if(cfg->verbosity>3){
+		fprintf(stderr, "Searching for user with id %d\n", unixid);
 	}
 
 	unixid=htonl(unixid);
@@ -93,15 +93,15 @@ GARFIELD_USER db_query_user(CONFIG* cfg, int unixid){
 				rv.account_no=strtoul(PQgetvalue(result, 0, 1), NULL, 10);
 				strncpy(rv.name, PQgetvalue(result, 0, 2), MAX_USERNAME_LENGTH);
 				if(cfg->verbosity>2){
-					printf("Resolved to user %s\n", rv.name);
+					fprintf(stderr, "Resolved to user %s\n", rv.name);
 				}
 			}
-			else if(cfg->verbosity>2){
-				printf("Query returned %d matches\n", PQntuples(result));
+			else if(cfg->verbosity>1){
+				fprintf(stderr, "Query returned %d matches\n", PQntuples(result));
 			}
 		}
-		else if(cfg->verbosity>1){
-			printf("User query failed\n");
+		else if(cfg->verbosity>0){
+			fprintf(stderr, "User query failed\n");
 		}
 		PQclear(result);
 	}
@@ -110,8 +110,8 @@ GARFIELD_USER db_query_user(CONFIG* cfg, int unixid){
 		if(rv.unixid<=0){
 			struct passwd* info=getpwuid(uid);
 			if(info){
-				if(cfg->verbosity>2){
-					printf("User lookup fallback found match\n");
+				if(cfg->verbosity>3){
+					fprintf(stderr, "User lookup fallback found match\n");
 				}
 
 				strncpy(rv.name, info->pw_name, MAX_USERNAME_LENGTH);
@@ -122,15 +122,15 @@ GARFIELD_USER db_query_user(CONFIG* cfg, int unixid){
 							rv.unixid=uid;
 							rv.account_no=strtoul(PQgetvalue(result, 0, 0), NULL, 10);
 							if(cfg->verbosity>2){
-								printf("Fallback resolved user %s\n", rv.name);
+								fprintf(stderr, "Fallback resolved user %s\n", rv.name);
 							}
 						}
-						else if(cfg->verbosity>2){
-							printf("Fallback resolved to %d rows\n", PQntuples(result));
+						else if(cfg->verbosity>1){
+							fprintf(stderr, "Fallback resolved to %d rows\n", PQntuples(result));
 						}
 					}
-					else if(cfg->verbosity>1){
-						printf("Fallback query failed\n");
+					else if(cfg->verbosity>0){
+						fprintf(stderr, "Fallback query failed\n");
 					}
 					PQclear(result);
 				}
@@ -156,8 +156,8 @@ CART_ITEM db_query_item(CONFIG* cfg, char* barcode){
 	char* barcode_buffer=NULL;
 	
 	if(!db_conn_begin(cfg)){
-		if(cfg->verbosity>1){
-			printf("Failed to begin database communication\n");
+		if(cfg->verbosity>0){
+			fprintf(stderr, "Failed to begin database communication\n");
 		}
 		return rv;
 	}
@@ -174,7 +174,7 @@ CART_ITEM db_query_item(CONFIG* cfg, char* barcode){
 	barcode_buffer[i]=0;
 
 	if(cfg->verbosity>3){
-		printf("Searching for barcode %s\n", barcode_buffer);
+		fprintf(stderr, "Searching for barcode %s\n", barcode_buffer);
 		//printf("QUERY: %s\n",QUERY_SNACK);
 	}
 
@@ -186,12 +186,12 @@ CART_ITEM db_query_item(CONFIG* cfg, char* barcode){
 			if(PQntuples(result)==1){
 				rv.id=strtoul(PQgetvalue(result, 0, 0), NULL, 10);
 				rv.price=strtof(PQgetvalue(result, 0, 2), NULL);	
-				if(cfg->verbosity>2){
-					printf("Queried snack: %s\n", PQgetvalue(result, 0, 1));
+				if(cfg->verbosity>3){
+					fprintf(stderr, "Queried snack: %s\n", PQgetvalue(result, 0, 1));
 				}
 			}
-			else if(cfg->verbosity>2){
-				printf("Query returned %d matches\n", PQntuples(result));
+			else if(cfg->verbosity>1){
+				fprintf(stderr, "Query returned %d matches\n", PQntuples(result));
 			}
 		}
 		PQclear(result);

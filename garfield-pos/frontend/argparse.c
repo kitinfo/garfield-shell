@@ -10,7 +10,7 @@ bool arg_parse(CONFIG* cfg, int argc, char** argv){
 						i++;
 					}
 					else{
-						printf("No value specified\n");
+						fprintf(stderr, "No config file specified\n");
 						return false;
 					}
 					break;
@@ -22,12 +22,12 @@ bool arg_parse(CONFIG* cfg, int argc, char** argv){
 					cfg->verbosity=c-1;
 					break;
 				default:
-					printf("Unrecognized option %s\n", argv[i]);
+					fprintf(stderr, "Unrecognized option %s\n", argv[i]);
 					return false;
 			}
 		}
 		else{
-			printf("Not an option: %s\n", argv[i]);
+			fprintf(stderr, "Not an option: %s\n", argv[i]);
 			return false;
 		}
 	}

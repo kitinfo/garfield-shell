@@ -33,8 +33,8 @@ TRANSITION_RESULT state_barcode(INPUT_TOKEN token, CONFIG* cfg){
 		case TOKEN_ENTER:
 			//resolve snack, add to cart
 			item=db_query_item(cfg, INPUT.parse_head);
-			if(cfg->verbosity>1){
-				printf("Returned item ID: %d, Price: %f\n", item.id, item.price);
+			if(cfg->verbosity>2){
+				fprintf(stderr, "Returned item ID: %d, Price: %f\n", item.id, item.price);
 			}
 			
 			if(item.id<=0){
@@ -70,8 +70,8 @@ TRANSITION_RESULT state_plu(INPUT_TOKEN token, CONFIG* cfg){
 			break;
 		case TOKEN_ENTER:
 			item=db_query_item(cfg, INPUT.parse_head);
-			if(cfg->verbosity>1){
-				printf("Returned item ID: %d, Price: %f\n", item.id, item.price);
+			if(cfg->verbosity>2){
+				fprintf(stderr, "Returned item ID: %d, Price: %f\n", item.id, item.price);
 			}
 			
 			if(item.id<=0){
@@ -143,8 +143,8 @@ TRANSITION_RESULT state_storno(INPUT_TOKEN token, CONFIG* cfg){
 		case TOKEN_ENTER:
 			//resolve snack
 			item=db_query_item(cfg, INPUT.parse_head);
-			if(cfg->verbosity>1){
-				printf("Returned item ID: %d, Price: %f\n", item.id, item.price);
+			if(cfg->verbosity>2){
+				fprintf(stderr, "Returned item ID: %d, Price: %f\n", item.id, item.price);
 			}
 			
 			if(item.id<=0){
@@ -154,8 +154,8 @@ TRANSITION_RESULT state_storno(INPUT_TOKEN token, CONFIG* cfg){
 			else{
 				for(i=0;i<POS.items;i++){
 					if(POS.cart[i].id==item.id){
-						if(cfg->verbosity>2){
-							printf("Item to be removed found at cart position %d\n", i);
+						if(cfg->verbosity>3){
+							fprintf(stderr, "Item to be removed found at cart position %d\n", i);
 						}
 						for(;i<POS.items-1;i++){
 							POS.cart[i]=POS.cart[i+1];
@@ -206,8 +206,8 @@ TRANSITION_RESULT state_pay(INPUT_TOKEN token, CONFIG* cfg){
 			//buy snacks
 			for(i=0;i<POS.items;i++){
 				if(!db_buy_snack(cfg, user, POS.cart[i])){
-					if(cfg->verbosity>0){
-						printf("Failed to buy snack %d\n", POS.cart[i].id);
+					if(cfg->verbosity>1){
+						fprintf(stderr, "Failed to buy snack %d\n", POS.cart[i].id);
 					}
 				}
 			}

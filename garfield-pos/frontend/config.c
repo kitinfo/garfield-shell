@@ -85,7 +85,7 @@ bool cfg_read(CONFIG* cfg, char* file){
 
 		//fail if no argument supplied
 		if(argument[0]==0){
-			printf("No argument for option %s\n",line_head);
+			fprintf(stderr, "No argument for option %s\n",line_head);
 			fclose(handle);
 			return false;
 		}
@@ -112,7 +112,7 @@ bool cfg_read(CONFIG* cfg, char* file){
 			cfg->connection_count++;
 			cfg->connections=realloc(cfg->connections, cfg->connection_count*sizeof(CONNECTION));
 			if(!cfg->connections){
-				printf("Failed to allocate memory for connection data\n");
+				fprintf(stderr, "Failed to allocate memory for connection data\n");
 				//TODO exit fail
 			}
 			
@@ -120,7 +120,9 @@ bool cfg_read(CONFIG* cfg, char* file){
 		}
 		else if(!strncmp(line_head, "db_server", 9)){
 			if(cfg->db.server){
-				printf("Multiple db_server directives, ignoring\n");
+				if(cfg->verbosity>1){
+					fprintf(stderr, "Multiple db_server directives, ignoring\n");
+				}
 				continue;
 			}
 			//db_server stanza
@@ -137,7 +139,9 @@ bool cfg_read(CONFIG* cfg, char* file){
 		else if(!strncmp(line_head, "db_user", 7)){
 			//db_user stanza
 			if(cfg->db.user){
-				printf("Multiple db_user directives, ignoring\n");
+				if(cfg->verbosity>1){
+					fprintf(stderr, "Multiple db_user directives, ignoring\n");
+				}
 				continue;
 			}
 			cfg->db.user=calloc(sizeof(char), strlen(argument)+1);
@@ -146,7 +150,9 @@ bool cfg_read(CONFIG* cfg, char* file){
 		else if(!strncmp(line_head, "db_name", 7)){
 			//db_name stanza
 			if(cfg->db.db_name){
-				printf("Multiple db_name directives, ignoring\n");
+				if(cfg->verbosity>1){
+					fprintf(stderr, "Multiple db_name directives, ignoring\n");
+				}
 				continue;
 			}
 			cfg->db.db_name=calloc(sizeof(char), strlen(argument)+1);
@@ -165,7 +171,7 @@ bool cfg_read(CONFIG* cfg, char* file){
 			}
 		}
 		else{
-			printf("Unrecognized config line %s\n", line_head);
+			fprintf(stderr, "Unrecognized config line %s\n", line_head);
 			fclose(handle);
 			return false;
 		}
@@ -185,61 +191,61 @@ bool cfg_sane(CONFIG* cfg){
 	int i;
 
 	if(!cfg->connections||cfg->connection_count<1){
-		printf("No input/output connections specified\n");
+		fprintf(stderr, "No input/output connections specified\n");
 		return false;
 	}
 
 	for(i=0;i<cfg->connection_count;i++){
 		if(!cfg->connections[i].host||strlen(cfg->connections[i].host)<1){
-			printf("Connection %d has invalid server\n", i);
+			fprintf(stderr, "Connection %d has invalid server\n", i);
 			return false;
 		}
 
 		if(cfg->connections[i].port==0){
-			printf("Connection %d has no port\n", i);
+			fprintf(stderr, "Connection %d has no port\n", i);
 			return false;
 		}
 	}
 
 	if(!cfg->db.server||strlen(cfg->db.server)<1){
-		printf("No database server specified\n");
+		fprintf(stderr, "No database server specified\n");
 		return false;
 	}
 
 	if(cfg->db.port==0){
-		printf("Invalid database port\n");
+		fprintf(stderr, "Invalid database port\n");
 		return false;
 	}
 
 	if(!cfg->db.user||strlen(cfg->db.user)<1){
-		printf("No database user specified\n");
+		fprintf(stderr, "No database user specified\n");
 		return false;
 	}
 
 	if(!cfg->db.use_pgpass&&(!cfg->db.pass||strlen(cfg->db.pass)<1)){
-		printf("No database password specified\n");
+		fprintf(stderr, "No database password specified\n");
 		return false;
 	}
 
 	if(!cfg->db.db_name||strlen(cfg->db.db_name)<1){
-		printf("No database name specified\n");
+		fprintf(stderr, "No database name specified\n");
 		return false;
 	}
 
-	if(cfg->verbosity>1){
-		printf("Config summary:\n");
-		printf("Configuration file: %s\n", cfg->cfg_file);
-		printf("Verbosity level %d\n", cfg->verbosity);
-		printf("Connection count %d\n", cfg->connection_count);
+	if(cfg->verbosity>3){
+		fprintf(stderr, "Config summary:\n");
+		fprintf(stderr, "Configuration file: %s\n", cfg->cfg_file);
+		fprintf(stderr, "Verbosity level %d\n", cfg->verbosity);
+		fprintf(stderr, "Connection count %d\n", cfg->connection_count);
 		for(i=0;i<cfg->connection_count;i++){
-			printf("Connection %d directionality: %s\n", i, (cfg->connections[i].type==CONN_INPUT)?"input":"output");
-			printf("Connection %d host: %s Port %d\n", i, cfg->connections[i].host, cfg->connections[i].port);
+			fprintf(stderr, "Connection %d directionality: %s\n", i, (cfg->connections[i].type==CONN_INPUT)?"input":"output");
+			fprintf(stderr, "Connection %d host: %s Port %d\n", i, cfg->connections[i].host, cfg->connections[i].port);
 		}
-		printf("Database server: %s Port %d\n", cfg->db.server, cfg->db.port);
-		printf("Database name: %s\n", cfg->db.db_name);
-		printf("Database user name: %s\n", cfg->db.user);
-		printf("Database connection is %spersistent\n", (cfg->db.persist_connection)?"":"non-");
-		printf("Using pgpass: %s\n", (cfg->db.use_pgpass)?"yes":"no");
+		fprintf(stderr, "Database server: %s Port %d\n", cfg->db.server, cfg->db.port);
+		fprintf(stderr, "Database name: %s\n", cfg->db.db_name);
+		fprintf(stderr, "Database user name: %s\n", cfg->db.user);
+		fprintf(stderr, "Database connection is %spersistent\n", (cfg->db.persist_connection)?"":"non-");
+		fprintf(stderr, "Using pgpass: %s\n", (cfg->db.use_pgpass)?"yes":"no");
 	}
 
 	return true;

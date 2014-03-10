@@ -7,12 +7,12 @@ bool pq_connect(DATABASE* cfg){
 	cfg->conn=PQconnectdbParams(keywords, (char const**)values, 0);
 
 	if(!cfg->conn){
-		printf("Failed to allocate memory for connection\n");
+		fprintf(stderr, "Failed to allocate memory for connection\n");
 		return false;
 	}
 
 	if(PQstatus(cfg->conn)!=CONNECTION_OK){
-		printf("Failed to connect to database server: %s\n", PQerrorMessage(cfg->conn));
+		fprintf(stderr, "Failed to connect to database server: %s\n", PQerrorMessage(cfg->conn));
 		PQfinish(cfg->conn);
 		return false;
 	}

@@ -1,10 +1,12 @@
 int cart_index(CONFIG* cfg){
 
-	//printf("Cart status: allocated %d, used %d\n",POS.items_allocated, POS.items);
+	if(cfg->verbosity>3){
+		fprintf(stderr, "Cart status: allocated %d, used %d\n",POS.items_allocated, POS.items);
+	}
 
 	if(POS.items==POS.items_allocated){
 		if(cfg->verbosity>2){
-			printf("Reallocating cart to %d items\n", POS.items_allocated+1);
+			fprintf(stderr, "Reallocating cart to %d items\n", POS.items_allocated+1);
 		}
 
 		POS.cart=realloc(POS.cart, (++POS.items_allocated)*sizeof(CART_ITEM));
@@ -25,15 +27,15 @@ bool cart_store(CART_ITEM item, CONFIG* cfg){
 	if(item.id>0){
 		index=cart_index(cfg);
 		if(index<0){
-			if(cfg->verbosity>1){
-				printf("Failed to store cart item\n");
+			if(cfg->verbosity>0){
+				fprintf(stderr, "Failed to store cart item\n");
 			}
 			return false;
 		}
 		POS.cart[index]=item;
 
 		if(cfg->verbosity>3){
-			printf("Stored in cart at position %d\n", index);
+			fprintf(stderr, "Stored in cart at position %d\n", index);
 		}
 		return true;
 	}
