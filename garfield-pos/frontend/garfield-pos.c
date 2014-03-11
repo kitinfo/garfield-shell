@@ -48,7 +48,8 @@ int main(int argc, char** argv){
 			cfg_free(&cfg);
 			return -1;
 		}
-		printf("Database access password: ");
+		fprintf(stderr, "DB Password: ");
+		printf("\fWaiting...");
 		ask_password(cfg.db.pass, MAX_PASSWORD_LENGTH);
 	}
 
