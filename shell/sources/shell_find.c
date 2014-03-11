@@ -23,15 +23,12 @@ int findSnack(char* snack) {
 
 void find(char* input) {
 
-    char dest[MAXLENGTH];
     if (begins(input, "snack ")) {
-		sFirstCut(input, dest, 6);
 		debug("exec find snack cmd");
-		findSnack(dest);
+		findSnack(input + 6);
     } else if (begins(input, "user ")) {
-    	sFirstCut(input, dest, 5);
     	debug("exec find user cmd");
-    	findUser(dest);
+    	findUser(input + 5);
     } else {
 		debug("no match found in find");
 		debug("try snack");

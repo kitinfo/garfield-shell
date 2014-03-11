@@ -27,11 +27,11 @@ void initSec() {
 }
 
 void setUser(char* username) {
-    strcpy(login.user, username);
+    strncpy(login.user, username, MAXLENGTH);
 }
 
 void setPassword(char* pass) {
-    strcpy(login.password, pass);
+    strncpy(login.password, pass, MAXLENGTH);
 }
 
 void setPGPass(bool flag) {
