@@ -7,48 +7,26 @@
 
 void parseArguments(int argc, char* argv[]) {
 
-	//parse arguments
-	int i;
-	for(i=1;i<argc;i++){
-		if(*argv[i]=='-'){
-			if(i+1<argc&&!strcmp(argv[i],"--user")){
-				setUser(argv[i+1]);
-				i++;
-			}
-			else if(i+1<argc&&!strcmp(argv[i],"-u")){
-				setUser(argv[i+1]);
-				i++;
-			}
-			else if(i+1<argc&&!strcmp(argv[i],"--pass")){
-				setPassword(argv[i+1]);
-				i++;
-			}
-			else if(i+1<argc&&!strcmp(argv[i],"-p")){
-				setPassword(argv[i+1]);
-				i++;
-			}
-			else if(i+1<argc&&!strcmp(argv[i],"--help")){
-				printHelp();
-			}
-			else if(i+1<argc&&!strcmp(argv[i],"-h")){
-				printHelp();
-			}
-			else if(!strcmp(argv[i],"--debug")){
-				setDebug(true);
-			}
-			else if(!strcmp(argv[i],"-d")){
-				setDebug(true);
-			}
-			else if(!strcmp(argv[i],"--pgpass")){
-				setPGPass(true);
-			}
-			else if(!strcmp(argv[i],"-g")){
-				setPGPass(true);
-			}
-			else {
-				printf("Invalid arguments.\n");
-				printHelp();
-			}
-		}
-	}
+    //parse arguments
+    int i;
+    for (i = 1; i < argc; i++) {
+        if (*argv[i] == '-') {
+            if (i + 1 < argc && (!strcmp(argv[i], "--user") || !strcmp(argv[i], "-u"))) {
+                setUser(argv[i + 1]);
+                i++;
+            }  else if (i + 1 < argc && (!strcmp(argv[i], "--pass") || !strcmp(argv[i], "-p"))) {
+                setPassword(argv[i + 1]);
+                i++;
+            }  else if (!strcmp(argv[i], "--help") || !strcmp(argv[i], "-h")) {
+                printHelp();
+            } else if (!strcmp(argv[i], "--debug") || !strcmp(argv[i], "-d")) {
+                setDebug(true);
+            } else if (!strcmp(argv[i], "--pgpass") || !strcmp(argv[i], "-g")) {
+                setPGPass(true);
+            } else {
+                printf("Invalid arguments.\n");
+                printHelp();
+            }
+        }
+    }
 }

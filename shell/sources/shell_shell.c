@@ -8,6 +8,13 @@
 #include "../headers/shell_sec.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+
+void shellExit() {
+    
+    freeSec();
+    exit(EXIT_SUCCESS);
+}
 
 /**
  * parse the set command
@@ -69,7 +76,7 @@ int shell() {
 
 		if (sequals(input, "exit")) {
 			debug("shut down");
-			return 0;
+			shellExit();
 		} else if (begins(input, "set ")) {
 			sFirstCut(input, dest, 4);
 			debug("exec set cmd");

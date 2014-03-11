@@ -18,7 +18,7 @@ int popenAction(char* cmd) {
 		return -1;
 	}
 	if (!getPGPass()) {
-		fprintf(pipe, getPassword());
+		fprintf(pipe, "%s", getPassword());
 	}
 
 	pclose(pipe);

@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include "../headers/shell_shell.h"
 
 void printHelp() {
     char* fn = "garfield-shell";
@@ -18,7 +18,7 @@ void printHelp() {
     printf("\nExamples:\n");
     printf("%s -u test -p test\t\topens shell with user *test* and password *test*\n", fn);
     
-    exit(EXIT_SUCCESS);
+    exit();
 }
 
 void printInternHelp() {
