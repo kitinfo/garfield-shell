@@ -1,32 +1,34 @@
 bool cfg_sanity_check(CONFIG_PARAMS* cfg){
 	if(!cfg->input_device){
-		printf("No input device specified\n");
+		fprintf(stderr, "No input device specified\n");
 		return false;
 	}
 
 	if(!cfg->bind_host){
-		printf("No bind address specified\n");
+		fprintf(stderr, "No bind address specified\n");
 		return false;
 	}
 
 	if(cfg->port==0){
-		printf("Invalid port\n");
+		fprintf(stderr, "Invalid port\n");
 		return false;
 	}
 
-	if(cfg->verbosity>0){
-		printf("Using verbosity level %d\n",cfg->verbosity);
-		printf("Using input device %s\n",cfg->input_device);
-		printf("Binding to host %s Port %d\n",cfg->bind_host, cfg->port);
-		printf("Fall back to sending raw scancodes: %s\n",cfg->send_raw?"true":"false");
-		printf("Open device in exclusive mode: %s\n",cfg->exclusive_access?"true":"false");
+	if(cfg->verbosity>2){
+		fprintf(stderr, "Using verbosity level %d\n",cfg->verbosity);
+		fprintf(stderr, "Using input device %s\n",cfg->input_device);
+		fprintf(stderr, "Binding to host %s Port %d\n",cfg->bind_host, cfg->port);
+		fprintf(stderr, "Fall back to sending raw scancodes: %s\n",cfg->send_raw?"true":"false");
+		fprintf(stderr, "Open device in exclusive mode: %s\n",cfg->exclusive_access?"true":"false");
 	}
 
 	return true;
 }
 
 bool cfg_free(CONFIG_PARAMS* cfg){
-	printf("Freeing allocated memory\n");
+	if(cfg->verbosity>2){
+		fprintf(stderr, "Freeing allocated memory\n");
+	}
 
 	if(cfg->input_device){
 		free(cfg->input_device);
@@ -71,7 +73,7 @@ char* cfg_parse_string(char* input){
 				conv=(uint8_t)strtoul(input, &endptr, 0);
 				if(input==endptr&&input[0]!=0){
 					free(translation);
-					printf("Invalid numeral at %s\n",input);
+					fprintf(stderr, "Invalid numeral at %s\n",input);
 					return NULL;
 				}
 				translation[pos++]=conv;

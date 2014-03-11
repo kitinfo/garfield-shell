@@ -45,13 +45,13 @@ MAPPING* map_elem(CONFIG_PARAMS* cfg, uint16_t scancode, bool create){
 		}
 	}
 
-	printf("Could not insert mapping\n");
+	fprintf(stderr, "Could not insert mapping\n");
 	return NULL;
 }
 
 bool map_add(CONFIG_PARAMS* cfg, uint16_t scancode, char* output){
-	if(cfg->verbosity>0){
-		printf("Mapping scancode %d to \"%s\"\n", scancode, output);
+	if(cfg->verbosity>2){
+		fprintf(stderr, "Mapping scancode %d to \"%s\"\n", scancode, output);
 	}
 
 	MAPPING* element=map_elem(cfg, scancode, true);
@@ -79,8 +79,8 @@ bool map_free(CONFIG_PARAMS* cfg){
 		current=cfg->mapping_head;
 		next=current->next;
 		while(current!=NULL){
-			if(cfg->verbosity>0){
-				printf("Releasing mapping of %d to %s\n", current->scancode, current->map_target);
+			if(cfg->verbosity>2){
+				fprintf(stderr, "Releasing mapping of %d to %s\n", current->scancode, current->map_target);
 			}
 			free(current);
 			current=next;

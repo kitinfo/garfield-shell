@@ -1,5 +1,5 @@
 int parse_arguments(int argc, char** argv, CONFIG_PARAMS* cfg){
-	int i;
+	int i, c;
 
 	for(i=0;i<argc;i++){
 		if(argv[i][0]=='-'){
@@ -13,9 +13,17 @@ int parse_arguments(int argc, char** argv, CONFIG_PARAMS* cfg){
 				case 'h':
 					return 0;
 				case 'v':
-					cfg->verbosity=1;
+					for(c=1;argv[i][c]=='v';c++){
+					}
+					cfg->verbosity=c-1;
 					break;
+				default:
+					fprintf(stderr, "Unknown flag %s\n", argv[i]);
+					return -1;
 			}
+		}
+		else{
+			fprintf(stderr, "Unknown argument %s\n", argv[i]);
 		}
 	}
 

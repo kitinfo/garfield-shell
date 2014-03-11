@@ -29,6 +29,8 @@
 int usage(char* fn){
 	printf("garfield-pos kbserver utility\n\n");	
 	printf("Exposes evdev input via TCP in a configurable fashion\n");	
+	printf("Usage:\n");
+	printf("\t%s -f <config file>\n", fn);
 	return -1;
 }
 
@@ -54,30 +56,30 @@ int main(int argc, char** argv){
 	error=parse_arguments(argc-1, argv+1, &cfg);
 
 	if(error!=0){
-		printf("Failed to parse commandline arguments\n");
+		fprintf(stderr, "Failed to parse commandline arguments\n");
 		usage(argv[0]);
 		exit(error);
 	}
 
 	if(!cfg.config_file){
-		printf("No config file supplied, aborting\n");
+		fprintf(stderr, "No config file supplied, aborting\n");
 		exit(usage(argv[0]));
 	}
 
-	if(cfg.verbosity>0){
-		printf("Using config file %s\n",cfg.config_file);
+	if(cfg.verbosity>2){
+		fprintf(stderr, "Using config file %s\n", cfg.config_file);
 	}
 
 	error=parse_config(cfg.config_file, &cfg);
 	if(error!=0){
-		printf("Failed to parse config file, aborting\n");
+		fprintf(stderr, "Failed to parse config file, aborting\n");
 		exit(error);
 	}
 
 	printf("kbserver v%s starting\n",VERSION);
 	
 	if(!cfg_sanity_check(&cfg)){
-		printf("Config failed the sanity check, aborting\n");
+		fprintf(stderr, "Config failed the sanity check, aborting\n");
 		cfg_free(&cfg);
 		return -1;
 	}
@@ -131,7 +133,7 @@ int main(int argc, char** argv){
 		if(FD_ISSET(ev_fd, &readfds)){
 			//read event
 			bytes=read(ev_fd, &ev_data, sizeof(ev_data));
-			if(bytes<0){
+			if(bytes<=0){
 				perror("evfd read");
 				break;
 			}
@@ -141,14 +143,17 @@ int main(int argc, char** argv){
 				if(ev_data.value==0){
 					//key press
 					char* map_target=map_get(&cfg, ev_data.code);
+					if(cfg.verbosity>3){
+						fprintf(stderr, "Read scancode %d, mapped to \"%s\"", ev_data.code, (map_target)?map_target:"NULL");
+					}
 					if(map_target||cfg.send_raw){
 						//send data
 						for(i=0;i<LISTEN_QUEUE_LENGTH;i++){
 							if(client_fds[i]>0){
 								if(map_target){
 									bytes=send(client_fds[i], map_target, strlen(map_target), 0);
-									if(bytes<strlen(map_target)&&cfg.verbosity>0){
-										printf("Incomplete send\n");
+									if(bytes<strlen(map_target)&&cfg.verbosity>1){
+										fprintf(stderr, "Incomplete send\n");
 									}
 								}
 								else{
@@ -168,8 +173,8 @@ int main(int argc, char** argv){
 
 		if(FD_ISSET(listen_fd, &readfds)){
 			//handle new client
-			if(cfg.verbosity>0){
-				printf("New client\n");
+			if(cfg.verbosity>2){
+				fprintf(stderr, "New client\n");
 			}
 			//find client slot
 			for(i=0;i<LISTEN_QUEUE_LENGTH;i++){

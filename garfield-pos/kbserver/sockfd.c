@@ -14,7 +14,7 @@ int sock_open(CONFIG_PARAMS* cfg){
 
 	status=getaddrinfo(cfg->bind_host, port, &hints, &info);
 	if(status!=0){
-		printf("sock_open/gai: %s\n", gai_strerror(status));
+		fprintf(stderr, "sock_open/gai: %s\n", gai_strerror(status));
 		return -1;
 	}
 
@@ -36,7 +36,7 @@ int sock_open(CONFIG_PARAMS* cfg){
 	freeaddrinfo(info);
 
 	if(!addr_it){
-		printf("Failed to create listening socket\n");
+		fprintf(stderr, "Failed to create listening socket\n");
 		return -1;
 	}
 

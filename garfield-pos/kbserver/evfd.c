@@ -8,8 +8,8 @@ int evin_open(CONFIG_PARAMS* cfg){
 	}
 
 	if(cfg->exclusive_access){
-		if(cfg->verbosity>0){
-			printf("Requesting exclusive access\n");
+		if(cfg->verbosity>2){
+			fprintf(stderr, "Requesting exclusive access\n");
 		}
 
 		status=ioctl(fd, EVIOCGRAB, 1);
