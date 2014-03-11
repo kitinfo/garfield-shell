@@ -14,3 +14,14 @@ int findUser(char* search) {
 
 	return status;
 }
+
+int balanceUser() {
+    
+   char* cmd = getCmd("", USERCMD, BALANCECMD);
+   debug(cmd);
+   
+   int status = popenAction(cmd);
+   free(cmd);
+   
+   return status;
+}

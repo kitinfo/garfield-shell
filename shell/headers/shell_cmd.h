@@ -7,6 +7,7 @@
 #define PGPASS_ARG "--pgpass"
 #define USERCMD "garfield-user"
 #define LISTCMD "list"
+#define BALANCECMD "balance"
 #define MATE "4029764001807"
 
 char* buildCmd(char* garfieldCmd);

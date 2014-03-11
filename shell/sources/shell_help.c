@@ -42,5 +42,6 @@ void printInternHelp() {
     printf("\t buy\n");
     printf("\t\t snack <id>\t - buy a snack by id\n");
     printf("\t\t mate\t\t - buy a mate^^\n");
+    printf("\t\t balance\t - show users account balance\n");
 
 }
