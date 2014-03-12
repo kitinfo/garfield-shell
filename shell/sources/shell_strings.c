@@ -1,24 +1,6 @@
 #include <string.h>
 #include <stdbool.h>
 
-/**
- * @handsoff
- *deletes the first <len> chars from input and writes the rest
- * to dest.
- */
-void sFirstCut(char* input, char* dest, int len) {
-
-    if (strlen(input) > len) {
-	char* dest0 = input + len;
-	// dont forget to copy string
-	strcpy(dest, dest0);
-	return;
-    } else {
-	dest = "";
-    }
-}
-
-
 bool sequals(char* one, char* two) {
 
     if (strlen(one) < 1 || strlen(two) < 1 || strlen(one) !=

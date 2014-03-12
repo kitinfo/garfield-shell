@@ -7,7 +7,7 @@ void parseList(char* input) {
     /*char dest[MAXLENGTH];*/
     if (begins(input, "user")) {
 		printf("user: ");
-		printf(getUser());
+		printf("%s", getUser());
 		printf("\n");
     }
 }

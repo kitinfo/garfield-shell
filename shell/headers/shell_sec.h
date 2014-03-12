@@ -1,6 +1,8 @@
 #pragma once
 #include <stdbool.h>
 
+void freeSec();
+
 void setPassword(char* pass);
 
 void setUser(char* username);

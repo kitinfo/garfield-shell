@@ -8,41 +8,44 @@
 #include "../headers/shell_sec.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+
+void shellExit() {
+    
+    freeSec();
+    exit(EXIT_SUCCESS);
+}
 
 /**
  * parse the set command
  */
 void parseSet(char* input) {
-    
-    char dest[MAXLENGTH];
+    printf("%s\n", input);
     if (begins(input, "user ")) {
-		sFirstCut(input, dest, 5);
 		debug("set user");
-		setUser(dest);
+		setUser(input + 5);
 		return;
     } else if (begins(input, "pass ")) {
-		sFirstCut(input, dest, 5);
 
-		if (strlen(dest) < 1) {
+		if (strlen(input + 5) < 1) {
 			debug("ask for password");
 			askPassword();
 			return;
 		}
 		debug("set password");
-		setPassword(dest);
+		setPassword(input + 5);
 		return;
     } else if (begins(input, "debug ")) {
-    	sFirstCut(input, dest, 6);
-    	if (begins(input, "true") || begins(input, "on")) {
+    	if (begins(input + 6, "true") || begins(input +6, "on")) {
     		setDebug(true);
-    	} else if (begins(input, "false") || begins(input, "off")) {
+    	} else if (begins(input + 6, "false") || begins(input + 6, "off")) {
     		setDebug(false);
     	}
     } else if (begins(input, "pgpass ")) {
-    	sFirstCut(input, dest, 7);
-    	if (begins(input, "true") || begins(input, "on")) {
+        
+    	if (begins(input + 7, "true") || begins(input + 7, "on")) {
     		setPGPass(true);
-    	} else if (begins(input, "false") || begins(input, "off")) {
+    	} else if (begins(input + 7, "false") || begins(input + 7, "off")) {
     		setPGPass(false);
     	}
     }
@@ -65,31 +68,24 @@ int shell() {
 
 		read_line(input);
 
-		char dest[MAXLENGTH];
-
 		if (sequals(input, "exit")) {
 			debug("shut down");
-			return 0;
+			shellExit();
 		} else if (begins(input, "set ")) {
-			sFirstCut(input, dest, 4);
 			debug("exec set cmd");
-			parseSet(dest);
+			parseSet(input + 4);
 		} else if (begins(input, "list ")) {
-			sFirstCut(input, dest, 5);
 			debug("exec list cmd");
-			parseList(dest);
+			parseList(input + 5);
 		} else if (begins(input, "search ")) {
-			sFirstCut(input, dest, 7);
 			debug("exec find cmd from search");
-			find(dest);
+			find(input + 7);
 		} else if (begins(input, "find ")) {
-			sFirstCut(input, dest, 5);
 			debug("exec find cmd");
-			find(dest);
+			find(input + 5);
 		} else if (begins(input, "buy ")) {
-			sFirstCut(input, dest, 4);
 			debug("exec buy cmd");
-			buy(dest);
+			buy(input + 4);
 		} else if (begins(input, "help")) {
 			debug("exec help cmd");
 			printInternHelp();
@@ -97,8 +93,6 @@ int shell() {
 			debug("no match found in shell");
 			printf("Don't know what you mean...\n");
 		}
-
     }
-
     return 0;
 }

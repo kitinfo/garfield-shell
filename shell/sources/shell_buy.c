@@ -57,11 +57,9 @@ void buySnacks(char* input) {
 
 void buy(char* input) {
     debug("init buy cmd");
-    char dest[MAXLENGTH];
     if (begins(input, "snack ")) {
-		sFirstCut(input, dest, 5);
 		debug("exec buy snack");
-		buySnacks(dest);
+		buySnacks(input + 5);
     } else if (begins(input, "mate")) {
 		debug("exec buy mate");
 		execBuyWithName(MATE);
