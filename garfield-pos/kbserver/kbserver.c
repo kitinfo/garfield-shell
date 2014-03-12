@@ -144,7 +144,7 @@ int main(int argc, char** argv){
 					//key press
 					char* map_target=map_get(&cfg, ev_data.code);
 					if(cfg.verbosity>3){
-						fprintf(stderr, "Read scancode %d, mapped to \"%s\"", ev_data.code, (map_target)?map_target:"NULL");
+						fprintf(stderr, "Read scancode %d, mapped to \"%s\"\n", ev_data.code, (map_target)?map_target:"NULL");
 					}
 					if(map_target||cfg.send_raw){
 						//send data
