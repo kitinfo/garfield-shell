@@ -99,7 +99,7 @@ int garfield_pos(CONFIG* cfg){
 					}
 
 					//display output	
-					if(POS.state!=trans.state){
+					if(POS.state!=trans.state||trans.force_redisplay){
 						state_enter(trans.state);
 					}
 					fflush(stdout);

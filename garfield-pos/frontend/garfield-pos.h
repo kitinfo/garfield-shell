@@ -34,7 +34,8 @@ typedef enum /*_INPUT_TOKEN*/ {
 	TOKEN_CANCEL,
 	TOKEN_ENTER,
 	TOKEN_BACKSPACE,
-	TOKEN_NUMERAL
+	TOKEN_NUMERAL,
+	TOKEN_AGAIN
 } INPUT_TOKEN;
 
 typedef enum /*_TOKEN_ACTION*/ {
@@ -46,6 +47,7 @@ typedef enum /*_TOKEN_ACTION*/ {
 typedef struct /*_TRANSITION_RESULT*/ {
 	POS_STATE state;
 	TOKEN_ACTION action;
+	bool force_redisplay;
 } TRANSITION_RESULT;
 
 typedef struct /*_CART_SNACK_ITEM*/ {

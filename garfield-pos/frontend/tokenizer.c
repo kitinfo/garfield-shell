@@ -40,6 +40,11 @@ INPUT_TOKEN tok_read(char* input){
 		return TOKEN_BACKSPACE;
 	}
 
+	if(!strncmp(input, "AGAIN\r\n", 7)){
+		return TOKEN_AGAIN;
+	}
+
+	//prefix matching
 	if(tok_match_prefix(input, "PAY\r\n")){
 		return TOKEN_INCOMPLETE;
 	}
@@ -64,6 +69,10 @@ INPUT_TOKEN tok_read(char* input){
 		return TOKEN_INCOMPLETE;
 	}
 
+	if(tok_match_prefix(input, "AGAIN\r\n")){
+		return TOKEN_INCOMPLETE;
+	}
+
 	return TOKEN_INVALID;
 }
 
@@ -85,6 +94,8 @@ int tok_length(INPUT_TOKEN token){
 			return 1;
 		case TOKEN_INCOMPLETE:
 			return 0;
+		case TOKEN_AGAIN:
+			return 7;
 		default:
 			return 1;
 	}
@@ -133,6 +144,8 @@ const char* tok_dbg_string(INPUT_TOKEN t){
 			return "TOKEN_BACKSPACE";
 		case TOKEN_NUMERAL:
 			return "TOKEN_NUMERAL";
+		case TOKEN_AGAIN:
+			return "TOKEN_AGAIN";
 	}
 	return "UNKNOWN";
 }
