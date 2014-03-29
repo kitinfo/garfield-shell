@@ -117,7 +117,7 @@ TRANSITION_RESULT state_display(INPUT_TOKEN token, CONFIG* cfg){
 			res.state=STATE_PAY;
 			res.action=TOKEN_CONSUME;
 			break;
-		case TOKEN_AGAIN:
+		case TOKEN_ADD:
 			if(POS.items>0){
 				item=POS.cart[POS.items-1];
 				cart_store(item, cfg);
