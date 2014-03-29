@@ -24,7 +24,6 @@ TRANSITION_RESULT state_barcode(INPUT_TOKEN token, CONFIG* cfg){
 
 	switch(token){
 		case TOKEN_BACKSPACE:
-			printf("\b ");
 			res.action=TOKEN_REMOVE;
 			break;
 		case TOKEN_NUMERAL:
@@ -61,7 +60,7 @@ TRANSITION_RESULT state_plu(INPUT_TOKEN token, CONFIG* cfg){
 
 	switch(token){
 		case TOKEN_BACKSPACE:
-			printf("\b");
+			printf("\b \b");
 			res.action=TOKEN_REMOVE;
 			break;
 		case TOKEN_NUMERAL:
@@ -147,7 +146,7 @@ TRANSITION_RESULT state_storno(INPUT_TOKEN token, CONFIG* cfg){
 			res.action=TOKEN_KEEP;
 			break;
 		case TOKEN_BACKSPACE:
-			printf("\b");
+			printf("\b \b");
 			res.action=TOKEN_REMOVE;
 			break;
 		case TOKEN_STORNO:
@@ -207,7 +206,7 @@ TRANSITION_RESULT state_pay(INPUT_TOKEN token, CONFIG* cfg){
 			res.action=TOKEN_KEEP;
 			break;
 		case TOKEN_BACKSPACE:
-			printf("\b");
+			printf("\b \b");
 			res.action=TOKEN_REMOVE;
 			break;
 		case TOKEN_ENTER:
