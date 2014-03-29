@@ -1,4 +1,4 @@
-#define VERSION "0.1"
+#define VERSION "0.2"
 #define MAX_CFGLINE_LENGTH 1024
 #define MAX_PASSWORD_LENGTH 128
 #define PGRES_SSLMODE "require"
