@@ -40,8 +40,9 @@ typedef enum /*_INPUT_TOKEN*/ {
 
 typedef enum /*_TOKEN_ACTION*/ {
 	TOKEN_KEEP,	//keep token in parse buffer
-	TOKEN_DISCARD,	//discard all tokens up to this one
-	TOKEN_REMOVE	//remove this and the previous token
+	TOKEN_DISCARD,	//discard the token
+	TOKEN_REMOVE,	//remove this and the previous token
+	TOKEN_CONSUME	//discard all tokens up to and including this one
 } TOKEN_ACTION;
 
 typedef struct /*_TRANSITION_RESULT*/ {

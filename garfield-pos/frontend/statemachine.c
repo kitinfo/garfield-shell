@@ -24,7 +24,7 @@ TRANSITION_RESULT state_barcode(INPUT_TOKEN token, CONFIG* cfg){
 
 	switch(token){
 		case TOKEN_BACKSPACE:
-			printf("\b");
+			printf("\b ");
 			res.action=TOKEN_REMOVE;
 			break;
 		case TOKEN_NUMERAL:
@@ -45,6 +45,7 @@ TRANSITION_RESULT state_barcode(INPUT_TOKEN token, CONFIG* cfg){
 			cart_store(item, cfg);
 			//no break here
 		case TOKEN_CANCEL:
+			res.action=TOKEN_CONSUME;
 			res.state=STATE_DISPLAY;
 			break;
 		default:
@@ -83,6 +84,7 @@ TRANSITION_RESULT state_plu(INPUT_TOKEN token, CONFIG* cfg){
 			
 			///no break here
 		case TOKEN_CANCEL:
+			res.action=TOKEN_CONSUME;
 			res.state=STATE_DISPLAY;
 			break;
 		default:
@@ -105,13 +107,16 @@ TRANSITION_RESULT state_display(INPUT_TOKEN token, CONFIG* cfg){
 			break;
 		case TOKEN_CANCEL:
 			POS.items=0;
+			res.action=TOKEN_CONSUME;
 			res.state=STATE_IDLE;
 			break;
 		case TOKEN_STORNO:
 			res.state=STATE_STORNO;
+			res.action=TOKEN_CONSUME;
 			break;
 		case TOKEN_PAY:
 			res.state=STATE_PAY;
+			res.action=TOKEN_CONSUME;
 			break;
 		case TOKEN_AGAIN:
 			if(POS.items>0){
@@ -122,6 +127,7 @@ TRANSITION_RESULT state_display(INPUT_TOKEN token, CONFIG* cfg){
 			else if(cfg->verbosity>2){
 				fprintf(stderr, "No item to be duplicated\n");
 			}
+			res.action=TOKEN_CONSUME;
 			break;
 		default:
 			return res;
@@ -150,6 +156,7 @@ TRANSITION_RESULT state_storno(INPUT_TOKEN token, CONFIG* cfg){
 				POS.items--;
 			}
 			res.state=STATE_DISPLAY;
+			res.action=TOKEN_CONSUME;
 			break;
 		case TOKEN_ENTER:
 			//resolve snack
@@ -179,6 +186,7 @@ TRANSITION_RESULT state_storno(INPUT_TOKEN token, CONFIG* cfg){
 
 			//no break here
 		case TOKEN_CANCEL:
+			res.action=TOKEN_CONSUME;
 			res.state=STATE_DISPLAY;
 			break;
 		default:
@@ -211,6 +219,7 @@ TRANSITION_RESULT state_pay(INPUT_TOKEN token, CONFIG* cfg){
 				printf(">Not recognized\n");
 				portable_sleep(1000);
 				res.state=STATE_DISPLAY;
+				res.action=TOKEN_CONSUME;
 				break;
 			}
 
@@ -228,8 +237,10 @@ TRANSITION_RESULT state_pay(INPUT_TOKEN token, CONFIG* cfg){
 
 			POS.items=0;
 			res.state=STATE_IDLE;
+			res.action=TOKEN_CONSUME;
 			break;
 		case TOKEN_CANCEL:
+			res.action=TOKEN_CONSUME;
 			res.state=STATE_DISPLAY;
 			break;
 		default:
@@ -307,6 +318,8 @@ const char* action_dbg_string(TOKEN_ACTION a){
 			return "TOKEN_DISCARD";
 		case TOKEN_REMOVE:
 			return "TOKEN_REMOVE";
+		case TOKEN_CONSUME:
+			return "TOKEN_CONSUME";
 	}
 	return "UNKNOWN";
 }

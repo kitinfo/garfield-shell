@@ -111,17 +111,28 @@ int garfield_pos(CONFIG* cfg){
 							//do not move parse_head
 							break;
 						case TOKEN_DISCARD:
+							//remove the last token
+							for(e=0;INPUT.data[c+e]!=0;e++){
+								INPUT.data[c-tok_length(token)+e]=INPUT.data[c+e];
+							}
+							INPUT.data[c-tok_length(token)+e]=0;
+							c-=tok_length(token);
+							break;
+						case TOKEN_CONSUME:
+							//consume up to and including this token
 							INPUT.parse_head=INPUT.data+c;
 							break;
 						case TOKEN_REMOVE:
-							//remove this and the last token
+							//get offset of this and the last token
 							e=tok_last_offset_from(INPUT.data, c-tok_length(token));
 							if(e<0){
 								e=0;
 							}
+							//if token to be deleted is not NUMERAL or BACKSPACE, do not delete
 							if(tok_read(INPUT.data+e)!=TOKEN_NUMERAL&&tok_read(INPUT.data+e)!=TOKEN_BACKSPACE){
 								e+=tok_length(tok_read(INPUT.data+e));
 							}
+							//copy remaining buffer over deleted tokens //FIXME broken
 							for(;INPUT.data[c]!=0;e++){
 								INPUT.data[e]=INPUT.data[c];
 							}
