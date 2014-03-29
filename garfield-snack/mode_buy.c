@@ -66,7 +66,7 @@ int buySnackByID(PGconn* db, int user, int snack){
 }
 
 PGresult* snackInfoByID(PGconn* db, int snackid){
-	static const char* QUERY_INFO_BY_ID="SELECT snack_name, snack_barcode, snack_price FROM garfield.snacks WHERE snack_id=$1::integer";
+	static const char* QUERY_INFO_BY_ID="SELECT snack_name, snack_barcode, snack_price, snack_available FROM garfield.snacks JOIN garfield.snacks_available ON snacks.snack_id=snacks_available.snack_id WHERE snacks.snack_id=$1::integer";
 
 	snackid=htonl(snackid);
 	
@@ -147,9 +147,14 @@ int mode_buy(PGconn* db, int argc, char** argv){
 		return -1;
 	}
 	if(PQntuples(snackInfo)!=1){
-		printf("Invalid result set for snack info query\n");
+		printf("Invalid result set for snack info query (%d results)\n", PQntuples(snackInfo));
 		PQclear(snackInfo);
 		return -1;
+	}
+	
+	if(!strncmp(PQgetvalue(snackInfo,0,3),"f",1)){
+		printf("WARNING: This snack is no longer for sale.\nPlease make sure you are doing the right thing!\n");
+		//TODO ask for user input
 	}
 	
 	printf("Snack:\t\t%s\nSnack ID:\t%d\nPrice:\t\t%s\nPaying user:\t%s (%d)\n",PQgetvalue(snackInfo,0,0),snack_id,PQgetvalue(snackInfo,0,2),username,userid);

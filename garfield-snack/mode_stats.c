@@ -1,7 +1,7 @@
 PGresult* queryStatsForId(PGconn* db, int snackid){
 	static const char* QUERY_STATS_BY_ID="SELECT snacks.snack_id, snack_name, count(snack_sales_log.snack_sales_log_id) AS sales, snack_barcode, snack_price, snack_timestamp, min(locations.location_name) AS location, min(users.user_name) AS user,\
-											min(users.user_full_name) AS user_name FROM garfield.snacks LEFT JOIN garfield.snack_sales_log ON snack_sales_log.snack_id=snacks.snack_id LEFT JOIN garfield.users ON snacks.snack_modifed_by_user_id=users.user_id \
-											JOIN garfield.locations ON snacks.location_id = locations.location_id WHERE snacks.snack_id=$1::integer GROUP BY snacks.snack_id";
+											min(users.user_full_name) AS user_name, bool_and(snack_available) FROM garfield.snacks LEFT JOIN garfield.snack_sales_log ON snack_sales_log.snack_id=snacks.snack_id LEFT JOIN garfield.users ON snacks.snack_modifed_by_user_id=users.user_id \
+											JOIN garfield.locations ON snacks.location_id = locations.location_id JOIN garfield.snacks_available ON snacks.snack_id=snacks_available.snack_id WHERE snacks.snack_id=$1::integer GROUP BY snacks.snack_id";
 
 	snackid=htonl(snackid);
 	
@@ -50,6 +50,9 @@ int mode_stats(PGconn* db, int argc, char** argv){
 		}
 		if(PQntuples(result)==1){
 			printf("%s (ID %s)\n",PQgetvalue(result,0,1),PQgetvalue(result,0,0));
+			if(!strncmp(PQgetvalue(result,0,9),"f",1)){
+				printf("ATTENTION: This snack is no longer available\n");
+			}
 			if(strlen(PQgetvalue(result,0,3))>2){
 				printf("Barcode: %s\n",PQgetvalue(result,0,3));
 			}

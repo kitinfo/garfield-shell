@@ -1,4 +1,4 @@
-#define VERSION "0.1"
+#define VERSION "0.2"
 #define MAX_CFGLINE_LENGTH 1024
 #define MAX_PASSWORD_LENGTH 128
 #define PGRES_SSLMODE "require"
@@ -34,18 +34,21 @@ typedef enum /*_INPUT_TOKEN*/ {
 	TOKEN_CANCEL,
 	TOKEN_ENTER,
 	TOKEN_BACKSPACE,
-	TOKEN_NUMERAL
+	TOKEN_NUMERAL,
+	TOKEN_ADD
 } INPUT_TOKEN;
 
 typedef enum /*_TOKEN_ACTION*/ {
 	TOKEN_KEEP,	//keep token in parse buffer
-	TOKEN_DISCARD,	//discard all tokens up to this one
-	TOKEN_REMOVE	//remove this and the previous token
+	TOKEN_DISCARD,	//discard the token
+	TOKEN_REMOVE,	//remove this and the previous token
+	TOKEN_CONSUME	//discard all tokens up to and including this one
 } TOKEN_ACTION;
 
 typedef struct /*_TRANSITION_RESULT*/ {
 	POS_STATE state;
 	TOKEN_ACTION action;
+	bool force_redisplay;
 } TRANSITION_RESULT;
 
 typedef struct /*_CART_SNACK_ITEM*/ {

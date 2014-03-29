@@ -2,7 +2,7 @@
 #include "cart.c"
 
 TRANSITION_RESULT state_idle(INPUT_TOKEN token, CONFIG* cfg){
-	TRANSITION_RESULT res={STATE_IDLE, TOKEN_DISCARD};
+	TRANSITION_RESULT res={STATE_IDLE, TOKEN_DISCARD, false};
 
 	switch(token){
 		case TOKEN_PLU:
@@ -19,12 +19,11 @@ TRANSITION_RESULT state_idle(INPUT_TOKEN token, CONFIG* cfg){
 }
 
 TRANSITION_RESULT state_barcode(INPUT_TOKEN token, CONFIG* cfg){
-	TRANSITION_RESULT res={STATE_BARCODE, TOKEN_DISCARD};
+	TRANSITION_RESULT res={STATE_BARCODE, TOKEN_DISCARD, false};
 	CART_ITEM item;
 
 	switch(token){
 		case TOKEN_BACKSPACE:
-			printf("\b");
 			res.action=TOKEN_REMOVE;
 			break;
 		case TOKEN_NUMERAL:
@@ -45,6 +44,7 @@ TRANSITION_RESULT state_barcode(INPUT_TOKEN token, CONFIG* cfg){
 			cart_store(item, cfg);
 			//no break here
 		case TOKEN_CANCEL:
+			res.action=TOKEN_CONSUME;
 			res.state=STATE_DISPLAY;
 			break;
 		default:
@@ -54,13 +54,13 @@ TRANSITION_RESULT state_barcode(INPUT_TOKEN token, CONFIG* cfg){
 }
 
 TRANSITION_RESULT state_plu(INPUT_TOKEN token, CONFIG* cfg){
-	TRANSITION_RESULT res={STATE_PLU, TOKEN_DISCARD};
+	TRANSITION_RESULT res={STATE_PLU, TOKEN_DISCARD, false};
 	int last_numeric;
 	CART_ITEM item;
 
 	switch(token){
 		case TOKEN_BACKSPACE:
-			printf("\b");
+			printf("\b \b");
 			res.action=TOKEN_REMOVE;
 			break;
 		case TOKEN_NUMERAL:
@@ -83,6 +83,7 @@ TRANSITION_RESULT state_plu(INPUT_TOKEN token, CONFIG* cfg){
 			
 			///no break here
 		case TOKEN_CANCEL:
+			res.action=TOKEN_CONSUME;
 			res.state=STATE_DISPLAY;
 			break;
 		default:
@@ -92,7 +93,8 @@ TRANSITION_RESULT state_plu(INPUT_TOKEN token, CONFIG* cfg){
 }
 
 TRANSITION_RESULT state_display(INPUT_TOKEN token, CONFIG* cfg){
-	TRANSITION_RESULT res={STATE_DISPLAY, TOKEN_DISCARD};
+	TRANSITION_RESULT res={STATE_DISPLAY, TOKEN_DISCARD, false};
+	CART_ITEM item;
 
 	switch(token){
 		case TOKEN_NUMERAL:
@@ -104,13 +106,27 @@ TRANSITION_RESULT state_display(INPUT_TOKEN token, CONFIG* cfg){
 			break;
 		case TOKEN_CANCEL:
 			POS.items=0;
+			res.action=TOKEN_CONSUME;
 			res.state=STATE_IDLE;
 			break;
 		case TOKEN_STORNO:
 			res.state=STATE_STORNO;
+			res.action=TOKEN_CONSUME;
 			break;
 		case TOKEN_PAY:
 			res.state=STATE_PAY;
+			res.action=TOKEN_CONSUME;
+			break;
+		case TOKEN_ADD:
+			if(POS.items>0){
+				item=POS.cart[POS.items-1];
+				cart_store(item, cfg);
+				res.force_redisplay=true;
+			}
+			else if(cfg->verbosity>2){
+				fprintf(stderr, "No item to be duplicated\n");
+			}
+			res.action=TOKEN_CONSUME;
 			break;
 		default:
 			return res;
@@ -119,7 +135,7 @@ TRANSITION_RESULT state_display(INPUT_TOKEN token, CONFIG* cfg){
 }
 
 TRANSITION_RESULT state_storno(INPUT_TOKEN token, CONFIG* cfg){
-	TRANSITION_RESULT res={STATE_STORNO, TOKEN_DISCARD};
+	TRANSITION_RESULT res={STATE_STORNO, TOKEN_DISCARD, false};
 	int last_numeral, i;
 	CART_ITEM item;
 
@@ -130,7 +146,7 @@ TRANSITION_RESULT state_storno(INPUT_TOKEN token, CONFIG* cfg){
 			res.action=TOKEN_KEEP;
 			break;
 		case TOKEN_BACKSPACE:
-			printf("\b");
+			printf("\b \b");
 			res.action=TOKEN_REMOVE;
 			break;
 		case TOKEN_STORNO:
@@ -139,6 +155,7 @@ TRANSITION_RESULT state_storno(INPUT_TOKEN token, CONFIG* cfg){
 				POS.items--;
 			}
 			res.state=STATE_DISPLAY;
+			res.action=TOKEN_CONSUME;
 			break;
 		case TOKEN_ENTER:
 			//resolve snack
@@ -168,6 +185,7 @@ TRANSITION_RESULT state_storno(INPUT_TOKEN token, CONFIG* cfg){
 
 			//no break here
 		case TOKEN_CANCEL:
+			res.action=TOKEN_CONSUME;
 			res.state=STATE_DISPLAY;
 			break;
 		default:
@@ -177,7 +195,7 @@ TRANSITION_RESULT state_storno(INPUT_TOKEN token, CONFIG* cfg){
 }
 
 TRANSITION_RESULT state_pay(INPUT_TOKEN token, CONFIG* cfg){
-	TRANSITION_RESULT res={STATE_PAY, TOKEN_DISCARD};
+	TRANSITION_RESULT res={STATE_PAY, TOKEN_DISCARD, false};
 	int last_numeral, i;
 	GARFIELD_USER user;
 
@@ -188,7 +206,7 @@ TRANSITION_RESULT state_pay(INPUT_TOKEN token, CONFIG* cfg){
 			res.action=TOKEN_KEEP;
 			break;
 		case TOKEN_BACKSPACE:
-			printf("\b");
+			printf("\b \b");
 			res.action=TOKEN_REMOVE;
 			break;
 		case TOKEN_ENTER:
@@ -200,6 +218,7 @@ TRANSITION_RESULT state_pay(INPUT_TOKEN token, CONFIG* cfg){
 				printf(">Not recognized\n");
 				portable_sleep(1000);
 				res.state=STATE_DISPLAY;
+				res.action=TOKEN_CONSUME;
 				break;
 			}
 
@@ -217,8 +236,10 @@ TRANSITION_RESULT state_pay(INPUT_TOKEN token, CONFIG* cfg){
 
 			POS.items=0;
 			res.state=STATE_IDLE;
+			res.action=TOKEN_CONSUME;
 			break;
 		case TOKEN_CANCEL:
+			res.action=TOKEN_CONSUME;
 			res.state=STATE_DISPLAY;
 			break;
 		default:
@@ -242,7 +263,7 @@ TRANSITION_RESULT transition(POS_STATE state, INPUT_TOKEN token, CONFIG* cfg){
 		case STATE_PAY:
 			return state_pay(token, cfg);
 	}
-	TRANSITION_RESULT def={STATE_IDLE, TOKEN_DISCARD};
+	TRANSITION_RESULT def={STATE_IDLE, TOKEN_DISCARD, false};
 	return def;
 }
 
@@ -296,6 +317,8 @@ const char* action_dbg_string(TOKEN_ACTION a){
 			return "TOKEN_DISCARD";
 		case TOKEN_REMOVE:
 			return "TOKEN_REMOVE";
+		case TOKEN_CONSUME:
+			return "TOKEN_CONSUME";
 	}
 	return "UNKNOWN";
 }
