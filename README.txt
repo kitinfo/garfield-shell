@@ -51,9 +51,6 @@ Additionally, this repo contains
 	- garfield-api
 		A PHP/PDO API with a simple AJAX frontend implementation.
 	
-	- garfield-pos
-		Stand-alone point of sales system implementation.
-
 Build/setup/usage information for these subprojects is probably located
 in the respective folders.
 
