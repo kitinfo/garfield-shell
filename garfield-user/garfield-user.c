@@ -19,17 +19,21 @@ bool beVerbose=false;
 #include "mode_list.c"
 #include "mode_balance.c"
 #include "mode_history.c"
+#include "mode_deposit.c"
 
 int module_main(PGconn* db, int argc, char** argv){
 	int i;
-	if(!strcmp(argv[0],"list")||!strcmp(argv[0],"search")||!strcmp(argv[0],"find")){
+	if(!strcmp(argv[0], "list")||!strcmp(argv[0], "search")||!strcmp(argv[0], "find")){
 		i=mode_list(db,argc,argv);
 	}
-	else if(!strcmp(argv[0],"balance")){
+	else if(!strcmp(argv[0], "balance")){
 		i=mode_balance(db,argc,argv);
 	}
-	else if(!strcmp(argv[0],"history")){
+	else if(!strcmp(argv[0], "history")){
 		i=mode_history(db,argc,argv);
+	}
+	else if(!strcmp(argv[0], "deposit")||!strcmp(argv[0], "withdraw")){
+		i=mode_deposit(db,argc,argv);
 	}
 	else{
 		printf("No such mode \"%s\".\n",argv[0]);
