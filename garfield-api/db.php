@@ -302,7 +302,7 @@ function findID($db, $id) {
 
 function getUserLog($db, $limit) {
 
-    $logQuery = "SELECT to_char(user_trans_log_timestamp, 'YYYY-MM-DD HH24:MI:SS') AS timestamp, "
+    $logQuery = "WITH x AS (SELECT to_char(user_trans_log_timestamp, 'YYYY-MM-DD HH24:MI:SS') AS timestamp, "
 	    . "user_trans_log_performed_by_user_id AS pid, "
 	    . "snack_name AS desc, user_trans_log_quantity AS balance, "
 	    . "snack_sales_log.type_id AS type "
@@ -323,7 +323,8 @@ function getUserLog($db, $limit) {
 	    . "'' AS desc, user_trans_log_quantity AS balance, "
 	    . "user_trans_log.type_id AS type "
 	    . "FROM garfield.user_trans_log "
-	    . "WHERE type_id != 'TRANSFER' AND type_id != 'SNACK_BUY' ORDER BY timestamp DESC LIMIT :li";
+	    . "WHERE type_id != 'TRANSFER' AND type_id != 'SNACK_BUY' ORDER BY timestamp DESC LIMIT :li) "
+	    . "SELECT * FROM x ORDER BY timestamp ASC";
 
     $stm = $db->prepare($logQuery);
 
