@@ -15,6 +15,7 @@ PGresult* queryUserHistory(PGconn* db, int numRows){
 		ON (snack_sales_log.snack_id = snacks.snack_id) \
 	JOIN garfield.users \
 		ON (users.user_id=user_trans_log_performed_by_user_id) \
+	WHERE user_trans_log.user_id = (SELECT garfield.user_id_from_session_user()) \
 	\
 	UNION ALL SELECT \
 		to_char(user_trans_log_timestamp, 'YYYY-MM-DD HH24:MI:SS') AS timestamp, \
@@ -26,6 +27,7 @@ PGresult* queryUserHistory(PGconn* db, int numRows){
 		ON (user_trans_log.user_trans_log_id = user_trans_log_target_id) \
 	JOIN garfield.users \
 		ON (users.user_id=user_trans_log_performed_by_user_id) \
+	WHERE user_trans_log.user_id = (SELECT garfield.user_id_from_session_user()) \
 	UNION ALL SELECT \
 		to_char(user_trans_log_timestamp, 'YYYY-MM-DD HH24:MI:SS') AS timestamp, \
 		user_name as performer, \
@@ -38,6 +40,7 @@ PGresult* queryUserHistory(PGconn* db, int numRows){
 	WHERE \
 		type_id != 'TRANSFER' \
 		AND type_id != 'SNACK_BUY' \
+		AND user_trans_log.user_id = (SELECT garfield.user_id_from_session_user()) \
 	ORDER BY timestamp DESC \
 	LIMIT $1::integer;";
 	
