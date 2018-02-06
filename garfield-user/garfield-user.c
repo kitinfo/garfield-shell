@@ -56,8 +56,8 @@ int usage(char* fn){
 	printf("\tbalance\t\t\tPrint connecting users balance\n");
 	printf("\tlist <id|name>\t\tSearch user by name\n");
 	printf("\thistory\t\t\tDisplay account history\n");
-	printf("\tstats\t\t\tDisplay account statistics\n");
-	printf("\tdeposit\t\t\tAdd funds to snack account balance\n");
+	printf("\tdeposit <amount>\t\t\tAdd funds to snack account balance\n");
+	printf("\twithdraw <amount>\t\t\tWithdraw funds from snack account balance\n");
 
 	return -1;
 }
