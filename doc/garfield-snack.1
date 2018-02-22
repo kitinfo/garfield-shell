@@ -1,0 +1,60 @@
+.TH GARFIELD-SNACK 1 "February 2018" "v1.0"
+.SH NAME
+garfield-snack \- Interact with the snack sales subsystem of Garfield
+.SH SYNOPSIS
+.BI "garfield-snack [" options "] <" mode "> [" mode-arguments "]"
+.SH DESCRIPTION
+.BR "garfield-snack " "can be used to search for, buy and get information on snacks"
+in the Garfield snack database from the command line.
+.SH OPTIONS
+.TP
+.BI --user " user"
+Database/Garfield user to connect as. By default, the username of the executing user is used.
+.RI "When running with the " --pgpass " option, if the users home directory contains a " .pgpass " file"
+usable for the connection, the credentials therein are used.
+.TP
+.BI --pass " password"
+Database/Garfield password. If not supplied, the password is queried via the standard input.
+.RI "When running with the " --pgpass " option, if the users home directory contains a " .pgpass " file"
+usable for the connection, the credentials therein are used.
+.TP
+.BI --server " server"
+.RB "Server name to use as database host. Default is " fsmi-db.fsmi.uni-karlsruhe.de
+.TP
+.BI --port " port"
+.RB "Database port to be used. Default is " 5432
+.TP
+.BI --dbname " dbname"
+.RB "Name of the Garfield database to use. Default is " garfield
+.TP
+.B --pgpass
+.RI "If the users home directory contains a " .pgpass " file specifying credentials usable for the database"
+connection, use those credentials. For documentation on the format of this file, see the postgresql documentation.
+.TP
+.B --verbose
+Print background information on actions performed.
+.SH MODES
+.TP
+.BI find " term"
+.RI "Find all snacks containing " term " in their name. This will print " snackids " usable with the"
+.BR "buy" " and  " info " modes."
+.TP
+.BI buy " snackid"
+.RI "Buy the snack " snackid " with the connecting user's account."
+.TP
+.BI "buy -s" " term"
+.RI "Search for snacks containing " term " in name or barcode, and, if the result list contains exactly one item,"
+buy it as the connecting user. Can be used to buy snacks using a known barcode.
+.TP
+.BI "buy -u" " user " "" "snackid"
+.RI "Buy a snack on the account of " user "."
+.TP
+.BI info " snackid"
+.RI "Show extended snack information on snack " snackid "."
+.SH BUGS
+Please report bugs to the projects issue tracker at https://github.com/kitinfo/garfield-shell/issues
+.SH AUTHORS
+ Jan "mpease" Duepmeier <me at mpease dot de>
+ Fabian "cbdev" Stumpf <cb at cbcdn dot com>
+.SH "SEE ALSO"
+Project repository at https://github.com/kitinfo/garfield-shell/

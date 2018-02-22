@@ -1,11 +1,12 @@
-INSTALLPATH=/usr/local/bin
+PREFIX ?= /usr/local
 .PHONY: all windows install
 
 all:
 	-mkdir -p bin
-	@cd garfield-snack && make
-	@cd garfield-user && make
-	@cd shell && make
+	$(MAKE) -C garfield-snack
+	$(MAKE) -C garfield-user
+	$(MAKE) -C shell
+	$(MAKE) -C doc
 	mv garfield-snack/garfield-snack bin/
 	mv garfield-user/garfield-user bin/
 	mv shell/garfield-shell bin/
@@ -18,6 +19,11 @@ windows:
 	mv garfield-user/garfield-user.exe bin/
 
 install:
-	install -m 0755 bin/garfield-shell $(INSTALLPATH)
-	install -m 0755 bin/garfield-snack $(INSTALLPATH)
-	install -m 0755 bin/garfield-user $(INSTALLPATH)
+	install -m 0755 bin/garfield-shell "$(DESTDIR)$(PREFIX)/bin"
+	install -m 0755 bin/garfield-snack "$(DESTDIR)$(PREFIX)/bin"
+	install -m 0755 bin/garfield-user "$(DESTDIR)$(PREFIX)/bin"
+	$(MAKE) -C doc install
+
+clean:
+	$(RM) -r bin/
+	$(MAKE) -C doc clean
