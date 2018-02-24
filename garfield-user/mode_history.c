@@ -62,35 +62,40 @@ PGresult* queryUserHistory(PGconn* db, int numRows){
 
 
 int mode_history(PGconn* db, int argc, char** argv){
-	int numRows=10;
-	int i=0, size=0;
+	unsigned numRows = 10;
+	size_t i = 0, size = 0;
 
-	if(argc>1){
-		numRows=strtoul(argv[1],NULL,10);
-		if(errno!=0||numRows==0){
+	if(argc > 1){
+		numRows = strtoul(argv[1], NULL, 10);
+		if(errno || !numRows){
 			printf("Invalid number of history items passed\n");
 			return -1;
 		}
 	}
 	
 	if(beVerbose){
-		printf("Querying for %d history items\n",numRows);
+		printf("Querying for %u history items\n", numRows);
 	}
 		
-	PGresult* historyRows=queryUserHistory(db,numRows);
+	PGresult* historyRows = queryUserHistory(db, numRows);
 	if(!historyRows){
-			printf("Failed to query user history!\n");
-			return -1;
+		printf("Failed to query user history!\n");
+		return -1;
 	}
 
-	size=PQntuples(historyRows);
+	size = PQntuples(historyRows);
 	if(beVerbose){
-		printf("Received %d history items\n",size);
+		printf("Received %d history items\n", size);
 	}
 
-	for(i=0;i<size;i++){
-		printf("%s: %s %s %s performed by %s\n",PQgetvalue(historyRows,i,0),PQgetvalue(historyRows,i,4),PQgetvalue(historyRows,i,2),PQgetvalue(historyRows,i,3),PQgetvalue(historyRows,i,1));
+	for(i = 0; i < size; i++){
+		printf("%s: %s %s %s performed by %s\n",
+				PQgetvalue(historyRows, i, 0),
+				PQgetvalue(historyRows, i, 4),
+				PQgetvalue(historyRows, i, 2),
+				PQgetvalue(historyRows, i, 3),
+				PQgetvalue(historyRows, i, 1));
 	}
 
-	return size;
+	return 0;
 }

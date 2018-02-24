@@ -22,24 +22,22 @@ bool beVerbose=false;
 #include "mode_deposit.c"
 
 int module_main(PGconn* db, int argc, char** argv){
-	int i;
-	if(!strcmp(argv[0], "list")||!strcmp(argv[0], "search")||!strcmp(argv[0], "find")){
-		i=mode_list(db,argc,argv);
+	if(!strcmp(argv[0], "list") || !strcmp(argv[0], "search") || !strcmp(argv[0], "find")){
+		return mode_list(db,argc,argv);
 	}
 	else if(!strcmp(argv[0], "balance")){
-		i=mode_balance(db,argc,argv);
+		return mode_balance(db,argc,argv);
 	}
 	else if(!strcmp(argv[0], "history")){
-		i=mode_history(db,argc,argv);
+		return mode_history(db,argc,argv);
 	}
 	else if(!strcmp(argv[0], "deposit")||!strcmp(argv[0], "withdraw")){
-		i=mode_deposit(db,argc,argv);
+		return mode_deposit(db,argc,argv);
 	}
 	else{
 		printf("No such mode \"%s\".\n",argv[0]);
-		i=usage("garfield-user");
+		return usage("garfield-user");
 	}
-	return i;
 }
 
 #include "../garfield-common/module-argparse.c"
