@@ -85,7 +85,7 @@ int mode_history(PGconn* db, int argc, char** argv){
 
 	size = PQntuples(historyRows);
 	if(beVerbose){
-		printf("Received %d history items\n", size);
+		printf("Received %zu history items\n", size);
 	}
 
 	for(i = 0; i < size; i++){
