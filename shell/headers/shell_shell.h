@@ -1,7 +1,7 @@
 #pragma once
 
 // exit
-void exit();
+void shellExit();
 
 // the main shell function
 int shell();
