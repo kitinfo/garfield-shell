@@ -1,7 +1,9 @@
 .PHONY: all debug windows
 
+CFLAGS+=-Wall
+
 all:
-	$(CC) -o garfield-shell -Wall sources/*.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -o garfield-shell sources/*.c $(LDFLAGS)
 
 debug:
 	$(CC) -o garfield-shell -Wall -g sources/*.c
