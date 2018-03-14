@@ -1,3 +1,11 @@
+garfield-shell (0.3.1-1) fsmi-stretch; urgency=medium
+
+  nmu
+  * added CFLAGS CPPFLAGS and LDFLAGS at makefile
+  * fix linitan warnings
+
+ -- Jan Unterbrink <jan.unterbrink@subpath.de>  Thu, 15 Mar 2018 00:26:25 +0100
+
 garfield-shell (0.3-1) fsmi-stretch; urgency=medium
 
   Team upload.
