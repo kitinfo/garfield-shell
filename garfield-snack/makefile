@@ -3,11 +3,12 @@ ifeq ($(PG_INCLUDES),-I)
 	PG_INCLUDES=
 endif
 
+GARFIELD_TOOLS_VERSION ?= $(shell git show-ref -s HEAD)
 
 .PHONY: all windows
 
 all:
-	$(CC) -o garfield-snack -Wall $(PG_INCLUDES) garfield-snack.c -lpq
+	$(CC) -o garfield-snack -Wall $(PG_INCLUDES) -DTOOL_VERSION='"$(GARFIELD_TOOLS_VERSION)"' garfield-snack.c -lpq
 
 windows:
-	cc -o garfield-snack.exe -lpq -ladvapi32 -lws2_32 -Wall garfield-snack.c
+	cc -o garfield-snack.exe -DTOOL_VERSION='"$(GARFIELD_TOOLS_VERSION)"' -lpq -ladvapi32 -lws2_32 -Wall garfield-snack.c

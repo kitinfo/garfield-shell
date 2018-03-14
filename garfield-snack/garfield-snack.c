@@ -6,6 +6,8 @@
 #include <stdbool.h>
 #include <libpq-fe.h>
 
+#define TOOL_NAME "garfield-snack"
+
 #ifndef _WIN32
 	#include <arpa/inet.h>
 #else
