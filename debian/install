@@ -1,0 +1,8 @@
+doc/garfield-snack.1.gz /usr/share/man/man1
+doc/garfield-user.1.gz /usr/share/man/man1
+
+bin/garfield-shell /usr/bin
+bin/garfield-snack /usr/bin
+bin/garfield-user /usr/bin
+
+bash-completion/garfield /usr/share/bash-completion/completions

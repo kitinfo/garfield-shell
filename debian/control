@@ -1,0 +1,16 @@
+Source: garfield-shell
+Section: utils
+Priority: extra
+Maintainer: Fachschaft Mathe/Info Rechenr-Admins <rechenr@fsmi.uni-karlsruhe.de>
+Build-Depends: debhelper (>= 9), libpq-dev
+Standards-Version: 3.9.8
+Homepage: https://github.com/kitinfo/garfield-shell
+Vcs-Git: https://github.com/kitinfo/garfield-shell.git
+Vcs-Browser: https://github.com/kitinfo/garfield-shell/commits/master
+
+Package: garfield-shell
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: offers a shell interface to garfield
+ with garfield-snack you have access to the garfield snack subsystem
+ with garfield-user you have access to garfield user subsystem
