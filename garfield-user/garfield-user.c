@@ -13,7 +13,7 @@
 
 int usage(char* fn);
 
-bool beVerbose=false;
+bool beVerbose = false;
 
 //operation modes
 #include "mode_list.c"
@@ -31,11 +31,11 @@ int module_main(PGconn* db, int argc, char** argv){
 	else if(!strcmp(argv[0], "history")){
 		return mode_history(db,argc,argv);
 	}
-	else if(!strcmp(argv[0], "deposit")||!strcmp(argv[0], "withdraw")){
+	else if(!strcmp(argv[0], "deposit") || !strcmp(argv[0], "withdraw")){
 		return mode_deposit(db,argc,argv);
 	}
 	else{
-		printf("No such mode \"%s\".\n",argv[0]);
+		printf("No such mode \"%s\".\n", argv[0]);
 		return usage("garfield-user");
 	}
 }

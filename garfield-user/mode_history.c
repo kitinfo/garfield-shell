@@ -43,17 +43,17 @@ PGresult* queryUserHistory(PGconn* db, int numRows){
 		AND user_trans_log.user_id = (SELECT garfield.user_id_from_session_user()) \
 	ORDER BY timestamp DESC \
 	LIMIT $1::integer;";
-	
-	numRows=htonl(numRows);
 
-	const char *values[1]={(char*)&numRows};
-	int lengths[1]={sizeof(numRows)};
-	int binary[1]={1};
-	
-	PGresult* result=PQexecParams(db,QUERY_USER_HISTORY,1,NULL,values,lengths,binary,0);
+	numRows = htonl(numRows);
 
-	if(PQresultStatus(result)!=PGRES_TUPLES_OK){
-		printf("User history query failed (%s)\n",PQresultErrorMessage(result));
+	const char *values[1] = {(char*)&numRows};
+	int lengths[1] = {sizeof(numRows)};
+	int binary[1] = {1};
+
+	PGresult* result = PQexecParams(db, QUERY_USER_HISTORY, 1, NULL, values, lengths, binary, 0);
+
+	if(PQresultStatus(result) != PGRES_TUPLES_OK){
+		printf("User history query failed (%s)\n", PQresultErrorMessage(result));
 		PQclear(result);
 		return NULL;
 	}
@@ -72,11 +72,11 @@ int mode_history(PGconn* db, int argc, char** argv){
 			return -1;
 		}
 	}
-	
+
 	if(beVerbose){
 		printf("Querying for %u history items\n", numRows);
 	}
-		
+
 	PGresult* historyRows = queryUserHistory(db, numRows);
 	if(!historyRows){
 		printf("Failed to query user history!\n");
