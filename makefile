@@ -1,6 +1,8 @@
 PREFIX ?= /usr/local
 .PHONY: all windows install
 
+export GARFIELD_TOOLS_VERSION=0.3
+
 all:
 	-mkdir -p bin
 	$(MAKE) -C garfield-snack
