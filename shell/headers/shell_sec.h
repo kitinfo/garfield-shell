@@ -9,7 +9,7 @@ void setUser(char* username);
 
 void askPassword();
 
-void checkLogin();
+int checkLogin();
 
 char* getPassword();
 

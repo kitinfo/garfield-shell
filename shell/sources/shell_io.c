@@ -1,12 +1,16 @@
 #include "../headers/shell_io.h"
 #include <stdio.h>
 
-void read_line(char dest[]) {
+int read_line(char dest[]) {
     char buff[MAXLENGTH + 1];
 
-    fgets(buff, MAXLENGTH, stdin);
+    if (fgets(buff, MAXLENGTH, stdin) == NULL) {
+		return 0;
+	}
 
     if (sscanf(buff, "%[^\n]", dest) != 1) {
 		dest = "";
     }
+
+	return 1;
 }

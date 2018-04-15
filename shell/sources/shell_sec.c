@@ -58,12 +58,14 @@ void askPassword() {
     login.password[i] = 0;
 }
 
-void checkLogin() {
+int checkLogin() {
 
     if (login.user == NULL || strlen(login.user) < 1) {
         printf("We need a user: ");
         char dest[MAXLENGTH];
-        read_line(dest);
+        if (!read_line(dest)) {
+			return 0;
+		}
         setUser(dest);
     }
     if (!pgpass) {
@@ -73,6 +75,8 @@ void checkLogin() {
             printf("\n");
         }
     }
+
+	return 1;
 }
 
 char* getPassword() {
