@@ -2,4 +2,4 @@
 
 #define MAXLENGTH 100
 
-void read_line(char dest[]);
+int read_line(char dest[]);

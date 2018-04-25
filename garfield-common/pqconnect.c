@@ -6,7 +6,7 @@ PGconn* database_connect(char* host, char* port, char* dbname, char* user, char*
 	
 	//set up connection parameters
 	char const* keywords[] = {"host", "port", "dbname", "user", "sslmode", "password", NULL};
-	char* values[]={host, port, dbname, user, SSLMODE, pass, NULL};
+	char* values[] = {host, port, dbname, user, SSLMODE, pass, NULL};
 	
 	if(!pass || !*pass){
 		//setting the password to NULL causes libpq to try .pgpass

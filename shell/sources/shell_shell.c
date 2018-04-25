@@ -60,13 +60,17 @@ void parseSet(char* input) {
 int shell() {
 
     debug("shell init");
-    checkLogin();
+    if (!checkLogin()) {
+		return 1;
+	}
 
     char input[MAXLENGTH];
     for (;;) {
         printf("%s>", getUser());
 
-        read_line(input);
+        if (!read_line(input)) {
+			break;
+		}
 
         if (sequals(input, "exit")) {
             debug("shut down");
