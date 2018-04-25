@@ -1,3 +1,18 @@
+garfield-shell (0.3.2-2) fsmi-stretch; urgency=medium
+
+  [ cbdev ]
+  * Style fixes for maintainability
+  * Fix typos
+  * Update code style
+
+  [ Jan Düpmeier ]
+  * fixing eof handling in shell (#14)
+
+  [ Jan Unterbrink ]
+  * adding watch file
+
+ -- Jan Unterbrink <jan.unterbrink@subpath.de>  Wed, 25 Apr 2018 13:38:57 +0200
+
 garfield-shell (0.3.1-1) fsmi-stretch; urgency=medium
 
   nmu
